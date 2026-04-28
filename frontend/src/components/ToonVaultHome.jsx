@@ -828,7 +828,7 @@ export default function ToonVaultHome() {
                 <button 
                   onClick={() => navigate(`/user?plan=${plan.name}`)}
                   style={{
-                    width: "100%", padding: "14px", borderRadius: 14, border: "none",
+                    width: "100%", padding: "14px", borderRadius: 14,
                     background: plan.popular ? plan.accent : "white",
                     color: plan.popular ? "white" : plan.accent,
                     border: `1.5px solid ${plan.accent}`,

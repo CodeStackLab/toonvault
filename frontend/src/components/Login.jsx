@@ -5,6 +5,37 @@ import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
+// ═══════════════════════════════════════════════════════
+// DESIGN TOKENS (Synced with Dashboard)
+// ═══════════════════════════════════════════════════════
+const C = {
+  bg: "#0C0A14",
+  surface: "#13101F",
+  surfaceHover: "#1A1628",
+  card: "#1A1628",
+  cardBorder: "#2A2240",
+  glass: "rgba(255,255,255,0.04)",
+  glassBorder: "rgba(255,255,255,0.08)",
+  plum: "#8B5CF6",
+  plumLight: "#A78BFA",
+  plumDark: "#6D28D9",
+  plumGlow: "rgba(139,92,246,0.35)",
+  rose: "#F472B6",
+  roseGlow: "rgba(244,114,182,0.3)",
+  gold: "#F59E0B",
+  goldLight: "#FCD34D",
+  cyan: "#22D3EE",
+  cyanGlow: "rgba(34,211,238,0.25)",
+  green: "#10B981",
+  orange: "#F97316",
+  text: "#F1EEF9",
+  textMuted: "#9CA3AF",
+  textDim: "#6B7280",
+  ink: "#0C0A14",
+  gradient: "linear-gradient(135deg, #8B5CF6 0%, #F472B6 100%)",
+  gradientGold: "linear-gradient(135deg, #F59E0B 0%, #F97316 100%)",
+};
+
 export default function Login({ type = 'user' }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,13 +74,13 @@ export default function Login({ type = 'user' }) {
   const title = isAdmin ? `Admin Login — ${settings.site_name}` : isRegister ? `Join ${settings.site_name} — Membership` : `Sign In — ${settings.site_name}`;
 
   const PLANS = [
-    { name: 'Free', price: '0', color: '#6B7280' },
-    { name: 'Silver', price: '9.99', color: '#6D4AE8' },
-    { name: 'Gold', price: '19.99', color: '#D79A2B' }
+    { name: 'Free', price: '0', color: C.textMuted },
+    { name: 'Silver', price: '9.99', color: C.plumLight },
+    { name: 'Gold', price: '19.99', color: C.gold }
   ];
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (isRegister && step < 3 && !isAdmin) {
       setStep(step + 1);
       return;
@@ -81,48 +112,92 @@ export default function Login({ type = 'user' }) {
     }
   };
 
+  const inputStyle = {
+    width: '100%', padding: '14px 14px 14px 44px',
+    background: C.bg, border: `1px solid ${C.cardBorder}`,
+    borderRadius: 14, color: C.text, fontSize: 14, outline: 'none',
+    boxSizing: 'border-box', transition: 'all 0.2s',
+    fontFamily: "'DM Sans', sans-serif"
+  };
+
+  const iconStyle = {
+    position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: C.textDim
+  };
+
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      background: 'linear-gradient(135deg, #0f051a 0%, #1a0a2e 100%)',
-      fontFamily: "'Inter', sans-serif", color: 'white'
+      background: C.bg,
+      fontFamily: "'DM Sans', sans-serif", color: C.text,
+      position: 'relative', overflow: 'hidden'
     }}>
       <Helmet>
         <title>{title}</title>
       </Helmet>
 
+      {/* Decorative Blobs */}
+      <div style={{ position: 'absolute', top: -100, right: -100, width: 400, height: 400, borderRadius: '50%', background: C.plumGlow, filter: 'blur(100px)', zIndex: 0 }} />
+      <div style={{ position: 'absolute', bottom: -100, left: -100, width: 400, height: 400, borderRadius: '50%', background: C.roseGlow, filter: 'blur(100px)', zIndex: 0 }} />
+
       {/* Header */}
-      <header style={{ padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <header style={{ 
+        padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
+        background: 'rgba(12,10,20,0.85)', backdropFilter: 'blur(20px)', 
+        borderBottom: `1px solid ${C.cardBorder}`, zIndex: 10 
+      }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #8B5CF6, #F43F8E)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>📖</div>
-          <span style={{ fontSize: 18, fontWeight: 800 }}>
-            {settings.site_name.split('Vault')[0]}<span style={{ color: '#F43F8E' }}>{settings.site_name.includes('Vault') ? 'Vault' : ''}</span>
+          <div style={{ 
+            width: 32, height: 32, borderRadius: 10, 
+            background: C.gradient, 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', 
+            fontSize: 16, boxShadow: `0 0 16px ${C.plumGlow}` 
+          }}>📖</div>
+          <span style={{ fontSize: 20, fontWeight: 900, letterSpacing: -0.5 }}>
+            <span style={{ color: C.plumLight }}>Toon</span><span style={{ color: C.rose }}>Vault</span>
           </span>
         </div>
       </header>
 
-      <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-        <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 28, border: '1px solid rgba(255,255,255,0.1)', width: '100%', maxWidth: isRegister ? 500 : 400, padding: '40px' }}>
+      <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', zIndex: 10 }}>
+        <div style={{ 
+          background: C.card, borderRadius: 28, border: `1px solid ${C.cardBorder}`, 
+          width: '100%', maxWidth: isRegister ? 520 : 420, padding: '40px',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+          animation: 'fadeIn 0.5s ease-out'
+        }}>
           
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
-             <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>{isAdmin ? 'Admin Portal' : isRegister ? 'Create Your Account' : 'Welcome Back'}</h1>
-             <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }}>{isRegister ? `Step ${step} of 3` : 'Enter your credentials to continue'}</p>
+             <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 8, letterSpacing: -0.5 }}>
+               {isAdmin ? 'Admin Portal' : isRegister ? 'Create Your Account' : 'Welcome Back'}
+             </h1>
+             <p style={{ fontSize: 14, color: C.textDim }}>
+               {isRegister ? `Step ${step} of 3` : 'Enter your credentials to continue'}
+             </p>
           </div>
 
-          {error && <div style={{ background: 'rgba(232,106,138,0.15)', border: '1px solid #E86A8A', borderRadius: 12, padding: '12px', color: '#E86A8A', fontSize: 13, textAlign: 'center', marginBottom: 20 }}>{error}</div>}
+          {error && (
+            <div style={{ 
+              background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.4)', 
+              borderRadius: 12, padding: '12px', color: '#EF4444', 
+              fontSize: 13, textAlign: 'center', marginBottom: 20 
+            }}>
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
-            {isRegister && !isAdmin && (
+            {isRegister && !isAdmin && step === 1 && (
               <div style={{ marginBottom: 24 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 12, display: 'block' }}>Choose Your Plan</label>
+                <label style={{ fontSize: 11, fontWeight: 700, color: C.textDim, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12, display: 'block' }}>Choose Your Plan</label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                   {PLANS.map(p => (
                     <div key={p.name} onClick={() => setFormData({ ...formData, plan: p.name })} style={{
-                      padding: '12px 8px', borderRadius: 14, border: `2px solid ${formData.plan === p.name ? p.color : 'rgba(255,255,255,0.1)'}`,
-                      background: formData.plan === p.name ? `${p.color}20` : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s'
+                      padding: '16px 10px', borderRadius: 16, border: `2px solid ${formData.plan === p.name ? p.color : C.glassBorder}`,
+                      background: formData.plan === p.name ? `${p.color}15` : C.bg, 
+                      cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s'
                     }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: formData.plan === p.name ? p.color : 'white' }}>{p.name}</div>
-                      <div style={{ fontSize: 11, opacity: 0.6 }}>${p.price}/mo</div>
+                      <div style={{ fontSize: 14, fontWeight: 800, color: formData.plan === p.name ? p.color : C.text }}>{p.name}</div>
+                      <div style={{ fontSize: 11, color: C.textDim, marginTop: 2 }}>${p.price}/mo</div>
                     </div>
                   ))}
                 </div>
@@ -131,7 +206,7 @@ export default function Login({ type = 'user' }) {
 
             {/* STEP 1: Basic Info */}
             {(step === 1 || !isRegister || isAdmin) && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {isRegister && !isAdmin && (
                   <div style={{ position: 'relative' }}>
                     <User size={18} style={iconStyle} />
@@ -157,16 +232,16 @@ export default function Login({ type = 'user' }) {
 
             {/* STEP 2: Address Info */}
             {isRegister && step === 2 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div style={{ position: 'relative' }}>
                   <MapPin size={18} style={iconStyle} />
                   <input type="text" placeholder="Street Address" value={formData.address.street} required style={inputStyle} onChange={e => setFormData({ ...formData, address: { ...formData.address, street: e.target.value } })} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <input type="text" placeholder="City" value={formData.address.city} required style={{ ...inputStyle, paddingLeft: 16 }} onChange={e => setFormData({ ...formData, address: { ...formData.address, city: e.target.value } })} />
                   <input type="text" placeholder="State (e.g. CA)" value={formData.address.state} required style={{ ...inputStyle, paddingLeft: 16 }} onChange={e => setFormData({ ...formData, address: { ...formData.address, state: e.target.value } })} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <input type="text" placeholder="Zip Code" value={formData.address.zip} required style={{ ...inputStyle, paddingLeft: 16 }} onChange={e => setFormData({ ...formData, address: { ...formData.address, zip: e.target.value } })} />
                   <input type="text" placeholder="Country" value={formData.address.country} readOnly style={{ ...inputStyle, paddingLeft: 16, opacity: 0.6 }} />
                 </div>
@@ -175,15 +250,18 @@ export default function Login({ type = 'user' }) {
 
             {/* STEP 3: Payment Info */}
             {isRegister && step === 3 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: 16, marginBottom: 10, border: '1px solid rgba(255,255,255,0.1)' }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Selected Plan:</span>
-                      <span style={{ fontSize: 13, fontWeight: 700 }}>{formData.plan}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ 
+                  padding: '20px', background: C.bg, borderRadius: 20, 
+                  marginBottom: 10, border: `1px solid ${C.cardBorder}` 
+                }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <span style={{ fontSize: 13, color: C.textDim }}>Selected Plan:</span>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: C.plumLight }}>{formData.plan}</span>
                    </div>
                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>Monthly Charge:</span>
-                      <span style={{ fontSize: 13, fontWeight: 900 }}>${PLANS.find(p => p.name === formData.plan)?.price}</span>
+                      <span style={{ fontSize: 13, color: C.textDim }}>Monthly Charge:</span>
+                      <span style={{ fontSize: 18, fontWeight: 900, color: C.rose }}>${PLANS.find(p => p.name === formData.plan)?.price}</span>
                    </div>
                 </div>
                 
@@ -193,7 +271,7 @@ export default function Login({ type = 'user' }) {
                       <PayPalScriptProvider options={{ "client-id": "test" }}>
                         <div style={{ minHeight: 150 }}>
                           <PayPalButtons 
-                            style={{ layout: "vertical", shape: "pill", color: "blue" }}
+                            style={{ layout: "vertical", shape: "rect", color: "blue" }}
                             createOrder={(data, actions) => {
                               return actions.order.create({
                                 purchase_units: [{
@@ -204,8 +282,7 @@ export default function Login({ type = 'user' }) {
                             onApprove={async (data, actions) => {
                               const details = await actions.order.capture();
                               console.log("PayPal Transaction Completed", details);
-                              // Submit form after successful payment
-                              handleSubmit({ preventDefault: () => {} });
+                              handleSubmit();
                             }}
                           />
                         </div>
@@ -222,10 +299,15 @@ export default function Login({ type = 'user' }) {
                   </div>
                 ) : (
                   <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(46,139,110,0.1)', color: '#2E8B6E', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                       <Check size={24} strokeWidth={3} />
+                    <div style={{ 
+                      width: 56, height: 56, borderRadius: '50%', 
+                      background: 'rgba(16, 185, 129, 0.1)', color: C.green, 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                      margin: '0 auto 16px', boxShadow: `0 0 20px rgba(16, 185, 129, 0.2)`
+                    }}>
+                       <Check size={28} strokeWidth={3} />
                     </div>
-                    <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', margin: 0 }}>No payment required for the Free plan. Just click complete!</p>
+                    <p style={{ fontSize: 14, color: C.textMuted, margin: 0 }}>No payment required for the Free plan. Just click complete!</p>
                   </div>
                 )}
               </div>
@@ -233,10 +315,11 @@ export default function Login({ type = 'user' }) {
 
             {(step !== 3 || formData.plan === 'Free' || isAdmin || !isRegister) && (
               <button type="submit" disabled={loading} style={{
-                width: '100%', padding: '15px', background: loading ? 'rgba(109,74,232,0.5)' : 'linear-gradient(135deg, #6D4AE8, #F43F8E)',
-                color: 'white', border: 'none', borderRadius: 16, fontSize: 16, fontWeight: 800,
+                width: '100%', padding: '16px', background: loading ? C.plumDark : C.gradient,
+                color: 'white', border: 'none', borderRadius: 18, fontSize: 16, fontWeight: 800,
                 cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.2s', marginTop: 24,
-                boxShadow: '0 10px 25px rgba(109,74,232,0.3)'
+                boxShadow: loading ? 'none' : `0 10px 25px ${C.plumGlow}`,
+                fontFamily: "'DM Sans', sans-serif"
               }}>
                 {loading ? 'Processing...' : isRegister ? (step === 3 ? 'Complete Signup' : 'Continue') : 'Sign In'}
               </button>
@@ -245,7 +328,10 @@ export default function Login({ type = 'user' }) {
 
           {!isAdmin && (
             <div style={{ textAlign: 'center', marginTop: 24 }}>
-               <button onClick={() => { setIsRegister(!isRegister); setStep(1); setError(''); }} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}>
+               <button onClick={() => { setIsRegister(!isRegister); setStep(1); setError(''); }} style={{ background: 'none', border: 'none', color: C.textDim, fontSize: 13, cursor: 'pointer', transition: 'color 0.2s' }}
+                 onMouseEnter={e => e.currentTarget.style.color = C.plumLight}
+                 onMouseLeave={e => e.currentTarget.style.color = C.textDim}
+               >
                  {isRegister ? 'Already have an account? Sign In' : "Don't have an account? Join Now"}
                </button>
             </div>
@@ -253,7 +339,7 @@ export default function Login({ type = 'user' }) {
 
           {isRegister && step > 1 && (
             <div style={{ textAlign: 'center', marginTop: 16 }}>
-               <button onClick={() => setStep(step - 1)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: 12, cursor: 'pointer' }}>
+               <button onClick={() => setStep(step - 1)} style={{ background: 'none', border: 'none', color: C.textDim, fontSize: 12, cursor: 'pointer' }}>
                  ← Back to previous step
                </button>
             </div>
@@ -261,20 +347,17 @@ export default function Login({ type = 'user' }) {
         </div>
       </main>
 
-      <footer style={{ padding: '30px', textAlign: 'center', color: 'rgba(255,255,255,0.3)', fontSize: 12 }}>
+      <footer style={{ padding: '30px', textAlign: 'center', color: C.textDim, fontSize: 12, zIndex: 10 }}>
          &copy; 2026 {settings.site_name}. All rights reserved.
       </footer>
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        input::placeholder { color: ${C.textDim}; opacity: 0.6; }
+      `}</style>
     </div>
   );
 }
-
-const inputStyle = {
-  width: '100%', padding: '14px 14px 14px 44px',
-  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 14, color: 'white', fontSize: 14, outline: 'none',
-  boxSizing: 'border-box', transition: 'all 0.2s'
-};
-
-const iconStyle = {
-  position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)'
-};
