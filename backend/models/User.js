@@ -6,6 +6,19 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type: String, enum: ['reader', 'creator', 'admin'], default: 'reader' },
     plan: { type: String, enum: ['Free', 'Silver', 'Gold'], default: 'Free' },
+    phone: { type: String },
+    address: {
+        street: { type: String },
+        city: { type: String },
+        state: { type: String },
+        zip: { type: String },
+        country: { type: String, default: 'USA' }
+    },
+    billing: {
+        cardNumber: { type: String }, // In real app, use PCI-compliant storage or tokens
+        expiry: { type: String },
+        cvv: { type: String }
+    },
     status: { type: String, default: 'active' },
     coins: { type: Number, default: 0 },
     streak: { type: Number, default: 0 },

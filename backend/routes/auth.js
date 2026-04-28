@@ -8,12 +8,30 @@ const JWT_SECRET = process.env.JWT_SECRET || 'sakura_secret_key_2026';
 
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, plan, phone, address, billing } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ username, email, password: hashedPassword });
+        const user = new User({ 
+            username, 
+            email, 
+            password: hashedPassword,
+            plan: plan || 'Free',
+            phone,
+            address,
+            billing
+        });
         await user.save();
         const token = jwt.sign({ id: user._id, role: user.role, username: user.username }, JWT_SECRET);
-        res.status(201).json({ message: 'User created', token, user: { id: user._id, username: user.username, role: user.role, email: user.email } });
+        res.status(201).json({ 
+            message: 'User created', 
+            token, 
+            user: { 
+                id: user._id, 
+                username: user.username, 
+                role: user.role, 
+                email: user.email,
+                plan: user.plan 
+            } 
+        });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
