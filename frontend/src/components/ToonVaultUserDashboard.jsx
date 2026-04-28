@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate, useLocation } from "react-router-dom";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import axios from "axios";
 
 const COLORS = {
   bg: "#0A0910",
@@ -285,7 +287,83 @@ export default function ToonVaultUserDashboard() {
           {/* ... other tabs ... */}
           {activeTab === "reading" && <div><h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20 }}>👁 Reading History</h2>{READING_HISTORY.map(s => <div key={s.id} style={{ background: COLORS.card, borderRadius: 16, padding: "16px", marginBottom: 12, border: `1px solid ${COLORS.border}`, display: "flex", alignItems: "center", gap: 16 }}><div style={{ width: 40, height: 55, background: s.bg, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{s.cover}</div><div style={{ flex: 1 }}><div style={{ fontWeight: 700 }}>{s.title}</div><div style={{ height: 6, background: COLORS.border, borderRadius: 4, marginTop: 8, width: "60%" }}><div style={{ height: "100%", width: `${s.progress}%`, background: COLORS.plum, borderRadius: 4 }} /></div></div></div>)}</div>}
           {activeTab === "generate" && <div style={{ textAlign: "center", padding: "40px" }}><div style={{ fontSize: 40, marginBottom: 20 }}>✨</div><h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 10 }}>AI Power Tools</h2><p style={{ color: COLORS.muted, marginBottom: 30 }}>Choose what you want to create with AI magic.</p><div style={{ display: "flex", gap: 16, justifyContent: "center" }}><button onClick={() => setShowStoryWizard(true)} style={{ padding: "20px 40px", background: COLORS.plum, color: "white", border: "none", borderRadius: 16, fontWeight: 700, cursor: "pointer" }}>Create Toon Story</button></div></div>}
-          {activeTab === "usage" && <div><h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20 }}>📊 Usage & Plan</h2><div style={{ background: COLORS.card, borderRadius: 16, padding: "24px", border: `1px solid ${COLORS.border}` }}><UsageBar label="Article Gen" used={31} total={50} /><UsageBar label="AI Panels" used={11} total={20} color={COLORS.rose} /></div></div>}
+          {activeTab === "usage" && (
+            <div>
+              <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20 }}>📊 Usage & Plan</h2>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+                <div style={{ background: COLORS.card, borderRadius: 16, padding: "24px", border: `1px solid ${COLORS.border}` }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.muted, marginBottom: 16, textTransform: "uppercase" }}>Current Usage</div>
+                  <UsageBar label="Article Gen" used={31} total={50} />
+                  <UsageBar label="AI Panels" used={11} total={20} color={COLORS.rose} />
+                </div>
+                <div style={{ background: `linear-gradient(135deg, ${COLORS.card}, ${COLORS.plumDark}10)`, borderRadius: 16, padding: "24px", border: `1px solid ${COLORS.plum}40`, position: "relative", overflow: "hidden" }}>
+                  <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, background: COLORS.plum, opacity: 0.1, borderRadius: "50%" }}></div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.muted, marginBottom: 8, textTransform: "uppercase" }}>Current Plan</div>
+                  <div style={{ fontSize: 32, fontWeight: 900, color: COLORS.ink, marginBottom: 4 }}>{displayUser.plan || "Free"}</div>
+                  <p style={{ fontSize: 13, color: COLORS.muted, margin: 0 }}>Active since {displayUser.joinDate || "Jan 2026"}</p>
+                  <div style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 12px", background: COLORS.plum + "20", borderRadius: 20, color: COLORS.plum, fontSize: 12, fontWeight: 700 }}>
+                    ✨ {displayUser.plan === "Gold" ? "Ultimate Access" : "Premium Member"}
+                  </div>
+                </div>
+              </div>
+
+              {/* UPGRADE OPTIONS */}
+              {displayUser.plan !== "Gold" && (
+                <div style={{ background: COLORS.card, borderRadius: 16, padding: "32px", border: `1px solid ${COLORS.border}` }}>
+                  <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 24, textAlign: "center" }}>🚀 Upgrade Your Experience</h3>
+                  <div style={{ display: "grid", gridTemplateColumns: displayUser.plan === "Silver" ? "1fr" : "1fr 1fr", gap: 24 }}>
+                    
+                    {displayUser.plan === "Free" && (
+                      <div style={{ background: COLORS.bg, borderRadius: 20, padding: "24px", border: `1px solid ${COLORS.border}`, textAlign: "center" }}>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: COLORS.plum, marginBottom: 8 }}>SILVER</div>
+                        <div style={{ fontSize: 28, fontWeight: 900, marginBottom: 16 }}>$9.99<span style={{ fontSize: 14, color: COLORS.muted }}>/mo</span></div>
+                        <ul style={{ listStyle: "none", padding: 0, margin: "0 0 24px", textAlign: "left", fontSize: 13, color: COLORS.muted, display: "flex", flexDirection: "column", gap: 10 }}>
+                          <li>✅ Ad-free reading</li>
+                          <li>✅ Unlimited episodes</li>
+                          <li>✅ Offline reading</li>
+                        </ul>
+                        <PayPalScriptProvider options={{ "client-id": "test" }}>
+                          <PayPalButtons 
+                            style={{ layout: "horizontal", height: 40 }}
+                            createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: "9.99" } }] })}
+                            onApprove={async (data, actions) => {
+                              await actions.order.capture();
+                              const res = await axios.post('/api/users/update-plan', { plan: 'Silver' }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+                              localStorage.setItem('user', JSON.stringify(res.data));
+                              window.location.reload();
+                            }}
+                          />
+                        </PayPalScriptProvider>
+                      </div>
+                    )}
+
+                    <div style={{ background: `linear-gradient(135deg, ${COLORS.card}, ${COLORS.gold}05)`, borderRadius: 20, padding: "24px", border: `2px solid ${COLORS.gold}40`, textAlign: "center", boxShadow: `0 10px 30px ${COLORS.gold}10` }}>
+                      <div style={{ fontSize: 14, fontWeight: 800, color: COLORS.gold, marginBottom: 8 }}>GOLD</div>
+                      <div style={{ fontSize: 28, fontWeight: 900, marginBottom: 16 }}>$19.99<span style={{ fontSize: 14, color: COLORS.muted }}>/mo</span></div>
+                      <ul style={{ listStyle: "none", padding: 0, margin: "0 0 24px", textAlign: "left", fontSize: 13, color: COLORS.muted, display: "flex", flexDirection: "column", gap: 10 }}>
+                        <li>✅ Everything in Silver</li>
+                        <li>✅ Gold-only stories</li>
+                        <li>✅ Monthly coin bonus</li>
+                      </ul>
+                      <PayPalScriptProvider options={{ "client-id": "test" }}>
+                        <PayPalButtons 
+                          style={{ layout: "horizontal", height: 40, color: "gold" }}
+                          createOrder={(data, actions) => actions.order.create({ purchase_units: [{ amount: { value: "19.99" } }] })}
+                          onApprove={async (data, actions) => {
+                            await actions.order.capture();
+                            const res = await axios.post('/api/users/update-plan', { plan: 'Gold' }, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+                            localStorage.setItem('user', JSON.stringify(res.data));
+                            window.location.reload();
+                          }}
+                        />
+                      </PayPalScriptProvider>
+                    </div>
+
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           {activeTab === "payments" && <div><h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20 }}>💳 Payments</h2><div style={{ background: COLORS.card, borderRadius: 16, overflow: "hidden", border: `1px solid ${COLORS.border}` }}>{PAYMENT_HISTORY.map((p, i) => <div key={i} style={{ padding: "16px 20px", borderBottom: `1px solid ${COLORS.border}`, display: "flex", justifyContent: "space-between" }}><div><div style={{ fontWeight: 700 }}>{p.plan}</div><div style={{ fontSize: 12, color: COLORS.muted }}>{p.date}</div></div><div style={{ textAlign: "right" }}><div style={{ fontWeight: 700 }}>{p.amount}</div><div style={{ fontSize: 12, color: COLORS.success }}>success</div></div></div>)}</div></div>}
           {activeTab === "settings" && <div><h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 20 }}>⚙️ Settings</h2><div style={{ background: COLORS.card, borderRadius: 16, padding: "24px", border: `1px solid ${COLORS.border}` }}><div style={{ marginBottom: 20 }}><label style={{ display: "block", fontSize: 12, color: COLORS.muted, marginBottom: 8 }}>DISPLAY NAME</label><input defaultValue={displayUser.username} style={{ width: "100%", padding: "12px", background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 10, color: COLORS.ink }} /></div><button style={{ padding: "12px 24px", background: COLORS.plum, color: "white", border: "none", borderRadius: 10, fontWeight: 700 }}>Save Settings</button><button onClick={handleLogout} style={{ marginLeft: 12, padding: "12px 24px", background: "transparent", color: COLORS.danger, border: `1px solid ${COLORS.danger}`, borderRadius: 10, fontWeight: 700 }}>Logout</button></div></div>}
         </main>

@@ -24,4 +24,15 @@ router.patch('/:id/status', auth, adminOnly, async (req, res) => {
     }
 });
 
+// Update User Plan
+router.post('/update-plan', auth, async (req, res) => {
+    try {
+        const { plan } = req.body;
+        const user = await User.findByIdAndUpdate(req.user.id, { plan }, { new: true }).select('-password');
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;
