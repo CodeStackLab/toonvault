@@ -1401,6 +1401,17 @@ function SettingsPage({ user, onLogout }) {
           </div>
         </div>
 
+        {/* Pricing Plans */}
+        <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "22px", gridColumn: "1 / -1" }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 18 }}>💎 Package Pricing (USD/mo)</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
+             <Input label="Bronze Plan Price" value={getVal('price_bronze') || "4.99"} onChange={v => updateSetting('price_bronze', v)} icon="$" />
+             <Input label="Silver Plan Price" value={getVal('price_silver') || "9.99"} onChange={v => updateSetting('price_silver', v)} icon="$" />
+             <Input label="Gold Plan Price" value={getVal('price_gold') || "19.99"} onChange={v => updateSetting('price_gold', v)} icon="$" />
+          </div>
+          <div style={{ fontSize: 11, color: C.muted, marginTop: 10 }}>These prices reflect immediately on the frontend pricing table.</div>
+        </div>
+
         {/* Admin Profile */}
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "22px" }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 18 }}>👤 Admin Profile</div>
@@ -1607,7 +1618,7 @@ export default function AdminDashboard() {
   // Group nav items by section
   const sections = [...new Set(NAV_ITEMS.map(n => n.section))];
 
-  const sideW = sidebarCollapsed ? 64 : 220;
+  const sideW = sidebarCollapsed ? 70 : 260;
 
   return (
     <div style={{
@@ -1680,8 +1691,9 @@ export default function AdminDashboard() {
           )}
         </div>
 
+
         {/* Nav */}
-        <nav style={{ flex: 1, padding: "10px 0", overflowY: "auto" }}>
+        <nav className="admin-custom-scrollbar" style={{ flex: 1, padding: "10px 0", overflowY: "auto" }}>
           {sections.map(section => (
             <div key={section}>
               {!sidebarCollapsed && (
@@ -1721,22 +1733,6 @@ export default function AdminDashboard() {
           ))}
         </nav>
 
-        {/* Quick Actions */}
-        {!sidebarCollapsed && (
-          <div style={{ padding: "0 16px", marginBottom: 20 }}>
-            <button 
-              onClick={() => setShowGenWizard(true)}
-              style={{
-                width: "100%", padding: "12px", background: `linear-gradient(135deg, ${C.plum}, ${C.rose})`,
-                color: "white", border: "none", borderRadius: 12, fontSize: 13, fontWeight: 800,
-                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                boxShadow: `0 8px 20px ${C.plum}40`, transition: "all 0.2s", marginBottom: 10
-              }}
-            >
-              <span style={{ fontSize: 16 }}>✨</span> Write Story
-            </button>
-          </div>
-        )}
 
         {/* User footer */}
         {!sidebarCollapsed && (
@@ -1754,18 +1750,12 @@ export default function AdminDashboard() {
             </div>
             
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => window.location.reload()} title="Switch to User View" style={{ 
-                flex: 1, background: C.surface2, border: `1px solid ${C.border}`, color: C.muted, 
-                cursor: "pointer", fontSize: 11, fontWeight: 600, padding: "8px", borderRadius: 10,
-                display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s"
-              }} onMouseEnter={e => e.currentTarget.style.background = C.surface3}>
-                🔄 Switch
-              </button>
               <button onClick={handleLogout} style={{ 
-                flex: 1.2, background: `${C.red}15`, border: `1px solid ${C.red}30`, color: C.red, 
-                cursor: "pointer", fontSize: 11, fontWeight: 700, padding: "8px", borderRadius: 10,
+                flex: 1, background: `${C.red}15`, border: `1px solid ${C.red}30`, color: C.red, 
+                cursor: "pointer", fontSize: 12, fontWeight: 700, padding: "10px", borderRadius: 10,
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s"
-              }} onMouseEnter={e => e.currentTarget.style.background = `${C.red}25`}>
+              }} onMouseEnter={e => e.currentTarget.style.background = `${C.red}25`}
+                 onMouseLeave={e => e.currentTarget.style.background = `${C.red}15`}>
                 🚪 Logout
               </button>
             </div>
@@ -1813,10 +1803,11 @@ export default function AdminDashboard() {
           </button>
 
           {/* Quick actions */}
-          <button onClick={() => setPage("stories")} className="hide-mobile" style={{
-            padding: "7px 14px", background: "linear-gradient(135deg,#8B5CF6,#F43F8E)",
-            border: "none", borderRadius: 10, fontSize: 12, fontWeight: 600, color: C.white, cursor: "pointer",
-          }}>+ New Report</button>
+          <button onClick={() => setShowGenWizard(true)} className="hide-mobile" style={{
+            padding: "8px 16px", background: `linear-gradient(135deg, ${C.plum}, ${C.rose})`,
+            border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, color: C.white, cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 6, boxShadow: `0 4px 12px ${C.plum}40`
+          }}>✨ Write Story</button>
 
           {/* Logout Mobile */}
           <button onClick={handleLogout} className="show-mobile" style={{
@@ -1832,6 +1823,19 @@ export default function AdminDashboard() {
       </main>
       {/* Responsive Styles */}
       <style>{`
+        .admin-custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .admin-custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .admin-custom-scrollbar::-webkit-scrollbar-thumb {
+          background: ${C.border};
+          border-radius: 10px;
+        }
+        .admin-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: ${C.muted};
+        }
         @media (max-width: 900px) {
           .admin-sidebar { 
             transform: translateX(-100%);

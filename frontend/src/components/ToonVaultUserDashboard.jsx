@@ -849,6 +849,7 @@ function MyStoriesPage({ myStories = [], refreshStories, navigate }) {
                 <div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 2 }}>{s.genre || "—"}</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: "white" }}>{s.title}</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", marginTop: 2, marginBottom: 2 }}>By {s.authorName || "Creator"}</div>
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>{s.type}</div>
                 </div>
                 <div style={{ position: "absolute", top: 10, right: 12 }}>
