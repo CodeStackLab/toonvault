@@ -40,6 +40,18 @@ export default function Login({ type = 'user' }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Redirect if already logged in
+    const user = localStorage.getItem('user');
+    if (user && user !== 'undefined') {
+      try {
+        const u = JSON.parse(user);
+        if (u && u.id) {
+          navigate('/dashboard');
+          return;
+        }
+      } catch (e) {}
+    }
+
     const params = new URLSearchParams(location.search);
     const planParam = params.get('plan');
     const isRegParam = params.get('register');
@@ -55,7 +67,7 @@ export default function Login({ type = 'user' }) {
         setSettings(prev => ({ ...prev, ...res.data }));
       })
       .catch(() => setPaypalEnabled(true));
-  }, [location]);
+  }, [location, navigate]);
 
   const isAdmin = type === 'admin';
   const title = isAdmin ? `Admin Portal` : isRegister ? `Create Your Account` : `Sign In`;
@@ -121,16 +133,24 @@ export default function Login({ type = 'user' }) {
       <Helmet><title>{title} — {settings.site_name}</title></Helmet>
 
       {/* ═══ HEADER ═══ */}
-      <header style={{ 
+      <style>{`
+        @media (max-width: 900px) {
+          .login-header { padding: 16px 20px !important; }
+          .login-nav { display: none !important; }
+          .login-logo-text { fontSize: 20px !important; }
+          .login-logo-icon { width: 34px !important; height: 34px !important; fontSize: 18px !important; }
+        }
+      `}</style>
+      <header className="login-header" style={{ 
         padding: '24px 60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
         background: 'rgba(5,4,8,0.8)', backdropFilter: 'blur(30px)', 
         borderBottom: `1px solid ${C.cardBorder}`, zIndex: 1000, position: 'sticky', top: 0
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <div style={{ width: 42, height: 42, borderRadius: 12, background: C.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, boxShadow: `0 0 30px ${C.plumGlow}` }}>📖</div>
-          <span style={{ fontSize: 26, fontWeight: 900, letterSpacing: -1.2 }}>Toon<span style={{ color: C.rose }}>Vault</span></span>
+          <div className="login-logo-icon" style={{ width: 42, height: 42, borderRadius: 12, background: C.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, boxShadow: `0 0 30px ${C.plumGlow}` }}>📖</div>
+          <span className="login-logo-text" style={{ fontSize: 26, fontWeight: 900, letterSpacing: -1.2 }}>Toon<span style={{ color: C.rose }}>Vault</span></span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        <div className="login-nav" style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
            {['Stories', 'Genres', 'Creators', 'Plans'].map(item => <span key={item} onClick={() => navigate('/')} style={{ fontSize: 14, fontWeight: 600, color: C.textDim, cursor: 'pointer' }}>{item}</span>)}
            <button onClick={() => navigate('/')} style={{ padding: '10px 24px', borderRadius: 20, border: `1px solid ${C.plum}`, background: 'transparent', color: C.plum, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Back to Site</button>
         </div>
@@ -334,25 +354,94 @@ export default function Login({ type = 'user' }) {
         </div>
       </main>
 
-      {/* ═══ FULL FOOTER ═══ */}
-      <footer style={{ background: '#050408', padding: '100px 60px 40px', borderTop: `1px solid ${C.cardBorder}` }}>
-         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 80 }}>
-            <div>
-              <div style={{ fontSize: 24, fontWeight: 900, marginBottom: 24 }}>ToonVault</div>
-              <p style={{ fontSize: 14, color: C.textDim, lineHeight: 1.8 }}>The world's first AI-powered interactive storytelling platform. Create, read, and own your stories like never before.</p>
+      <footer style={{
+        background: '#050408', color: "rgba(255,255,255,0.45)",
+        padding: "80px 60px 40px",
+        borderTop: `1px solid ${C.cardBorder}`
+      }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 48, marginBottom: 60 }}>
+            <div style={{ gridColumn: "span 1.5" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, cursor: "pointer" }} onClick={() => navigate("/")}>
+                <div style={{ width: 36, height: 36, borderRadius: 12, background: C.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, boxShadow: `0 0 30px ${C.plumGlow}` }}>📖</div>
+                <span style={{ fontSize: 22, fontWeight: 900, color: "white", letterSpacing: -0.8 }}>Toon<span style={{ color: C.rose }}>Vault</span></span>
+              </div>
+              <p style={{ fontSize: 14, lineHeight: 1.8, maxWidth: 300, color: "rgba(255,255,255,0.5)" }}>
+                An AI-powered interactive storytelling platform where choices shape every story. Create, share, and monetize your imagination.
+              </p>
             </div>
-            {['Platform', 'Company', 'Resources', 'Legal'].map(section => (
-              <div key={section}>
-                <h4 style={{ fontSize: 14, fontWeight: 900, color: 'white', marginBottom: 28, textTransform: 'uppercase', letterSpacing: 2 }}>{section}</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                   {['Overview', 'Features', 'Community'].map(i => <span key={i} onClick={() => navigate('/')} style={{ fontSize: 14, color: C.textDim, cursor: 'pointer' }}>{i}</span>)}
+            {[
+              { 
+                title: "Discover", 
+                links: [
+                  { l: "Browse", t: "/browse" },
+                  { l: "Originals", t: "/#daily-schedule" },
+                  { l: "Categories", t: "/#categories" },
+                  { l: "Rankings", t: "/#rankings" },
+                  { l: "New releases", t: "/#daily-schedule" },
+                  { l: "Canvas", t: "/#collections" },
+                  { l: "Pricing", t: "/#pricing" }
+                ] 
+              },
+              { 
+                title: "Create", 
+                links: [
+                  { l: "Publish a story", t: "/dashboard?page=ai" },
+                  { l: "Creators 101", t: "/#creators" },
+                  { l: "Team features", t: "/#creators" },
+                  { l: "Creator tools", t: "/#creators" },
+                  { l: "Earnings", t: "/dashboard" }
+                ] 
+              },
+              { 
+                title: "Company", 
+                links: [
+                  { l: "About", t: "/#about" },
+                  { l: "Help center", t: "/#help" },
+                  { l: "Community", t: "/#community" },
+                  { l: "Terms", t: "#" },
+                  { l: "Privacy", t: "#" }
+                ] 
+              },
+            ].map(col => (
+              <div key={col.title}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "white", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 24 }}>{col.title}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {col.links.map(link => (
+                    <div key={link.l} 
+                      onClick={() => {
+                        if (link.t.startsWith('/#')) {
+                           navigate(link.t);
+                        } else if (link.t.startsWith('/')) {
+                           navigate(link.t);
+                        } else {
+                           const el = document.querySelector(link.t);
+                           if (el) el.scrollIntoView({ behavior: 'smooth' });
+                           else navigate('/' + link.t);
+                        }
+                      }}
+                      style={{ fontSize: 14, cursor: "pointer", transition: "all 0.2s" }}
+                      onMouseEnter={e => e.currentTarget.style.color = C.plum}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
+                    >{link.l}</div>
+                  ))}
                 </div>
               </div>
             ))}
-         </div>
-         <div style={{ marginTop: 80, borderTop: `1px solid ${C.cardBorder}`, paddingTop: 40, textAlign: 'center', color: C.textDim, fontSize: 14 }}>
-           &copy; 2026 ToonVault AI. All Rights Reserved.
-         </div>
+          </div>
+          
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 32, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>© 2026 ToonVault. All rights reserved.</div>
+            <div style={{ display: "flex", gap: 24 }}>
+              {["Discord", "Instagram", "Twitter", "YouTube"].map(s => (
+                <span key={s} style={{ fontSize: 14, cursor: "pointer", transition: "all 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.color = "white"}
+                  onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
+                >{s}</span>
+              ))}
+            </div>
+          </div>
+        </div>
       </footer>
 
       <style>{`

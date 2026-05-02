@@ -50,6 +50,41 @@ router.patch('/stories/:id/status', auth, adminOnly, async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Delete story
+router.delete('/stories/:id', auth, adminOnly, async (req, res) => {
+    try {
+        await Story.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Story deleted successfully' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Get User Detail
+router.get('/users/:id', auth, adminOnly, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+        const stories = await Story.find({ authorId: req.params.id }).sort({ createdAt: -1 });
+        const payments = await Payment.find({ userId: req.params.id }).sort({ createdAt: -1 });
+        res.json({ user, stories, payments });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Update User
+router.patch('/users/:id', auth, adminOnly, async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-password');
+        res.json(user);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Delete User
+router.delete('/users/:id', auth, adminOnly, async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        await Story.deleteMany({ authorId: req.params.id }); // Clean up stories
+        res.json({ message: 'User and their stories deleted successfully' });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // Transactions
 router.get('/transactions', auth, adminOnly, async (req, res) => {
     try {

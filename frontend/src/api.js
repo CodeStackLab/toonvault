@@ -33,7 +33,11 @@ export const api = {
   getAdminSettings: () => axios.get('/api/admin/settings', authHeaders()),
   updateAdminSetting: (key, value) => axios.post('/api/admin/settings', { key, value }, authHeaders()),
   banUser: (id, status) => axios.patch(`/api/admin/users/${id}/status`, { status }, authHeaders()),
+  updateUser: (id, data) => axios.patch(`/api/admin/users/${id}`, data, authHeaders()),
+  deleteUser: (id) => axios.delete(`/api/admin/users/${id}`, authHeaders()),
+  getUserDetail: (id) => axios.get(`/api/admin/users/${id}`, authHeaders()),
   updateStoryStatus: (id, status) => axios.patch(`/api/admin/stories/${id}/status`, { status }, authHeaders()),
+  adminDeleteStory: (id) => axios.delete(`/api/admin/stories/${id}`, authHeaders()),
 
   // Public settings
   getPublicSettings: () => axios.get('/api/settings/public'),

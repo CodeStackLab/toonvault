@@ -7,11 +7,19 @@ import MantaReader from './components/MantaReader';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Login from './components/Login';
 import ToonVaultUserDashboard from './components/ToonVaultUserDashboard';
+import Browse from './components/Browse';
 import './App.css';
 
 // Simple Protected Route
 const ProtectedRoute = ({ children, role }) => {
-  const user = JSON.parse(localStorage.getItem('user'));
+  let user = null;
+  try {
+    const userStr = localStorage.getItem('user');
+    user = (userStr && userStr !== 'undefined') ? JSON.parse(userStr) : null;
+  } catch (e) {
+    localStorage.removeItem('user');
+  }
+
   if (!user) return <Navigate to="/user" />;
   if (role && user.role !== role) return <Navigate to="/" />;
   return children;
@@ -19,7 +27,15 @@ const ProtectedRoute = ({ children, role }) => {
 
 // Dashboard Hub to handle both Admin and User dashboards on the same /dashboard URL
 const DashboardHub = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+  let user = null;
+  try {
+    const userStr = localStorage.getItem('user');
+    user = (userStr && userStr !== 'undefined') ? JSON.parse(userStr) : null;
+  } catch (e) {
+    console.error("Malformed user object in localStorage");
+    localStorage.removeItem('user');
+  }
+
   if (!user) return <Navigate to="/user" />;
   
   if (user.role === 'admin') {
@@ -35,6 +51,7 @@ function App() {
         <Routes>
           {/* Home Page */}
           <Route path="/" element={<ToonVaultHome />} />
+          <Route path="/browse" element={<Browse />} />
           
           {/* Public Reader */}
           <Route path="/story/:storyId" element={<Reader />} />

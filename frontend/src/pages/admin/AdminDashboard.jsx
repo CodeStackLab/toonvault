@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { api, logout } from "../../api";
 
 // ═══════════════════════════════════════════════════════
@@ -220,6 +221,7 @@ function Toggle({ checked, onChange, label }) {
 //  NAV ITEMS
 // ═══════════════════════════════════════════════════════
 const NAV_ITEMS = [
+  { id: "public_home", icon: "🌐", label: "Public Homepage", section: "Platform" },
   { id: "dashboard", icon: "📊", label: "Dashboard", section: "Overview" },
   { id: "analytics", icon: "📈", label: "Analytics", section: "Overview" },
   { id: "users", icon: "👥", label: "Users", section: "Management", badge: true },
@@ -269,12 +271,12 @@ function DashboardPage({ setPage }) {
         </select>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 24 }}>
+      <div className="stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 24 }}>
         {stats.map(s => <StatCard key={s.label} {...s} onClick={() => setPage(s.label === "Total Users" ? "users" : s.label === "Active Stories" ? "stories" : s.label === "Monthly Revenue" ? "revenue" : "analytics")} />)}
       </div>
 
       {/* Charts Row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 14, marginBottom: 24 }}>
+      <div className="chart-grid" style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 14, marginBottom: 24 }}>
         {/* Revenue Chart (SVG simulated) */}
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "20px 22px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
@@ -408,35 +410,57 @@ function UsersPage() {
 
   useEffect(() => {
     api.getAdminUsers().then(res => {
-      setUsers(res.data);
+      setUsers(res.data || []);
       setLoading(false);
     }).catch(e => { console.error(e); setLoading(false); });
   }, []);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
   const [editUser, setEditUser] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [viewUser, setViewUser] = useState(null);
+  const [viewUserStories, setViewUserStories] = useState([]);
+  const [loadingUserDetail, setLoadingUserDetail] = useState(false);
   const [editForm, setEditForm] = useState({});
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-  const filtered = users.filter(u => {
+  const handleViewUser = async (u) => {
+    setViewUser(u);
+    setLoadingUserDetail(true);
+    try {
+      const res = await api.getUserDetail(u.id || u._id);
+      setViewUserStories(res.data.stories || []);
+    } catch (e) { console.error(e); }
+    setLoadingUserDetail(false);
+  };
+
+  const filtered = (users || []).filter(u => {
     const q = search.toLowerCase();
-    const matchSearch = u.username.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+    const matchSearch = (u.username || "").toLowerCase().includes(q) || (u.email || "").toLowerCase().includes(q);
     const matchFilter = filter === "All" || u.plan === filter || u.status === filter;
     return matchSearch && matchFilter;
   });
 
   const handleEdit = (u) => { setEditUser(u); setEditForm({ ...u }); };
-  const handleSave = () => {
-    setUsers(prev => prev.map(u => u.id === editForm.id ? editForm : u));
-    setEditUser(null);
+  const handleSave = async () => {
+    try {
+      const res = await api.updateUser(editForm.id || editForm._id, editForm);
+      setUsers(prev => prev.map(u => (u.id === editForm.id || u._id === editForm._id) ? res.data : u));
+      setEditUser(null);
+    } catch (e) { alert("Failed to update user"); }
   };
-  const handleDelete = (id) => {
-    setUsers(prev => prev.filter(u => u.id !== id));
-    setDeleteConfirm(null);
+  const handleDelete = async (id) => {
+    try {
+      await api.deleteUser(id);
+      setUsers(prev => prev.filter(u => (u.id !== id && u._id !== id)));
+      setDeleteConfirm(null);
+    } catch (e) { alert("Failed to delete user"); }
   };
-  const handleBan = (id) => {
-    setUsers(prev => prev.map(u => u.id === id ? { ...u, status: u.status === "Banned" ? "Active" : "Banned" } : u));
+  const handleBan = async (u) => {
+    try {
+      const newStatus = u.status === "Banned" ? "Active" : "Banned";
+      await api.banUser(u.id || u._id, newStatus);
+      setUsers(prev => prev.map(item => (item.id === u.id || item._id === u._id) ? { ...item, status: newStatus } : item));
+    } catch (e) { alert("Failed to update user status"); }
   };
 
   return (
@@ -509,9 +533,9 @@ function UsersPage() {
                 <td style={{ padding: "12px 16px" }}>
                   <div style={{ display: "flex", gap: 5 }}>
                     {[
-                      { label: "👁", tip: "View", color: C.blue, onClick: () => setViewUser(u) },
+                      { label: "👁", tip: "View", color: C.blue, onClick: () => handleViewUser(u) },
                       { label: "✏️", tip: "Edit", color: C.gold, onClick: () => handleEdit(u) },
-                      { label: u.status === "Banned" ? "✅" : "🚫", tip: u.status === "Banned" ? "Unban" : "Ban", color: u.status === "Banned" ? C.green : C.red, onClick: () => handleBan(u.id) },
+                      { label: u.status === "Banned" ? "✅" : "🚫", tip: u.status === "Banned" ? "Unban" : "Ban", color: u.status === "Banned" ? C.green : C.red, onClick: () => handleBan(u) },
                       { label: "🗑", tip: "Delete", color: C.red, onClick: () => setDeleteConfirm(u) },
                     ].map(b => (
                       <button key={b.tip} onClick={b.onClick} title={b.tip} style={{
@@ -552,6 +576,24 @@ function UsersPage() {
                 <span style={{ fontWeight: 600, color: C.text }}>{v}</span>
               </div>
             ))}
+
+            <div style={{ marginTop: 24 }}>
+               <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 12 }}>User's Stories ({viewUserStories.length})</div>
+               {loadingUserDetail ? (
+                 <div style={{ color: C.muted, fontSize: 13 }}>Loading stories...</div>
+               ) : (
+                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {viewUserStories.length > 0 ? viewUserStories.map(s => (
+                      <div key={s._id} style={{ padding: 12, background: C.surface2, borderRadius: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                         <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{s.title}</div>
+                         <Badge type={s.status}>{s.status}</Badge>
+                      </div>
+                    )) : (
+                      <div style={{ color: C.muted, fontSize: 12 }}>No stories published yet.</div>
+                    )}
+                 </div>
+               )}
+            </div>
           </div>
         )}
       </Modal>
@@ -603,7 +645,7 @@ function UsersPage() {
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={() => setDeleteConfirm(null)} style={{ flex: 1, padding: "11px", border: `1px solid ${C.border}`, background: C.surface2, borderRadius: 10, color: C.muted, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
-              <button onClick={() => handleDelete(deleteConfirm.id)} style={{ flex: 1, padding: "11px", background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, color: C.red, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🗑 Delete User</button>
+              <button onClick={() => handleDelete(deleteConfirm.id || deleteConfirm._id)} style={{ flex: 1, padding: "11px", background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, color: C.red, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🗑 Delete User</button>
             </div>
           </div>
         )}
@@ -622,7 +664,7 @@ function StoriesPage() {
 
   useEffect(() => {
     api.getAdminStories().then(res => {
-      setStories(res.data);
+      setStories(res.data || []);
       setLoading(false);
     }).catch(e => { console.error(e); setLoading(false); });
   }, []);
@@ -634,7 +676,7 @@ function StoriesPage() {
     } catch (e) { alert("Failed to update story status"); }
   };
 
-  const filtered = stories.filter(s =>
+  const filtered = (stories || []).filter(s =>
     (s.title || "").toLowerCase().includes(search.toLowerCase()) ||
     (s.authorName || "").toLowerCase().includes(search.toLowerCase())
   );
@@ -679,11 +721,21 @@ function StoriesPage() {
                 <td style={{ padding: "12px 16px" }}>
                   <div style={{ display: "flex", gap: 5 }}>
                     {[
-                      { label: "Approve", color: C.green, status: "Approved" },
+                      { label: "Approve", color: C.green, status: "Live" },
                       { label: "Feature", color: C.gold, status: "Featured" },
-                      { label: "Remove", color: C.red, status: "Flagged" },
+                      { label: "Flag", color: C.rose, status: "Flagged" },
+                      { label: "🗑", color: C.red, action: "delete" },
                     ].map(b => (
-                      <button key={b.label} onClick={() => handleStatus(s.id, b.status)} style={{
+                      <button key={b.label} onClick={async () => {
+                        if (b.action === 'delete') {
+                          if (window.confirm("Are you sure you want to delete this story?")) {
+                            await api.adminDeleteStory(s.id || s._id);
+                            setStories(prev => prev.filter(item => (item.id !== s.id && item._id !== s._id)));
+                          }
+                        } else {
+                          handleStatus(s.id || s._id, b.status);
+                        }
+                      }} style={{
                         padding: "4px 10px", borderRadius: 7, border: `1px solid ${b.color}30`,
                         background: `${b.color}10`, color: b.color, fontSize: 11, fontWeight: 600, cursor: "pointer",
                       }}>{b.label}</button>
@@ -1485,7 +1537,13 @@ function AnalyticsPage() {
 // ═══════════════════════════════════════════════════════
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user')));
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || '{}');
+    } catch (e) {
+      return {};
+    }
+  });
   const [page, setPage] = useState("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [apiKeys, setApiKeys] = useState({ gemini: "", mistral: "", runware: "", openrouter: "", paypalClientId: "", paypalSecret: "" });
@@ -1496,6 +1554,7 @@ export default function AdminDashboard() {
   const [genData, setGenData] = useState({ topic: "", prompt: "", images: 3, category: "Fantasy", status: "published" });
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleFinishStory = async () => {
     setIsGenerating(true);
@@ -1562,29 +1621,63 @@ export default function AdminDashboard() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       {/* ── SIDEBAR ── */}
-      <aside style={{
+      <aside className={`admin-sidebar ${mobileMenuOpen ? 'open' : ''}`} style={{
         width: sideW, minHeight: "100vh", background: C.surface,
         borderRight: `1px solid ${C.border}`, display: "flex", flexDirection: "column",
-        position: "fixed", top: 0, left: 0, height: "100%", zIndex: 100,
-        transition: "width 0.25s",
+        position: "fixed", top: 0, left: 0, height: "100%", zIndex: 1000,
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
       }}>
-        {/* Logo */}
-        <div style={{ padding: "18px 14px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10, minHeight: 60, cursor: "pointer" }} onClick={() => navigate("/")}>
+        {/* Logo Section */}
+        <div style={{ 
+          padding: "20px 16px", 
+          borderBottom: `1px solid ${C.border}`, 
+          display: "flex", 
+          alignItems: "center", 
+          gap: 12, 
+          minHeight: 70, 
+          cursor: "pointer",
+          background: `linear-gradient(to bottom, ${C.surface2}40, transparent)`
+        }} onClick={() => window.location.href = "/"}>
           <div style={{
-            width: 32, height: 32, borderRadius: 9, flexShrink: 0,
-            background: "linear-gradient(135deg, #8B5CF6, #F43F8E)",
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14,
-          }}>📖</div>
+            width: 38, height: 38, borderRadius: 12, flexShrink: 0,
+            background: `linear-gradient(135deg, ${C.plum}, ${C.rose})`,
+            display: "flex", alignItems: "center", justifyContent: "center", 
+            fontSize: 18, boxShadow: `0 4px 12px ${C.plum}40`,
+            transition: "transform 0.2s"
+          }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} 
+             onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+            📖
+          </div>
           {!sidebarCollapsed && (
-            <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: -0.3, whiteSpace: "nowrap" }}>
-              Toon<span style={{ color: C.rose }}>Vault</span>
-              <span style={{ fontSize: 10, color: C.muted, letterSpacing: 1, fontWeight: 600, marginLeft: 4 }}>ADMIN</span>
-            </span>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <span style={{ 
+                fontSize: 18, 
+                fontWeight: 900, 
+                letterSpacing: -0.5, 
+                color: C.white,
+                lineHeight: 1.1
+              }}>
+                Toon<span style={{ color: C.rose }}>Vault</span>
+              </span>
+              <span style={{ 
+                fontSize: 9, 
+                color: C.muted, 
+                letterSpacing: 1.5, 
+                fontWeight: 700,
+                marginTop: 2,
+                textTransform: "uppercase"
+              }}>Control Center</span>
+            </div>
           )}
-          <button onClick={(e) => { e.stopPropagation(); setSidebarCollapsed(p => !p); }} style={{
-            marginLeft: "auto", background: "none", border: "none", color: C.muted,
-            cursor: "pointer", fontSize: 16, padding: "2px 4px", flexShrink: 0,
-          }}>{sidebarCollapsed ? "›" : "‹"}</button>
+          {!mobileMenuOpen && (
+            <button onClick={(e) => { e.stopPropagation(); setSidebarCollapsed(p => !p); }} style={{
+              marginLeft: "auto", background: C.surface2, border: `1px solid ${C.border}`, 
+              color: C.muted, cursor: "pointer", fontSize: 14, padding: "4px 6px", 
+              borderRadius: 8, transition: "all 0.2s"
+            }} onMouseEnter={e => e.currentTarget.style.color = C.plum2}>
+              {sidebarCollapsed ? "›" : "‹"}
+            </button>
+          )}
         </div>
 
         {/* Nav */}
@@ -1597,7 +1690,10 @@ export default function AdminDashboard() {
               {NAV_ITEMS.filter(n => n.section === section).map(item => {
                 const active = page === item.id;
                 return (
-                  <div key={item.id} onClick={() => setPage(item.id)} style={{
+                  <div key={item.id} onClick={() => {
+                    if (item.id === "public_home") window.location.href = "/";
+                    else setPage(item.id);
+                  }} style={{
                     display: "flex", alignItems: "center", gap: 10,
                     padding: sidebarCollapsed ? "10px 0" : "10px 16px",
                     justifyContent: sidebarCollapsed ? "center" : "flex-start",
@@ -1644,30 +1740,51 @@ export default function AdminDashboard() {
 
         {/* User footer */}
         {!sidebarCollapsed && (
-          <div style={{ padding: "14px 16px", borderTop: `1px solid ${C.border}` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ padding: "16px", borderTop: `1px solid ${C.border}`, background: `linear-gradient(to top, ${C.surface2}20, transparent)` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
               <div style={{
-                width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg,#8B5CF6,#F43F8E)",
-                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, flexShrink: 0,
+                width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${C.plum}40, ${C.rose}40)`,
+                border: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "center", 
+                fontSize: 16, fontWeight: 800, flexShrink: 0, color: C.white
               }}>{user?.avatar || (user?.username || user?.name || "A")[0].toUpperCase()}</div>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.username || user?.name || "Admin User"}</div>
-                <div style={{ fontSize: 10, color: C.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user?.username || user?.name || "Admin"}</div>
+                <div style={{ fontSize: 11, color: C.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
               </div>
-              <button onClick={() => window.location.reload()} title="Switch to User View" style={{ background: C.surface2, border: `1px solid ${C.border}`, color: C.muted, cursor: "pointer", fontSize: 12, padding: "4px 8px", borderRadius: 8 }}>🔄</button>
+            </div>
+            
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => window.location.reload()} title="Switch to User View" style={{ 
+                flex: 1, background: C.surface2, border: `1px solid ${C.border}`, color: C.muted, 
+                cursor: "pointer", fontSize: 11, fontWeight: 600, padding: "8px", borderRadius: 10,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s"
+              }} onMouseEnter={e => e.currentTarget.style.background = C.surface3}>
+                🔄 Switch
+              </button>
+              <button onClick={handleLogout} style={{ 
+                flex: 1.2, background: `${C.red}15`, border: `1px solid ${C.red}30`, color: C.red, 
+                cursor: "pointer", fontSize: 11, fontWeight: 700, padding: "8px", borderRadius: 10,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s"
+              }} onMouseEnter={e => e.currentTarget.style.background = `${C.red}25`}>
+                🚪 Logout
+              </button>
             </div>
           </div>
         )}
       </aside>
 
+      {/* Mobile Overlay */}
+      {mobileMenuOpen && <div onClick={() => setMobileMenuOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 999 }} />}
+
       {/* ── MAIN ── */}
-      <main style={{ marginLeft: sideW, flex: 1, display: "flex", flexDirection: "column", transition: "margin-left 0.25s", minHeight: "100vh" }}>
+      <main className="admin-main" style={{ marginLeft: sideW, flex: 1, display: "flex", flexDirection: "column", transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)", minHeight: "100vh" }}>
         {/* Topbar */}
-        <div style={{
+        <div className="admin-topbar" style={{
           height: 56, background: C.surface, borderBottom: `1px solid ${C.border}`,
           display: "flex", alignItems: "center", padding: "0 24px", gap: 14,
           position: "sticky", top: 0, zIndex: 50,
         }}>
+          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)} style={{ background: "none", border: "none", color: C.text, fontSize: 20, cursor: "pointer", display: "none" }}>☰</button>
           <div style={{ fontSize: 15, fontWeight: 700, color: C.text, flex: 1, textTransform: "capitalize" }}>
             {NAV_ITEMS.find(n => n.id === page)?.icon} {NAV_ITEMS.find(n => n.id === page)?.label || "Dashboard"}
           </div>
@@ -1696,17 +1813,64 @@ export default function AdminDashboard() {
           </button>
 
           {/* Quick actions */}
-          <button onClick={() => setPage("stories")} style={{
+          <button onClick={() => setPage("stories")} className="hide-mobile" style={{
             padding: "7px 14px", background: "linear-gradient(135deg,#8B5CF6,#F43F8E)",
             border: "none", borderRadius: 10, fontSize: 12, fontWeight: 600, color: C.white, cursor: "pointer",
           }}>+ New Report</button>
+
+          {/* Logout Mobile */}
+          <button onClick={handleLogout} className="show-mobile" style={{
+            display: "none", padding: "7px 10px", background: `${C.red}15`,
+            border: `1px solid ${C.red}40`, borderRadius: 10, color: C.red, cursor: "pointer", fontSize: 14,
+          }}>🚪 Logout</button>
         </div>
 
         {/* Content */}
-        <div style={{ padding: "24px", flex: 1, overflowY: "auto" }}>
+        <div className="admin-content" style={{ padding: "24px", flex: 1, overflowY: "auto" }}>
           {renderPage()}
         </div>
       </main>
+      {/* Responsive Styles */}
+      <style>{`
+        @media (max-width: 900px) {
+          .admin-sidebar { 
+            transform: translateX(-100%);
+            width: 260px !important;
+          }
+          .admin-sidebar.open {
+            transform: translateX(0);
+          }
+          .admin-main {
+            margin-left: 0 !important;
+          }
+          .mobile-menu-btn, .show-mobile {
+            display: block !important;
+          }
+          .hide-mobile {
+            display: none !important;
+          }
+          .admin-topbar {
+            padding: 0 16px !important;
+          }
+          .search-desktop {
+            display: none !important;
+          }
+          .stat-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .chart-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .admin-content {
+            padding: 16px !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .stat-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
       {/* ═══ GENERATION WIZARD MODAL ═══ */}
       {showGenWizard && (
         <div style={{

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 
-const MONGO_URI = 'mongodb://mongo:27017/toonvault';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/toonvault';
 
 async function resetAdmin() {
   try {

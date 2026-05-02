@@ -39,6 +39,7 @@ const C = {
 // DATA
 // ═══════════════════════════════════════════════════════
 const NAV_ITEMS = [
+  { id: "public_home", icon: "🌐", label: "Public Homepage" },
   { id: "home", icon: "⬡", label: "Home" },
   { id: "stories", icon: "📖", label: "My Stories" },
   { id: "reading", icon: "👁", label: "Reading" },
@@ -171,9 +172,9 @@ function StatPill({ icon, label, value, color = C.plum }) {
 // ═══════════════════════════════════════════════════════
 // TOP NAV
 // ═══════════════════════════════════════════════════════
-function TopNav({ page, setPage, user = {} }) {
+function TopNav({ page, setPage, user = {}, onMenuClick }) {
   const [notifs, setNotifs] = useState(3);
-  const avatarLetter = (user.username || "U")[0].toUpperCase();
+  const avatarLetter = (user.username || user.name || "U")[0].toUpperCase();
   return (
     <header style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
@@ -185,23 +186,28 @@ function TopNav({ page, setPage, user = {} }) {
       padding: "0 20px 0 0",
       gap: 0,
     }}>
-      {/* Logo */}
-      <div style={{
+      <div className="logo-container" onClick={() => window.location.href = '/'} style={{
         width: 240, flexShrink: 0,
         display: "flex", alignItems: "center", gap: 10,
         padding: "0 20px",
+        cursor: "pointer",
         borderRight: `1px solid ${C.cardBorder}`,
         height: "100%",
+        background: `linear-gradient(to bottom, ${C.surface}40, transparent)`
       }}>
+        <button className="show-mobile" onClick={(e) => { e.stopPropagation(); onMenuClick(); }} style={{ display: "none", background: "none", border: "none", color: C.plumLight, fontSize: 20, cursor: "pointer", marginRight: 8 }}>☰</button>
         <div style={{
-          width: 34, height: 34, borderRadius: 10,
+          width: 36, height: 36, borderRadius: 11,
           background: C.gradient,
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 16, boxShadow: `0 0 16px ${C.plumGlow}`,
+          fontSize: 18, boxShadow: `0 4px 15px ${C.plumGlow}`,
         }}>📖</div>
-        <span style={{ fontSize: 20, fontWeight: 900, letterSpacing: -0.5 }}>
-          <span style={{ color: C.plumLight }}>Toon</span><span style={{ color: C.rose }}>Vault</span>
-        </span>
+        <div style={{ display: "flex", flexDirection: "column", marginLeft: 4 }}>
+          <span style={{ fontSize: 18, fontWeight: 900, letterSpacing: -0.8, color: "white", lineHeight: 1.1 }}>
+            Toon<span style={{ color: C.rose }}>Vault</span>
+          </span>
+          <span style={{ fontSize: 8, color: C.plumLight, fontWeight: 800, letterSpacing: 1.2, textTransform: "uppercase" }}>Dashboard</span>
+        </div>
       </div>
 
       {/* Center breadcrumb */}
@@ -217,8 +223,8 @@ function TopNav({ page, setPage, user = {} }) {
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
         {/* Publish Button */}
         <button 
-          onClick={() => setPage('ai')}
-          className="publish-btn"
+          onClick={() => { setPage('ai'); }}
+          className="publish-btn hide-mobile"
           style={{
             padding: "8px 18px", borderRadius: 12,
             background: C.gradient, border: "none", color: "white",
@@ -233,25 +239,25 @@ function TopNav({ page, setPage, user = {} }) {
           Publish New Story
         </button>
 
-        {/* Coins */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 6,
-          padding: "7px 14px", borderRadius: 20,
-          background: C.gold + "18", border: `1px solid ${C.gold}40`,
-        }}>
-          <span style={{ fontSize: 15 }}>🪙</span>
-          <span style={{ fontSize: 14, fontWeight: 700, color: C.goldLight }}>{(user.coins || 0).toLocaleString()}</span>
-          <span style={{ fontSize: 12, color: C.textDim }}>coins</span>
-        </div>
+        {/* Coins & Streak (Hide on small mobile) */}
+        <div className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 6,
+            padding: "7px 14px", borderRadius: 20,
+            background: C.gold + "18", border: `1px solid ${C.gold}40`,
+          }}>
+            <span style={{ fontSize: 15 }}>🪙</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: C.goldLight }}>{(user.coins || 0).toLocaleString()}</span>
+          </div>
 
-        {/* Streak */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 5,
-          padding: "7px 12px", borderRadius: 20,
-          background: C.orange + "18", border: `1px solid ${C.orange}40`,
-        }}>
-          <span style={{ fontSize: 15 }}>🔥</span>
-          <span style={{ fontSize: 14, fontWeight: 700, color: C.orange }}>{user.streak || 0}d</span>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 5,
+            padding: "7px 12px", borderRadius: 20,
+            background: C.orange + "18", border: `1px solid ${C.orange}40`,
+          }}>
+            <span style={{ fontSize: 15 }}>🔥</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: C.orange }}>{user.streak || 0}d</span>
+          </div>
         </div>
 
         {/* Notifications */}
@@ -282,6 +288,13 @@ function TopNav({ page, setPage, user = {} }) {
           boxShadow: `0 0 16px ${C.plumGlow}`,
           fontWeight: 800, color: "white",
         }}>{avatarLetter}</div>
+
+        {/* Logout Mobile */}
+        <button onClick={() => logout()} className="show-mobile" style={{
+          display: "none", width: 38, height: 38, borderRadius: 10,
+          background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)",
+          cursor: "pointer", fontSize: 16, color: "#EF4444",
+        }}>🚪</button>
       </div>
     </header>
   );
@@ -290,7 +303,7 @@ function TopNav({ page, setPage, user = {} }) {
 // ═══════════════════════════════════════════════════════
 // SIDEBAR
 // ═══════════════════════════════════════════════════════
-function Sidebar({ page, setPage, user = {}, navigate }) {
+function Sidebar({ page, setPage, user = {}, navigate, onLinkClick }) {
   return (
     <aside style={{
       position: "fixed", top: 62, left: 0, bottom: 0,
@@ -348,7 +361,14 @@ function Sidebar({ page, setPage, user = {}, navigate }) {
           return (
             <button
               key={item.id}
-              onClick={() => setPage(item.id)}
+              onClick={() => { 
+                if (item.id === "public_home") {
+                  window.location.href = '/';
+                } else {
+                  setPage(item.id); 
+                  if(onLinkClick) onLinkClick(); 
+                }
+              }}
               style={{
                 width: "100%", display: "flex", alignItems: "center", gap: 12,
                 padding: "10px 14px", borderRadius: 12, marginBottom: 3,
@@ -392,27 +412,36 @@ function Sidebar({ page, setPage, user = {}, navigate }) {
         )}
       </nav>
 
-      {/* Bottom: Publish + Logout */}
-      <div style={{ padding: "0 14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
-        <button onClick={() => setPage("stories")} style={{
+      {/* Bottom Footer Area */}
+      <div style={{ padding: "16px", borderTop: `1px solid ${C.cardBorder}`, background: `linear-gradient(to top, rgba(139,92,246,0.05), transparent)` }}>
+        <button onClick={() => setPage("ai")} style={{
           width: "100%", padding: "12px",
-          background: "transparent",
-          border: `1.5px dashed ${C.plum}60`,
-          borderRadius: 14, cursor: "pointer",
+          background: "rgba(139,92,246,0.1)",
+          border: `1px solid ${C.plum}40`,
+          borderRadius: 12, cursor: "pointer",
           display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          color: C.plumLight, fontSize: 13, fontWeight: 600, transition: "all 0.2s",
+          color: C.plumLight, fontSize: 13, fontWeight: 700, transition: "all 0.2s",
+          marginBottom: 10
         }}
-          onMouseEnter={e => { e.currentTarget.style.background = C.plum + "18"; e.currentTarget.style.borderStyle = "solid"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderStyle = "dashed"; }}
+          onMouseEnter={e => { e.currentTarget.style.background = "rgba(139,92,246,0.2)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "rgba(139,92,246,0.1)"; }}
         >
-          <span style={{ fontSize: 18 }}>✏️</span> New Story
+          <span style={{ fontSize: 18 }}>✨</span> AI Story Wizard
         </button>
-        <button onClick={() => { localStorage.clear(); window.location.href = "/"; }} style={{
-          width: "100%", padding: "10px",
-          background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)",
-          borderRadius: 12, cursor: "pointer", color: "#EF4444",
-          fontSize: 12, fontWeight: 600, transition: "all 0.2s",
-        }}>🚪 Logout</button>
+        
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 4px" }}>
+           <div style={{ width: 34, height: 34, borderRadius: 10, background: C.gradient, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "white" }}>
+             {user?.username ? user.username[0].toUpperCase() : 'U'}
+           </div>
+           <div style={{ flex: 1, minWidth: 0 }}>
+             <div style={{ fontSize: 12, fontWeight: 700, color: "white", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user?.username || 'User'}</div>
+             <div style={{ fontSize: 10, color: C.textDim, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user?.email || 'user@toonvault.com'}</div>
+           </div>
+           <button onClick={() => logout()} title="Logout" style={{ 
+             width: 32, height: 32, borderRadius: 8, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)",
+             color: "#EF4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14
+           }}>🚪</button>
+        </div>
       </div>
     </aside>
   );
@@ -424,8 +453,8 @@ function Sidebar({ page, setPage, user = {}, navigate }) {
 function HomePage({ setPage, user = {}, myStories = [], allStories = [] }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-  const publishingCount = myStories.filter(s => s.status === "Live").length;
-  const totalViews = myStories.reduce((sum, s) => sum + (s.views || 0), 0);
+  const publishingCount = (myStories || []).filter(s => s.status === "Live").length;
+  const totalViews = (myStories || []).reduce((sum, s) => sum + (s.views || 0), 0);
   return (
     <div>
       {/* Welcome Banner */}
@@ -454,7 +483,7 @@ function HomePage({ setPage, user = {}, myStories = [], allStories = [] }) {
             Welcome back, <span style={{ background: C.gradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{user.username || "Creator"}</span>
           </h1>
           <p style={{ fontSize: 14, color: C.textMuted, margin: "0 0 20px" }}>
-            You have <strong style={{ color: C.plumLight }}>{myStories.length}</strong> stories · <strong style={{ color: C.green }}>{publishingCount}</strong> live · <strong style={{ color: C.cyan }}>{(user.plan || "Free")}</strong> plan
+            You have <strong style={{ color: C.plumLight }}>{(myStories || []).length}</strong> stories · <strong style={{ color: C.green }}>{publishingCount}</strong> live · <strong style={{ color: C.cyan }}>{(user.plan || "Free")}</strong> plan
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <button 
@@ -497,8 +526,8 @@ function HomePage({ setPage, user = {}, myStories = [], allStories = [] }) {
       {/* Stats Row */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 24 }}>
         {[
-          { icon: "👁", label: "Total Views", value: totalViews > 1000000 ? (totalViews/1000000).toFixed(1)+"M" : totalViews > 1000 ? (totalViews/1000).toFixed(1)+"K" : String(totalViews), color: C.plum, delta: myStories.length + " stories total" },
-          { icon: "📖", label: "My Stories", value: String(myStories.length), color: C.rose, delta: publishingCount + " live" },
+          { icon: "👁", label: "Total Views", value: totalViews > 1000000 ? (totalViews/1000000).toFixed(1)+"M" : totalViews > 1000 ? (totalViews/1000).toFixed(1)+"K" : String(totalViews), color: C.plum, delta: (myStories || []).length + " stories total" },
+          { icon: "📖", label: "My Stories", value: String((myStories || []).length), color: C.rose, delta: publishingCount + " live" },
           { icon: "🪙", label: "Coins", value: (user.coins || 0).toLocaleString(), color: C.gold, delta: user.plan + " plan" },
           { icon: "🔥", label: "Streak", value: (user.streak || 0) + " days", color: C.orange, delta: user.storiesRead + " stories read" },
         ].map(stat => (
@@ -578,7 +607,7 @@ function HomePage({ setPage, user = {}, myStories = [], allStories = [] }) {
               <div style={{ fontSize: 16, fontWeight: 700, color: C.text }}>Top Performing Stories</div>
               <button onClick={() => setPage("stories")} style={{ fontSize: 12, color: C.plumLight, background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>View all →</button>
             </div>
-            {(myStories.length > 0 ? myStories : STORIES_DATA).slice(0, 4).map((s, i) => (
+            {( (myStories && myStories.length > 0) ? myStories : STORIES_DATA).slice(0, 4).map((s, i) => (
               <div key={s.id} style={{
                 display: "flex", alignItems: "center", gap: 14,
                 padding: "12px 0",
@@ -598,7 +627,7 @@ function HomePage({ setPage, user = {}, myStories = [], allStories = [] }) {
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: C.plumLight }}>{s.views}</div>
-                  <div style={{ fontSize: 11, color: s.trend.startsWith("+") ? C.green : "#EF4444", marginTop: 2 }}>{s.trend}</div>
+                  <div style={{ fontSize: 11, color: (s.trend || "").startsWith("+") ? C.green : "#EF4444", marginTop: 2 }}>{s.trend || "0%"}</div>
                 </div>
               </div>
             ))}
@@ -693,8 +722,8 @@ function MyStoriesPage({ myStories = [], refreshStories, navigate }) {
   const [deleting, setDeleting] = useState(null);
   const filters = ["All", "Live", "Draft", "Pending", "Flagged"];
 
-  const filtered = filter === "All" ? myStories : myStories.filter(s => s.status === filter);
-  const totalViews = myStories.reduce((sum, s) => sum + (s.views || 0), 0);
+  const filtered = filter === "All" ? (myStories || []) : (myStories || []).filter(s => s.status === filter);
+  const totalViews = (myStories || []).reduce((sum, s) => sum + (s.views || 0), 0);
 
   const handleCreate = async () => {
     if (!newStory.title.trim()) return;
@@ -1562,6 +1591,7 @@ export default function ToonVaultUserDashboard() {
   const [allStories, setAllStories] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
   const [initialPrompt, setInitialPrompt] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -1593,15 +1623,15 @@ export default function ToonVaultUserDashboard() {
           }
           console.error("Profile load failed:", profileRes.reason);
         } else {
-          const u = profileRes.value.data;
+          const u = profileRes.value.data || {};
           setUser(u);
           localStorage.setItem("user", JSON.stringify({ ...u, id: u._id }));
         }
         
-        if (myStoriesRes.status === "fulfilled") setMyStories(myStoriesRes.value.data);
+        if (myStoriesRes.status === "fulfilled") setMyStories(myStoriesRes.value.data || []);
         else console.error("My Stories load failed:", myStoriesRes.reason);
         
-        if (allStoriesRes.status === "fulfilled") setAllStories(allStoriesRes.value.data);
+        if (allStoriesRes.status === "fulfilled") setAllStories(allStoriesRes.value.data || []);
         else console.error("All Stories load failed:", allStoriesRes.reason);
       } catch (e) {
         console.error("Dashboard load crash:", e);
@@ -1653,18 +1683,36 @@ export default function ToonVaultUserDashboard() {
           100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
         }
         .publish-btn:hover { animation: none !important; transform: translateY(-2px); }
+        @media (max-width: 900px) {
+          .logo-container { 
+            width: auto !important; 
+            border-right: none !important;
+            padding: 0 16px !important;
+          }
+        }
         @media (max-width: 768px) {
-          .sidebar { display: none !important; }
-          .main-content { margin-left: 0 !important; }
+          .sidebar { 
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            display: block !important;
+            z-index: 1000;
+          }
+          .sidebar.open {
+            transform: translateX(0);
+          }
+          .main-content { margin-left: 0 !important; padding: 16px !important; }
+          .hide-mobile { display: none !important; }
+          .show-mobile { display: block !important; }
         }
       `}</style>
 
-      <TopNav page={page} setPage={setPage} user={user} />
+      <TopNav page={page} setPage={setPage} user={user} onMenuClick={() => setMobileMenuOpen(true)} />
 
       <div style={{ display: "flex", paddingTop: 62 }}>
-        <div className="sidebar">
-          <Sidebar page={page} setPage={setPage} user={user} navigate={navigate} />
+        <div className={`sidebar ${mobileMenuOpen ? 'open' : ''}`}>
+          <Sidebar page={page} setPage={setPage} user={user} navigate={navigate} onLinkClick={() => setMobileMenuOpen(false)} />
         </div>
+        {mobileMenuOpen && <div onClick={() => setMobileMenuOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 999 }} />}
 
         <main
           className="main-content"
