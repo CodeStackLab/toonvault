@@ -148,6 +148,34 @@ function SeriesPage() {
           </div>
         </section>
 
+        {/* Membership Banner */}
+        <section style={{ marginTop: 40, marginBottom: 20 }}>
+          <div style={{
+            background: `linear-gradient(135deg, ${COLORS.accent} 0%, ${COLORS.rose} 100%)`,
+            borderRadius: 16, padding: "24px", position: "relative", overflow: "hidden",
+            boxShadow: "0 10px 30px rgba(139,92,246,0.2)"
+          }}>
+            <div style={{ position: "relative", zIndex: 10, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+              <div>
+                <h3 style={{ fontSize: 22, fontWeight: 900, color: "white", marginBottom: 6 }}>ToonVault Unlimited</h3>
+                <p style={{ color: "rgba(255,255,255,0.9)", margin: 0, fontSize: 14 }}>Read this series and thousands more without limits.</p>
+              </div>
+              <button 
+                onClick={() => navigate('/dashboard?page=plans')}
+                style={{ 
+                  padding: "12px 24px", background: "white", color: COLORS.accent, 
+                  border: "none", borderRadius: 30, fontWeight: 800, fontSize: 14, 
+                  cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" 
+                }}
+              >
+                Get Unlimited
+              </button>
+            </div>
+            {/* Sparkle Decoration */}
+            <Star size={80} color="rgba(255,255,255,0.1)" fill="currentColor" style={{ position: "absolute", right: -10, top: -20, transform: "rotate(15deg)" }} />
+          </div>
+        </section>
+
         {/* Episodes */}
         <section style={{ marginTop: 60, paddingBottom: 100 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
@@ -196,16 +224,28 @@ function SeriesPage() {
         background: "rgba(8, 9, 10, 0.9)", backdropFilter: "blur(20px)",
         borderTop: "1px solid rgba(255,255,255,0.1)", zIndex: 100
       }}>
-        <button 
-          onClick={() => navigate(`/manta/${story._id}`)}
-          style={{ 
-            width: "100%", maxWidth: 600, margin: "0 auto", padding: "16px",
-            borderRadius: 12, background: COLORS.accent, color: "white", border: "none",
-            fontSize: 16, fontWeight: 800, cursor: "pointer", display: "block"
-          }}
-        >
-          Read Episode 1
-        </button>
+          <div style={{ display: "flex", gap: 12 }}>
+            <button 
+              onClick={() => navigate(`/manta/${story._id}`)}
+              style={{ 
+                flex: 1, padding: "16px", borderRadius: 12, background: "rgba(255,255,255,0.1)", 
+                color: "white", border: "1px solid rgba(255,255,255,0.2)",
+                fontSize: 16, fontWeight: 800, cursor: "pointer", backdropFilter: "blur(10px)"
+              }}
+            >
+              Ep. 1 (Free)
+            </button>
+            <button 
+              onClick={() => navigate('/dashboard?page=plans')}
+              style={{ 
+                flex: 2, padding: "16px", borderRadius: 12, background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.rose})`, 
+                color: "white", border: "none",
+                fontSize: 16, fontWeight: 800, cursor: "pointer", boxShadow: `0 4px 20px ${COLORS.accent}66`
+              }}
+            >
+              Unlock All Episodes
+            </button>
+          </div>
       </div>
     </div>
   );

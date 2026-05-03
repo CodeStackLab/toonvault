@@ -163,8 +163,8 @@ router.post('/generate', auth, async (req, res) => {
             ...storyPanels.map((p, idx) => ({
                 taskType: "imageInference",
                 taskUUID: crypto.randomUUID(),
-                model: process.env.RUNWARE_MODEL || "runware:31@1", // Flux Schnell
-                positivePrompt: `manga style, webtoon aesthetic, high quality, colorful, ${p.imagePrompt}`,
+                model: process.env.RUNWARE_MODEL || "runware:32@1", // Upgraded to FLUX.1 [dev] for premium quality
+                positivePrompt: `masterpiece, best quality, ultra-detailed, manhwa style, korean webtoon aesthetic, rich vibrant colors, cinematic lighting, ${p.imagePrompt}`,
                 width: 512,
                 height: 768,
                 numberResults: 1,

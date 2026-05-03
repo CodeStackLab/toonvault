@@ -609,7 +609,7 @@ function HomePage({ setPage, user = {}, myStories = [], allStories = [] }) {
               <button onClick={() => setPage("stories")} style={{ fontSize: 12, color: C.plumLight, background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>View all →</button>
             </div>
             {( (myStories && myStories.length > 0) ? myStories : STORIES_DATA).slice(0, 4).map((s, i) => (
-              <div key={s.id} style={{
+              <div key={s._id || s.id} style={{
                 display: "flex", alignItems: "center", gap: 14,
                 padding: "12px 0",
                 borderBottom: i < 3 ? `1px solid ${C.cardBorder}` : "none",
@@ -670,7 +670,7 @@ function HomePage({ setPage, user = {}, myStories = [], allStories = [] }) {
               <button onClick={() => setPage("reading")} style={{ fontSize: 11, color: C.plumLight, background: "none", border: "none", cursor: "pointer" }}>See all →</button>
             </div>
             {READING_LIST.slice(0, 3).map(s => (
-              <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+              <div key={s._id || s.id} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
                 <div style={{
                   width: 36, height: 46, borderRadius: 8, flexShrink: 0,
                   background: s.bg, display: "flex", alignItems: "center",
@@ -912,7 +912,7 @@ function ReadingPage() {
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 14 }}>
         {READING_LIST.map(s => (
-          <GlassCard key={s.id} glow style={{ padding: "16px 20px", display: "flex", gap: 16, alignItems: "center" }}>
+          <GlassCard key={s._id || s.id} glow style={{ padding: "16px 20px", display: "flex", gap: 16, alignItems: "center" }}>
             <div style={{
               width: 52, height: 66, borderRadius: 10, flexShrink: 0,
               background: s.bg, display: "flex", alignItems: "center",
