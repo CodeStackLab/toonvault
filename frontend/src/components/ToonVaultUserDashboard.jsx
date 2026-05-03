@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { api, getStoredUser, logout } from "../api";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import StoryWizPopup from './StoryWizPopup';
 
 // ═══════════════════════════════════════════════════════
 // DESIGN TOKENS
@@ -487,7 +488,7 @@ function HomePage({ setPage, user = {}, myStories = [], allStories = [] }) {
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <button 
-              onClick={() => setPage('ai')}
+              onClick={() => setShowWizard(true)}
               style={{
                 padding: "12px 28px", borderRadius: 24,
                 background: C.gradient, border: "none",
@@ -1593,6 +1594,7 @@ export default function ToonVaultUserDashboard() {
   const [loadingData, setLoadingData] = useState(true);
   const [initialPrompt, setInitialPrompt] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -1736,6 +1738,19 @@ export default function ToonVaultUserDashboard() {
           ) : PAGES[page]}
         </main>
       </div>
+
+      <StoryWizPopup 
+        isOpen={showWizard} 
+        onClose={() => setShowWizard(false)} 
+        onComplete={(res) => {
+          refreshStories();
+          if (res?.type === 'Comic' || res?.panels?.length > 0) {
+            navigate(`/manta/${res._id}`);
+          } else {
+            setPage('stories');
+          }
+        }} 
+      />
     </div>
   );
 }
