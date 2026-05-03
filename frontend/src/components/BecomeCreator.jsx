@@ -211,13 +211,76 @@ export default function BecomeCreator() {
 
       </main>
 
-      {/* Footer */}
-      <footer style={{ padding: '60px', borderTop: `1px solid ${C.cardBorder}`, textAlign: 'center', color: C.textDim, fontSize: 14 }}>
-        <p>© 2026 ToonVault Creator Program. All rights reserved.</p>
-        <div style={{ marginTop: 12, display: 'flex', justifyContent: 'center', gap: 20 }}>
-          <span onClick={() => navigate('/privacy')} style={{ cursor: 'pointer' }}>Privacy Policy</span>
-          <span onClick={() => navigate('/terms')} style={{ cursor: 'pointer' }}>Terms of Service</span>
-          <span onClick={() => navigate('/help')} style={{ cursor: 'pointer' }}>Help Center</span>
+      {/* ═══ FOOTER ═══ */}
+      <footer style={{ background: "#0D0B1A", padding: "80px 0 60px", color: "white", marginTop: 100, borderTop: `1px solid ${C.cardBorder}` }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 48, marginBottom: 60 }}>
+            <div style={{ gridColumn: "span 1.5" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, cursor: "pointer" }} onClick={() => navigate("/")}>
+                <div style={{ width: 36, height: 36, borderRadius: 12, background: C.gradient, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, boxShadow: `0 4px 15px ${C.plumGlow}` }}>📖</div>
+                <span style={{ fontSize: 22, fontWeight: 900, color: "white", letterSpacing: -0.8 }}>Toon<span style={{ color: C.rose }}>Vault</span></span>
+              </div>
+              <p style={{ fontSize: 14, lineHeight: 1.8, maxWidth: 300, color: "rgba(255,255,255,0.5)" }}>
+                An AI-powered interactive storytelling platform where choices shape every story. Create, share, and monetize your imagination.
+              </p>
+            </div>
+            {[
+              { 
+                title: "Discover", 
+                links: [
+                  { l: "Browse", t: "/browse" },
+                  { l: "Originals", t: "/#daily-schedule" },
+                  { l: "Categories", t: "/#categories" },
+                  { l: "Rankings", t: "/#rankings" },
+                  { l: "Pricing", t: "/#pricing" }
+                ] 
+              },
+              { 
+                title: "Create", 
+                links: [
+                  { l: "Become a Creator", t: "/creators" },
+                  { l: "Publish a story", t: "/dashboard?page=ai" },
+                  { l: "Creator tools", t: "/creators" },
+                ] 
+              },
+              { 
+                title: "Company", 
+                links: [
+                  { l: "About", t: "/about" },
+                  { l: "Help center", t: "/help" },
+                  { l: "Community", t: "/community" },
+                  { l: "Terms", t: "/terms" },
+                  { l: "Privacy", t: "/privacy" }
+                ] 
+              },
+            ].map(col => (
+              <div key={col.title}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "white", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 24 }}>{col.title}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {col.links.map(link => (
+                    <div key={link.l} 
+                      onClick={() => navigate(link.t)}
+                      style={{ fontSize: 14, cursor: "pointer", transition: "all 0.2s", color: "rgba(255,255,255,0.45)" }}
+                      onMouseEnter={e => e.currentTarget.style.color = "white"}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
+                    >{link.l}</div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 32, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>© 2026 ToonVault. All rights reserved.</div>
+            <div style={{ display: "flex", gap: 24 }}>
+              {["Discord", "Instagram", "Twitter", "YouTube"].map(s => (
+                <span key={s} style={{ fontSize: 14, cursor: "pointer", transition: "all 0.2s", color: "rgba(255,255,255,0.45)" }}
+                  onMouseEnter={e => e.currentTarget.style.color = "white"}
+                  onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
+                >{s}</span>
+              ))}
+            </div>
+          </div>
         </div>
       </footer>
 

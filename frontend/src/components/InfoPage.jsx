@@ -1,21 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Shield, Book, Info, Users, HelpCircle, ArrowLeft } from 'lucide-react';
+import { Shield, Book, Info, Users, HelpCircle, ArrowLeft, Sparkles, Search } from 'lucide-react';
+import axios from 'axios';
 
-const C = {
-  bg: "#050408",
-  surface: "#0D0B1A",
-  border: "rgba(255,255,255,0.06)",
-  plum: "#8B5CF6",
-  rose: "#F43F8E",
-  text: "#F1EEF9",
-  textDim: "#6B6789",
+const COLORS = {
+  bg: "#FAF7F2",
+  card: "#FFFFFF",
+  cardTint: "#F6F0E8",
+  ink: "#1F2430",
+  muted: "#6B7280",
+  mutedLight: "#9CA3AF",
+  plum: "#6D4AE8",
+  plumLight: "#EDE8FD",
+  plumDark: "#4C2DB5",
+  rose: "#E86A8A",
+  roseLight: "#FDEEF3",
+  gold: "#D79A2B",
+  goldLight: "#FEF3DC",
+  border: "#EDE8DF",
+  success: "#2E8B6E",
 };
 
 const CONTENT = {
   about: {
     title: "About ToonVault",
-    icon: <Info size={24} className="text-plum" />,
+    icon: <Info size={24} color={COLORS.plum} />,
     body: (
       <div className="info-body">
         <p>ToonVault is the world's leading AI-powered storytelling platform, where imagination meets cutting-edge technology. Founded in 2026, we aim to democratize the creation of high-quality comics and novels.</p>
@@ -28,7 +37,7 @@ const CONTENT = {
   },
   terms: {
     title: "Terms of Service",
-    icon: <Book size={24} className="text-plum" />,
+    icon: <Book size={24} color={COLORS.plum} />,
     body: (
       <div className="info-body">
         <p>Last Updated: May 2026</p>
@@ -45,7 +54,7 @@ const CONTENT = {
   },
   privacy: {
     title: "Privacy Policy",
-    icon: <Shield size={24} className="text-plum" />,
+    icon: <Shield size={24} color={COLORS.plum} />,
     body: (
       <div className="info-body">
         <p>Your privacy is paramount at ToonVault. This policy outlines how we collect and protect your data.</p>
@@ -60,7 +69,7 @@ const CONTENT = {
   },
   help: {
     title: "Help Center",
-    icon: <HelpCircle size={24} className="text-plum" />,
+    icon: <HelpCircle size={24} color={COLORS.plum} />,
     body: (
       <div className="info-body">
         <h3>Common Questions</h3>
@@ -83,7 +92,7 @@ const CONTENT = {
   },
   community: {
     title: "Community Guidelines",
-    icon: <Users size={24} className="text-plum" />,
+    icon: <Users size={24} color={COLORS.plum} />,
     body: (
       <div className="info-body">
         <p>Join a community built on respect and creativity.</p>
@@ -101,42 +110,149 @@ const CONTENT = {
 export default function InfoPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchVal, setSearchVal] = useState("");
+  const searchRef = useRef(null);
+  
   const page = CONTENT[slug] || CONTENT['about'];
 
-  return (
-    <div style={{ background: C.bg, color: C.text, minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
-      <header style={{ 
-        padding: '20px 60px', borderBottom: `1px solid ${C.border}`, 
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        position: 'sticky', top: 0, background: 'rgba(5,4,8,0.8)', backdropFilter: 'blur(20px)', zIndex: 100
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }} onClick={() => navigate('/')}>
-          <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg, #8B5CF6, #F43F8E)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📖</div>
-          <span style={{ fontSize: 20, fontWeight: 900 }}>Toon<span style={{ color: C.rose }}>Vault</span></span>
-        </div>
-        <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: C.textDim, fontWeight: 600, cursor: 'pointer' }}>
-          <ArrowLeft size={18} /> Back
-        </button>
-      </header>
+  const handleNav = (item) => {
+    if (item.path) navigate(item.path);
+    else if (item.target) {
+      if (item.target.startsWith('/')) navigate(item.target);
+      else window.location.href = '/' + item.target;
+    }
+  };
 
-      <main style={{ maxWidth: 800, margin: '0 auto', padding: '60px 20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
-          {page.icon}
-          <h1 style={{ fontSize: 40, fontWeight: 900, margin: 0, letterSpacing: -1.5 }}>{page.title}</h1>
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
+
+  return (
+    <div style={{ background: COLORS.bg, color: COLORS.ink, minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
+      
+      {/* ═══ TOP NAV (FROM HOME) ═══ */}
+      <nav style={{
+        position: "sticky", top: 0, zIndex: 200,
+        background: COLORS.bg,
+        borderBottom: `1px solid ${COLORS.border}`,
+      }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 32, flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => navigate("/")}>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, boxShadow: "0 4px 12px rgba(109,74,232,0.2)" }}>📖</div>
+              <span style={{ fontSize: 20, fontWeight: 800, color: COLORS.ink, letterSpacing: -0.5 }}>
+                Toon<span style={{ color: COLORS.rose }}>Vault</span>
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <button onClick={() => navigate('/')} style={{ padding: "8px 16px", background: "none", border: "none", fontSize: 14, fontWeight: 600, color: COLORS.ink, cursor: "pointer" }}>Home</button>
+            <button onClick={() => navigate('/browse')} style={{ padding: "8px 16px", background: "none", border: "none", fontSize: 14, fontWeight: 600, color: COLORS.ink, cursor: "pointer" }}>Browse</button>
+            <button onClick={() => navigate(isLoggedIn ? '/dashboard' : '/user')} style={{
+              padding: "8px 18px", border: `1.5px solid ${COLORS.plum}`,
+              background: isLoggedIn ? COLORS.plum : "transparent", borderRadius: 22, fontSize: 13,
+              fontWeight: 600, color: isLoggedIn ? "white" : COLORS.plum, cursor: "pointer"
+            }}>{isLoggedIn ? "Dashboard" : "Log in"}</button>
+          </div>
+        </div>
+      </nav>
+
+      <main style={{ maxWidth: 900, margin: '0 auto', padding: '80px 24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 40 }}>
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: COLORS.plumLight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {page.icon}
+          </div>
+          <h1 style={{ fontSize: 42, fontWeight: 900, margin: 0, letterSpacing: -1.5, color: COLORS.ink }}>{page.title}</h1>
         </div>
         
-        <div className="content-area" style={{ lineHeight: 1.8, fontSize: 17, color: 'rgba(255,255,255,0.8)' }}>
+        <div className="content-area" style={{ lineHeight: 1.8, fontSize: 18, color: COLORS.muted }}>
           {page.body}
         </div>
       </main>
 
+      {/* ═══ FOOTER (FROM HOME) ═══ */}
+      <footer style={{ background: "#1F2430", padding: "80px 0 60px", color: "white", marginTop: 100 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 48, marginBottom: 60 }}>
+            <div style={{ gridColumn: "span 1.5" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, cursor: "pointer" }} onClick={() => navigate("/")}>
+                <div style={{ width: 36, height: 36, borderRadius: 12, background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, boxShadow: "0 4px 15px rgba(109,74,232,0.3)" }}>📖</div>
+                <span style={{ fontSize: 22, fontWeight: 900, color: "white", letterSpacing: -0.8 }}>Toon<span style={{ color: COLORS.rose }}>Vault</span></span>
+              </div>
+              <p style={{ fontSize: 14, lineHeight: 1.8, maxWidth: 300, color: "rgba(255,255,255,0.5)" }}>
+                An AI-powered interactive storytelling platform where choices shape every story. Create, share, and monetize your imagination.
+              </p>
+            </div>
+            {[
+              { 
+                title: "Discover", 
+                links: [
+                  { l: "Browse", t: "/browse" },
+                  { l: "Originals", t: "/#daily-schedule" },
+                  { l: "Categories", t: "/#categories" },
+                  { l: "Rankings", t: "/#rankings" },
+                  { l: "Pricing", t: "/#pricing" }
+                ] 
+              },
+              { 
+                title: "Create", 
+                links: [
+                  { l: "Become a Creator", t: "/creators" },
+                  { l: "Publish a story", t: "/dashboard?page=ai" },
+                  { l: "Creator tools", t: "/creators" },
+                ] 
+              },
+              { 
+                title: "Company", 
+                links: [
+                  { l: "About", t: "/about" },
+                  { l: "Help center", t: "/help" },
+                  { l: "Community", t: "/community" },
+                  { l: "Terms", t: "/terms" },
+                  { l: "Privacy", t: "/privacy" }
+                ] 
+              },
+            ].map(col => (
+              <div key={col.title}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "white", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 24 }}>{col.title}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {col.links.map(link => (
+                    <div key={link.l} 
+                      onClick={() => handleNav({ target: link.t })}
+                      style={{ fontSize: 14, cursor: "pointer", transition: "all 0.2s", color: "rgba(255,255,255,0.45)" }}
+                      onMouseEnter={e => e.currentTarget.style.color = "white"}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
+                    >{link.l}</div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 32, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>© 2026 ToonVault. All rights reserved.</div>
+            <div style={{ display: "flex", gap: 24 }}>
+              {["Discord", "Instagram", "Twitter", "YouTube"].map(s => (
+                <span key={s} style={{ fontSize: 14, cursor: "pointer", transition: "all 0.2s", color: "rgba(255,255,255,0.45)" }}
+                  onMouseEnter={e => e.currentTarget.style.color = "white"}
+                  onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
+                >{s}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </footer>
+
       <style>{`
-        .info-body h3 { color: #F1EEF9; margin-top: 32px; margin-bottom: 12px; font-size: 20px; font-weight: 800; }
-        .info-body p { margin-bottom: 16px; }
-        .info-body details { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
-        .info-body summary { font-weight: 700; cursor: pointer; outline: none; }
-        .info-body summary::-webkit-details-marker { color: #8B5CF6; }
-        .text-plum { color: #8B5CF6; }
+        .info-body h3 { color: ${COLORS.ink}; margin-top: 40px; margin-bottom: 16px; font-size: 22px; font-weight: 800; }
+        .info-body p { margin-bottom: 20px; }
+        .info-body details { background: white; border: 1px solid ${COLORS.border}; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .info-body summary { font-weight: 700; cursor: pointer; outline: none; color: ${COLORS.ink}; }
+        .info-body summary::-webkit-details-marker { color: ${COLORS.plum}; }
       `}</style>
     </div>
   );

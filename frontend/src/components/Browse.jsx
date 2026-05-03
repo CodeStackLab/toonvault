@@ -882,14 +882,17 @@ export default function ToonVaultBrowse() {
               <span style={{ fontSize: 18, fontWeight: 800, color: "white", fontFamily: "Georgia, serif" }}>ToonVault</span>
             </div>
             <div style={{ display: "flex", gap: 20 }}>
-              {["Browse", "About", "Help Center", "Community", "Terms", "Privacy"].map(l => (
-                <span key={l} 
-                  onClick={() => navigate(l === "Browse" ? '/browse' : '/')}
-                  style={{ fontSize: 13, cursor: "pointer" }}
-                  onMouseEnter={e => e.currentTarget.style.color = "white"}
-                  onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.55)"}
-                >{l}</span>
-              ))}
+              {["Browse", "About", "Help Center", "Community", "Terms", "Privacy"].map(l => {
+                const map = { "Browse": "/browse", "About": "/about", "Help Center": "/help", "Community": "/community", "Terms": "/terms", "Privacy": "/privacy" };
+                return (
+                  <span key={l} 
+                    onClick={() => navigate(map[l])}
+                    style={{ fontSize: 13, cursor: "pointer" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "white"}
+                    onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.55)"}
+                  >{l}</span>
+                );
+              })}
             </div>
             <div style={{ display: "flex", gap: 14 }}>
               {["Discord", "Instagram", "Twitter", "YouTube"].map(s => (
