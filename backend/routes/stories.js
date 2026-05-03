@@ -5,6 +5,7 @@ const Story = require('../models/Story');
 const auth = require('../middleware/auth');
 const adminOnly = require('../middleware/adminOnly');
 const redis = require('../redisClient');
+const crypto = require('crypto');
 
 // Get all stories
 router.get('/', async (req, res) => {
@@ -161,7 +162,7 @@ router.post('/generate', auth, async (req, res) => {
             { taskType: "authentication", apiKey: process.env.RUNWARE_API_KEY },
             ...storyPanels.map((p, idx) => ({
                 taskType: "imageInference",
-                taskUUID: `panel-${idx}-${Date.now()}`,
+                taskUUID: crypto.randomUUID(),
                 model: process.env.RUNWARE_MODEL || "runware:31@1", // Flux Schnell
                 positivePrompt: `manga style, webtoon aesthetic, high quality, colorful, ${p.imagePrompt}`,
                 width: 512,
