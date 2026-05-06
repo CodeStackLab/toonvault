@@ -142,12 +142,12 @@ router.post('/generate', auth, async (req, res) => {
     
     try {
         const systemPrompt = category === "Quotes" 
-            ? "You are a creator of aesthetic and deep quotes. Output ONLY a JSON object with: title (collection name), description, and an array 'panels' (length 5) where each item has 'text' (a beautiful quote) and 'imagePrompt' (a minimalist, aesthetic background description matching the quote's mood)."
-            : "You are a professional Manhwa (webtoon) writer. Output ONLY a JSON object with: title, description, and an array 'panels' (length 10) where each item has 'text' (poetic narrative or dialogue) and 'imagePrompt' (high-end Manhwa style, cinematic lighting, 8k, detailed character features, atmospheric backgrounds).";
+            ? "You are a world-class creator of aesthetic, philosophical, and deep quotes. Your output MUST be a JSON object with: title (a compelling collection name), description (an evocative summary), and an array 'panels' (length 5). Each panel item must have 'text' (a profound, beautifully phrased quote) and 'imagePrompt' (a minimalist, cinematic, high-end photography description with soft lighting and elegant composition that perfectly mirrors the quote's mood)."
+            : "You are an elite Manhwa (webtoon) writer and storyboard director for a premium global platform. Your output MUST be a highly professional JSON object with: title (a catchy, dramatic series name), description (a compelling synopsis that hooks the reader), and an array 'panels' (length 10). Each panel item must have 'text' (expertly written poetic narration or sharp, character-driven dialogue) and 'imagePrompt' (ultra-detailed Manhwa illustration instructions: cinematic lighting, Flux-level textures, 8k resolution, precise character expressions, atmospheric depth, and professional composition).";
 
         const userPrompt = category === "Quotes"
-            ? `Create a collection of 5 deep aesthetic quotes about: ${topic}. ${prompt ? `Style/Vibe: ${prompt}` : ''}`
-            : `Create a professional 10-panel Manhwa episode about: ${topic}. Style: Sexy, Mature, Intense. ${prompt ? `Context: ${prompt}` : ''}`;
+            ? `Curate a masterpiece collection of 5 deep, aesthetic quotes focused on: "${topic}". Theme details: ${prompt || 'Universal wisdom'}. Ensure the quotes are unique and impactful.`
+            : `Draft a high-stakes, professionally structured 10-panel Manhwa pilot episode about: "${topic}". Tone: Mature, Sexy, Intense Drama. Plot hooks: ${prompt || 'A fateful encounter'}. Focus on visual storytelling and emotional tension.`;
 
         // 1. Generate Narrative & Prompts using Mistral
         const mistralResp = await axios.post('https://api.mistral.ai/v1/chat/completions', {
@@ -171,7 +171,7 @@ router.post('/generate', auth, async (req, res) => {
             ...storyPanels.map((p, idx) => ({
                 taskType: "imageInference",
                 taskUUID: crypto.randomUUID(),
-                model: "runware:100@1", 
+                model: process.env.RUNWARE_MODEL || "runware:100@1", 
                 positivePrompt: category === "Quotes" 
                     ? `masterpiece, minimalist aesthetic, cinematic photography, high contrast, clean, elegant, ${p.imagePrompt}`
                     : `masterpiece, highly detailed Manhwa style, beautiful anime aesthetic, cinematic lighting, intricate textures, 8k resolution, ${p.imagePrompt}`,
@@ -266,7 +266,7 @@ router.post('/generate-episode', auth, async (req, res) => {
             model: "mistral-small-latest",
             messages: [{
                 role: "system",
-                content: "You are an adult webtoon story writer specializing in mature, steamy romance and drama. Output ONLY a JSON object with: episodeTitle, and an array 'panels' (length 5) where each item has 'text' (dialogue/narration) and 'imagePrompt' (detailed visual description for Flux AI)."
+                content: "You are a professional Manhwa scriptwriter specializing in high-tension drama and mature romance. Your task is to write the NEXT episode of an existing series. Ensure narrative continuity, character development, and emotional impact. Output ONLY a JSON object with: episodeTitle, and an array 'panels' (length 10) where each item has 'text' (dialogue/narration) and 'imagePrompt' (detailed cinematic description for the artist)."
             }, {
                 role: "user",
                 content: context
@@ -283,7 +283,7 @@ router.post('/generate-episode', auth, async (req, res) => {
             ...storyPanels.map((p, idx) => ({
                 taskType: "imageInference",
                 taskUUID: crypto.randomUUID(),
-                model: process.env.RUNWARE_MODEL || "civitai:24149@95489",
+                model: process.env.RUNWARE_MODEL || "runware:100@1",
                 positivePrompt: `masterpiece, best quality, ultra-detailed, beautiful manhwa style, steamy mature romance webtoon aesthetic, rich vibrant colors, cinematic lighting, ${p.imagePrompt}`,
                 width: 512,
                 height: 768,

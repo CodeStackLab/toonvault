@@ -352,10 +352,16 @@ export default function Login({ type = 'user' }) {
                        { id: 'social_facebook_enabled', name: 'Facebook', icon: <Facebook size={20} />, color: '#1877F2' },
                        { id: 'social_linkedin_enabled', name: 'LinkedIn', icon: <Linkedin size={20} />, color: '#0A66C2' }
                      ].filter(s => settings[s.id] === 'true').map(s => (
-                       <button key={s.name} type="button" style={{ 
-                         height: 50, borderRadius: 16, background: '#131121', border: `1px solid ${C.cardBorder}`,
-                         display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                       }} onMouseEnter={e => e.currentTarget.style.background = '#1B1930'} onMouseLeave={e => e.currentTarget.style.background = '#131121'}>
+                       <button 
+                        key={s.name} 
+                        type="button" 
+                        onClick={() => alert(`${s.name} login is currently in testing mode. Please use email/password for now.`)}
+                        style={{ 
+                          height: 50, borderRadius: 16, background: '#131121', border: `1px solid ${C.cardBorder}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                        }} 
+                        onMouseEnter={e => e.currentTarget.style.background = '#1B1930'} 
+                        onMouseLeave={e => e.currentTarget.style.background = '#131121'}>
                          <span style={{ color: s.color }}>{s.icon}</span>
                        </button>
                      ))}

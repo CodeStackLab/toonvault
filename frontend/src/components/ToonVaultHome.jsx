@@ -377,7 +377,15 @@ export default function ToonVaultHome() {
             <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => navigate("/")}>
               <div style={{ width: 32, height: 32, borderRadius: 10, background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, boxShadow: "0 4px 12px rgba(109,74,232,0.2)" }}>📖</div>
               <span style={{ fontSize: 20, fontWeight: 800, color: COLORS.ink, letterSpacing: -0.5 }}>
-                Toon<span style={{ color: COLORS.rose }}>Vault</span>
+                {settings.site_name.includes(" ") ? (
+                  <>
+                    {settings.site_name.split(" ")[0]}<span style={{ color: COLORS.rose }}>{settings.site_name.split(" ").slice(1).join(" ")}</span>
+                  </>
+                ) : (
+                  <>
+                    {settings.site_name.slice(0, 4)}<span style={{ color: COLORS.rose }}>{settings.site_name.slice(4)}</span>
+                  </>
+                )}
               </span>
             </div>
           </div>
@@ -1052,7 +1060,7 @@ export default function ToonVaultHome() {
             <div style={{ gridColumn: "span 1.5" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, cursor: "pointer" }} onClick={() => navigate("/")}>
                 <div style={{ width: 36, height: 36, borderRadius: 12, background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, boxShadow: "0 4px 15px rgba(109,74,232,0.3)" }}>📖</div>
-                <span style={{ fontSize: 22, fontWeight: 900, color: "white", letterSpacing: -0.8 }}>Toon<span style={{ color: COLORS.rose }}>Vault</span></span>
+                <span style={{ fontSize: 22, fontWeight: 900, color: "white", letterSpacing: -0.8 }}>{settings.site_name}</span>
               </div>
               <p style={{ fontSize: 14, lineHeight: 1.8, maxWidth: 300, color: "rgba(255,255,255,0.5)" }}>
                 An AI-powered interactive storytelling platform where choices shape every story. Create, share, and monetize your imagination.

@@ -808,7 +808,7 @@ function MyStoriesPage({ myStories = [], refreshStories, navigate }) {
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={() => setShowCreate(false)} style={{ flex: 1, padding: "12px", borderRadius: 14, background: C.glass, border: `1px solid ${C.glassBorder}`, color: C.textMuted, cursor: "pointer" }}>Cancel</button>
-              <button onClick={handleCreate} disabled={creating} style={{ flex: 2, padding: "12px", borderRadius: 14, background: C.gradient, border: "none", color: "white", fontWeight: 700, cursor: creating ? "default" : "pointer", opacity: creating ? 0.7 : 1 }}>{creating ? "Creating..." : "Become ToonVault Creator"}</button>
+              <button onClick={handleCreate} disabled={creating} style={{ flex: 2, padding: "12px", borderRadius: 14, background: C.gradient, border: "none", color: "white", fontWeight: 700, cursor: creating ? "default" : "pointer", opacity: creating ? 0.7 : 1 }}>{creating ? "Creating..." : `Become ${settings.site_name || 'ToonVault'} Creator`}</button>
             </div>
           </div>
         </div>
