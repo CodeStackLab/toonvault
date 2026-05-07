@@ -138,7 +138,7 @@ router.get('/apikeys', auth, adminOnly, async (req, res) => {
     res.json({
         mistral: process.env.MISTRAL_API_KEY || "",
         runware: process.env.RUNWARE_API_KEY || "",
-        runware_model: process.env.RUNWARE_MODEL || "civitai:133005@78200",
+        runware_model: process.env.RUNWARE_MODEL || "runware:100@1",
         gemini: process.env.GEMINI_API_KEY || "",
         openrouter: process.env.OPENROUTER_API_KEY || "",
         paypalClientId: process.env.PAYPAL_CLIENT_ID || "",

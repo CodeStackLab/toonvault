@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/toonvault';
 
-async function seedProWebtoon() {
+async function seedQuotesToon() {
   try {
     await mongoose.connect(MONGO_URI);
     console.log('✅ Connected to MongoDB');
@@ -14,28 +14,24 @@ async function seedProWebtoon() {
     const MISTRAL_KEY = process.env.MISTRAL_API_KEY;
     const RUNWARE_KEY = process.env.RUNWARE_API_KEY;
 
-    if (!MISTRAL_KEY || !RUNWARE_KEY) {
-        throw new Error("Missing API Keys in .env");
-    }
-
-    console.log('🚀 Step 1: Generating Professional Story Script with Mistral...');
+    console.log('🚀 Step 1: Generating Quotes with Mistral...');
     
     const mistralResp = await axios.post('https://api.mistral.ai/v1/chat/completions', {
         model: "mistral-small-latest",
         messages: [{
             role: "system",
-            content: "You are an elite Manhwa (webtoon) writer. Output ONLY a JSON object with: title, description, and an array 'panels' (length 6) where each item has 'text' (narration/dialogue) and 'imagePrompt' (ultra-detailed Manhwa illustration instructions for Flux AI)."
+            content: "You are a world-class creator of aesthetic, philosophical, and deep quotes. Your output MUST be a JSON object with: title (a compelling collection name), description (an evocative summary), and an array 'panels' (length 5). Each panel item must have 'text' (a profound, beautifully phrased quote) and 'imagePrompt' (a cute, vibrant toon/anime style illustration description that perfectly mirrors the quote's mood)."
         }, {
             role: "user",
-            content: "Create a pilot episode for a sexy, mature romance webtoon titled 'Accidental Assassin's Love'. The story is about a female assassin who falls for her target, a cold-hearted billionaire."
+            content: "Curate 5 masterpiece quotes about 'Hope and Dreams' in a vibrant, colorful toon/anime style."
         }],
         response_format: { type: "json_object" }
     }, { headers: { 'Authorization': `Bearer ${MISTRAL_KEY}` } });
 
     const storyData = JSON.parse(mistralResp.data.choices[0].message.content);
-    console.log('✅ Story Script Generated:', storyData.title);
+    console.log('✅ Quotes Generated:', storyData.title);
 
-    console.log('🎨 Step 2: Generating 6 High-Quality Panels with Runware Flux...');
+    console.log('🎨 Step 2: Generating 5 Toon-Style Images with Runware Flux...');
     
     const runwareTasks = [
         { taskType: "authentication", apiKey: RUNWARE_KEY },
@@ -43,7 +39,7 @@ async function seedProWebtoon() {
             taskType: "imageInference",
             taskUUID: crypto.randomUUID(),
             model: "runware:100@1",
-            positivePrompt: `masterpiece, highly detailed Manhwa style, beautiful anime aesthetic, cinematic lighting, intricate textures, 8k resolution, ${p.imagePrompt}`,
+            positivePrompt: `masterpiece, cute vibrant toon style, colorful anime aesthetic, high quality illustration, clean lines, ${p.imagePrompt}`,
             width: 512,
             height: 768,
             numberResults: 1,
@@ -62,7 +58,7 @@ async function seedProWebtoon() {
 
     const episode1 = {
         number: 1,
-        title: "Episode 1: The Contract",
+        title: "Hope & Dreams",
         panels: imageUrls,
         content: JSON.stringify(storyData.panels.map((p, i) => ({ text: p.text }))),
         createdAt: new Date()
@@ -70,23 +66,24 @@ async function seedProWebtoon() {
 
     const newStory = new Story({
         title: storyData.title,
-        genre: "Romance",
-        coverIcon: "🔪",
-        coverBg: "#1A0A0A",
+        genre: "Quotes",
+        coverIcon: "✨",
+        coverBg: "#1A1A2E",
         authorId: "admin",
         authorName: "ToonVault AI",
-        views: 1200000,
-        rating: 9.8,
-        likes: 450000,
+        views: 450000,
+        rating: 9.9,
+        likes: 120000,
         status: "Live",
-        type: "Comic",
+        type: "Novel",
         description: storyData.description,
         panels: imageUrls,
         episodes: [episode1]
     });
 
     await newStory.save();
-    console.log('✨ SUCCESS! Professional Story Seeded with ID:', newStory._id);
+    console.log('✨ SUCCESS! Quotes Toon Story Seeded with ID:', newStory._id);
+    console.log(`🔗 LIVE LINK: https://toonvault.com/story/${newStory._id}`);
     process.exit(0);
   } catch (err) {
     console.error('❌ Error:', err.response?.data || err.message);
@@ -94,4 +91,4 @@ async function seedProWebtoon() {
   }
 }
 
-seedProWebtoon();
+seedQuotesToon();

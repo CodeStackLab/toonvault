@@ -3,7 +3,15 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { HelmetProvider } from 'react-helmet-async';
 import ToonVaultHome from './components/ToonVaultHome';
 import Reader from './components/Reader';
+import StoryPage from './components/StoryPage';
 import MantaReader from './components/MantaReader';
+
+// Mock data for StoryPage (can be replaced by API fetch inside StoryPage)
+const STORIES = [
+  { id: "69f7365c1cd954ae93abb532", title: "The Lemon Forest", image: "/src/assets/lemon_forest.png", tags: ['fantasy'] },
+  { id: 2, title: "Shadow of the Realm", image: "/src/assets/shadow_realm.png", tags: ['thriller'] },
+];
+
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Login from './components/Login';
 import ToonVaultUserDashboard from './components/ToonVaultUserDashboard';
@@ -99,7 +107,7 @@ function App() {
 
   return (
     <HelmetProvider>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           {/* Maintenance wrap except for direct admin login or if already in admin mode */}
           <Route path="/" element={isMaintenance ? <MaintenancePage /> : <ToonVaultHome />} />
@@ -114,7 +122,7 @@ function App() {
           <Route path="/community" element={<Navigate to="/info/community" replace />} />
           
           {/* Public Reader */}
-          <Route path="/story/:storyId" element={isMaintenance ? <MaintenancePage /> : <Reader />} />
+          <Route path="/story/:id" element={isMaintenance ? <MaintenancePage /> : <StoryPage stories={STORIES} />} />
           <Route path="/manta/:storyId" element={isMaintenance ? <MaintenancePage /> : <MantaReader />} />
           
           {/* Auth - Allow admin portal even in maintenance for emergency fixes */}
