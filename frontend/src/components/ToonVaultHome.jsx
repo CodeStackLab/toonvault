@@ -93,7 +93,7 @@ function StoryCard({ story, size = "normal" }) {
         fontSize: size === "large" ? 60 : 48,
         position: "relative",
       }}>
-        {String(story.cover || "").trim().includes("http") ? (
+        {(String(story.cover || "").trim().includes("http") || String(story.cover || "").trim().startsWith("/")) ? (
           <img src={String(story.cover).trim()} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt={story.title} />
         ) : (
           <span>{story.cover || "📖"}</span>
@@ -466,7 +466,7 @@ export default function ToonVaultHome() {
                             onMouseLeave={e => e.currentTarget.style.background = "white"}
                           >
                             <div style={{ width: 40, height: 40, borderRadius: 6, background: "#f0f0f0", overflow: "hidden" }}>
-                              {s.cover?.startsWith('http') ? (
+                              {(String(s.cover || "").trim().includes("http") || String(s.cover || "").trim().startsWith("/")) ? (
                                 <img src={s.cover} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                               ) : (
                                 <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>{s.cover || '📖'}</div>
@@ -760,7 +760,7 @@ export default function ToonVaultHome() {
                      color: "white", fontSize: 16, fontWeight: 900, borderBottomRightRadius: 10 
                    }}>{i + 1}</div>
                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32 }}>
-                     {String(s.cover || "").trim().includes("http") ? (
+                     {(String(s.cover || "").trim().includes("http") || String(s.cover || "").trim().startsWith("/")) ? (
                        <img src={String(s.cover).trim()} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                      ) : s.cover}
                    </div>
@@ -842,7 +842,7 @@ export default function ToonVaultHome() {
                   background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", 
                   fontSize: 20, overflow: "hidden"
                 }}>
-                  {String(s.cover || "").trim().includes("http") ? (
+                  {(String(s.cover || "").trim().includes("http") || String(s.cover || "").trim().startsWith("/")) ? (
                     <img src={String(s.cover).trim()} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   ) : s.cover}
                 </div>

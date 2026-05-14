@@ -16,6 +16,22 @@ const StorySchema = new mongoose.Schema({
     description: String,
     content: String,
     panels: [String], // URLs for AI images (Episode 1)
+    nodes: [{
+        id: { type: String, required: true },
+        type: { type: String, enum: ['scene', 'choice'], default: 'scene' },
+        label: String, // 'Scene 1', 'A', etc.
+        title: String,
+        description: String,
+        panels: [String],
+        content: String,
+        nextNodes: [String], // IDs of children nodes
+        status: { type: String, enum: ['locked', 'unlocked', 'read'], default: 'locked' },
+        isPopular: { type: Boolean, default: false },
+        isAgeRestricted: { type: Boolean, default: false },
+        creatorPick: { type: Boolean, default: false },
+        x: Number, // Position on map
+        y: Number
+    }],
     episodes: [{
         number: Number,
         title: String,

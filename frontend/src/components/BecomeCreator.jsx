@@ -50,11 +50,6 @@ export default function BecomeCreator() {
 
   const rules = [
     {
-      title: "Original Content Only",
-      desc: "You must own the full copyright to all stories and images uploaded. Plagiarism is strictly prohibited.",
-      icon: <ShieldCheck className="text-emerald-400" size={24} />
-    },
-    {
       title: "Content Standards",
       desc: "Maintain professional quality. No excessive violence, hate speech, or prohibited adult content.",
       icon: <CheckCircle2 className="text-blue-400" size={24} />
@@ -65,9 +60,9 @@ export default function BecomeCreator() {
       icon: <Zap className="text-amber-400" size={24} />
     },
     {
-      title: "Monetization Rules",
-      desc: "Earn through ad revenue, subscriptions, and direct coin support from your dedicated fans.",
-      icon: <DollarSign className="text-rose-400" size={24} />
+      title: "Story Visibility",
+      desc: "Top story branches get featured in the Story Map, reaching millions of active readers.",
+      icon: <Globe className="text-emerald-400" size={24} />
     }
   ];
 
@@ -112,8 +107,11 @@ export default function BecomeCreator() {
             Unleash Your <span style={{ background: C.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Imagination.</span>
           </h1>
           <p style={{ fontSize: 20, color: C.textDim, maxWidth: 700, margin: '0 auto 48px', lineHeight: 1.6 }}>
-            The world's first AI-integrated storytelling platform. Create high-quality comics and novels faster than ever before.
+            The world's first choice-driven narrative platform. Create high-quality interactive comics and novels with AI assistance.
           </p>
+          <div style={{ fontSize: 13, color: C.textDim, background: 'rgba(255,255,255,0.03)', padding: '12px 24px', borderRadius: 16, display: 'inline-block', marginBottom: 40, border: `1px solid ${C.cardBorder}` }}>
+            💡 <b>Note:</b> If your story gains high engagement, you may be eligible for monetization in the future.
+          </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 16 }}>
             <button onClick={() => {
               const el = document.getElementById('terms-section');

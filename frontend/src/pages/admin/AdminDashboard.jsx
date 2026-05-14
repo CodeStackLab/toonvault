@@ -1934,16 +1934,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             
-            <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={handleLogout} style={{ 
-                flex: 1, background: `${C.red}15`, border: `1px solid ${C.red}30`, color: C.red, 
-                cursor: "pointer", fontSize: 12, fontWeight: 700, padding: "10px", borderRadius: 10,
-                display: "flex", alignItems: "center", justifyContent: "center", gap: 6, transition: "all 0.2s"
-              }} onMouseEnter={e => e.currentTarget.style.background = `${C.red}25`}
-                 onMouseLeave={e => e.currentTarget.style.background = `${C.red}15`}>
-                🚪 Logout
-              </button>
-            </div>
+
           </div>
         )}
       </aside>
@@ -1994,11 +1985,19 @@ export default function AdminDashboard() {
             display: "flex", alignItems: "center", gap: 6, boxShadow: `0 4px 12px ${C.plum}40`
           }}>✨ Write Story</button>
 
-          {/* Logout Mobile */}
-          <button onClick={handleLogout} className="show-mobile" style={{
-            display: "none", padding: "7px 10px", background: `${C.red}15`,
-            border: `1px solid ${C.red}40`, borderRadius: 10, color: C.red, cursor: "pointer", fontSize: 14,
-          }}>🚪 Logout</button>
+          {/* Logout Button */}
+          <button onClick={handleLogout} style={{
+            display: "flex", alignItems: "center", gap: 6,
+            padding: "8px 16px", background: "rgba(239,68,68,0.15)",
+            border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, color: "#EF4444", cursor: "pointer",
+            fontSize: 13, fontWeight: 700, transition: "all 0.2s",
+            boxShadow: "0 4px 12px rgba(239,68,68,0.1)"
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.25)"; e.currentTarget.style.transform = "scale(1.05)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(239,68,68,0.15)"; e.currentTarget.style.transform = "scale(1)"; }}
+          >
+            <span style={{ fontSize: 16 }}>🚪</span> <span className="hide-mobile">Logout</span>
+          </button>
         </div>
 
         {/* Content */}

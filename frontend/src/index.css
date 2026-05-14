@@ -1,18 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=Outfit:wght@300;500;700&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Royal Sakura Palette */
-  --midnight: #2D004B;
-  --plum-dark: #1F0035;
-  --sakura-pearl: #FFF0F5;
-  --sakura-glow: #FFB7C5;
-  --gold-foil: #D4AF37;
-  --gold-glow: #FFD700;
-  --glass: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.15);
+  /* ToonVault Premium Palette */
+  --bg-deep: #050408;
+  --bg-surface: #0D0B1A;
+  --accent: #7C3AED;
+  --accent-glow: rgba(124, 58, 237, 0.25);
+  --rose: #F43F8E;
+  --emerald: #10B981;
+  --text-main: #F1EEF9;
+  --text-dim: #6B6789;
+  --border: rgba(255, 255, 255, 0.08);
+  --glass: rgba(255, 255, 255, 0.03);
   
-  --font-display: 'Crimson Pro', serif;
   --font-ui: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 
 * {
@@ -23,8 +25,8 @@
 }
 
 body {
-  background: var(--plum-dark);
-  color: var(--sakura-pearl);
+  background: var(--bg-deep);
+  color: var(--text-main);
   font-family: var(--font-ui);
   overflow-x: hidden;
   line-height: 1.6;

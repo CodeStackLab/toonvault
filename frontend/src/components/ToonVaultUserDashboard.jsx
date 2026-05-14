@@ -291,12 +291,20 @@ function TopNav({ page, setPage, user = {}, onMenuClick, setShowWizard }) {
           fontWeight: 800, color: "white",
         }}>{avatarLetter}</div>
 
-        {/* Logout Mobile */}
-        <button onClick={() => logout()} className="show-mobile" style={{
-          display: "none", width: 38, height: 38, borderRadius: 10,
-          background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)",
-          cursor: "pointer", fontSize: 16, color: "#EF4444",
-        }}>🚪</button>
+        {/* Desktop & Mobile Logout */}
+        <button onClick={() => logout()} style={{
+          display: "flex", alignItems: "center", gap: 6,
+          height: 38, padding: "0 14px", borderRadius: 10,
+          background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)",
+          color: "#EF4444", cursor: "pointer", fontSize: 13, fontWeight: 700,
+          transition: "all 0.2s"
+        }}
+          onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.25)"; e.currentTarget.style.transform = "scale(1.05)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "rgba(239,68,68,0.15)"; e.currentTarget.style.transform = "scale(1)"; }}
+        >
+          <span style={{ fontSize: 16 }}>🚪</span> 
+          <span className="hide-mobile">Logout</span>
+        </button>
       </div>
     </header>
   );
@@ -439,10 +447,7 @@ function Sidebar({ page, setPage, user = {}, navigate, onLinkClick }) {
              <div style={{ fontSize: 12, fontWeight: 700, color: "white", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user?.username || 'User'}</div>
              <div style={{ fontSize: 10, color: C.textDim, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user?.email || 'user@toonvault.com'}</div>
            </div>
-           <button onClick={() => logout()} title="Logout" style={{ 
-             width: 32, height: 32, borderRadius: 8, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)",
-             color: "#EF4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14
-           }}>🚪</button>
+
         </div>
       </div>
     </aside>

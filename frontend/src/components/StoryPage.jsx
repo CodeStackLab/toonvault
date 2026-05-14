@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Bookmark, Heart, Share2, Play, Users, Star, ChevronRight, AlertTriangle, Info, Clock, BookOpen
+  ArrowLeft, Bookmark, Heart, Share2, Play, Users, Star, ChevronRight, AlertTriangle, Info, Clock, BookOpen, Map as MapIcon
 } from 'lucide-react';
+import StoryMap from './StoryMap';
 
 /* 
   NOTE: For Runware.ai integration, you can use their SDK or REST API.
@@ -39,7 +40,7 @@ export default function StoryPage({ stories = [], user }) {
   const [selectedChar, setSelectedChar] = useState(null);
   const [followed, setFollowed] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
-  const [activeTab, setActiveTab] = useState('episodes'); // episodes | about | characters
+  const [activeTab, setActiveTab] = useState('episodes'); // episodes | about | characters | map
 
   // Find story or use fallback
   const story = stories.find(s => String(s.id) === id) || {
@@ -140,6 +141,9 @@ export default function StoryPage({ stories = [], user }) {
             <button className={`tab-btn ${activeTab === 'about' ? 'active' : ''}`} onClick={() => setActiveTab('about')}>
               About
             </button>
+            <button className={`tab-btn ${activeTab === 'map' ? 'active' : ''}`} onClick={() => setActiveTab('map')}>
+              Story Map
+            </button>
             <button className={`tab-btn ${activeTab === 'characters' ? 'active' : ''}`} onClick={() => setActiveTab('characters')}>
               Characters
             </button>
@@ -195,6 +199,127 @@ export default function StoryPage({ stories = [], user }) {
                         <div className="rel-label">{r.label}</div>
                       </div>
                     ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'map' && (
+              <div className="story-map-tab-content fade-in" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 32 }}>
+                <div className="story-map-main">
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+                    <div style={{ padding: "16px 24px", background: "rgba(124, 58, 237, 0.05)", borderRadius: 20, border: "1px solid rgba(124, 58, 237, 0.1)", flex: 1 }}>
+                       <div style={{ fontSize: 13, color: "#A78BFA", fontWeight: 900, marginBottom: 8, letterSpacing: 1 }}>CURRENT STORYLINE</div>
+                       <h2 style={{ fontSize: 24, fontWeight: 900, margin: 0 }}>Hearts of Ash: Scene 4</h2>
+                       <p style={{ margin: "8px 0 0", color: "rgba(255,255,255,0.5)", fontSize: 13 }}>"If we tell them the truth, everything burns."</p>
+                    </div>
+                  </div>
+
+                  <StoryMap 
+                    storyNodes={story.nodes || []} 
+                    currentNodeId={story.currentNodeId || 's4'}
+                    onSelectNode={(id, action) => console.log('Action:', action, 'Node:', id)}
+                  />
+                  
+                  {/* Community Choice (What Happens Next Preview) */}
+                  <div style={{ marginTop: 32, padding: 24, background: "rgba(255,255,255,0.02)", borderRadius: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                       <h3 style={{ margin: 0, fontSize: 18, fontWeight: 900 }}>My Vault</h3>
+                       <div style={{ display: "flex", gap: 16 }}>
+                          {['Continue', 'Unlocked', 'Favorites'].map(tab => (
+                            <span key={tab} style={{ fontSize: 11, fontWeight: 700, color: tab === 'Continue' ? "#A78BFA" : "rgba(255,255,255,0.4)", cursor: "pointer", borderBottom: tab === 'Continue' ? "2px solid #A78BFA" : "none", paddingBottom: 4 }}>{tab}</span>
+                          ))}
+                       </div>
+                    </div>
+                    
+                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                       {[
+                         { title: 'Hearts of Ash', desc: 'You chose: Protect the Secret', ep: 'Chapter 7, Scene 4', image: story.image },
+                         { title: 'Shadow School', desc: 'You chose: Join the Rebels', ep: 'Chapter 5, Scene 2', image: "https://images.unsplash.com/photo-1534447677768-be436bb09401" },
+                       ].map((v, i) => (
+                         <div key={i} style={{ display: "flex", gap: 16, alignItems: "center", padding: 12, borderRadius: 16, background: "rgba(255,255,255,0.02)" }}>
+                            <div style={{ width: 40, height: 40, borderRadius: 8, backgroundImage: `url(${v.image})`, backgroundSize: "cover" }} />
+                            <div style={{ flex: 1 }}>
+                               <div style={{ fontSize: 13, fontWeight: 800 }}>{v.title}</div>
+                               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>{v.desc}</div>
+                            </div>
+                            <button style={{ padding: "6px 12px", borderRadius: 8, background: "#7C3AED", color: "white", fontSize: 10, fontWeight: 900, border: "none" }}>Continue</button>
+                         </div>
+                       ))}
+                    </div>
+                    <div style={{ textAlign: "center", marginTop: 16, fontSize: 11, color: "#A78BFA", fontWeight: 700, cursor: "pointer" }}>View all in your Vault →</div>
+                  </div>
+                </div>
+
+                <div className="story-dashboard-sidebar" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                  {/* Fan Vote */}
+                  <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 24, padding: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+                      <h3 style={{ margin: 0, fontSize: 16, fontWeight: 900 }}>Fan Vote</h3>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>28.3K total</span>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                      {[
+                        { id: 'A', label: 'Protect Secret', pct: 48, color: '#7C3AED' },
+                        { id: 'B', label: 'Follow Heart', pct: 23, color: '#F43F8E' },
+                        { id: 'C', label: 'Chase Truth', pct: 16, color: '#10B981' },
+                        { id: 'D', label: 'Write Own Turn', pct: 13, color: '#F59E0B' },
+                      ].map(v => (
+                        <div key={v.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <div style={{ width: 24, height: 24, borderRadius: 6, background: v.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900 }}>{v.id}</div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                              <span style={{ fontSize: 11, fontWeight: 700 }}>{v.label}</span>
+                              <span style={{ fontSize: 11, fontWeight: 900 }}>{v.pct}%</span>
+                            </div>
+                            <div style={{ height: 6, background: "rgba(255,255,255,0.05)", borderRadius: 3, overflow: "hidden" }}>
+                              <div style={{ width: `${v.pct}%`, height: "100%", background: v.color }} />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Top Comment */}
+                  <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 24, padding: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
+                    <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 900 }}>Top Comment</h3>
+                    <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+                       <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#F43F8E" }} />
+                       <div style={{ flex: 1 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                             <span style={{ fontSize: 12, fontWeight: 800 }}>LunaDreams</span>
+                             <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>5m ago</span>
+                          </div>
+                          <p style={{ fontSize: 12, lineHeight: 1.5, margin: "4px 0 8px", color: "rgba(255,255,255,0.7)" }}>A is safer, but B is the one that hurts in the best way. My heart is split!</p>
+                          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                             <Heart size={12} fill="#F43F8E" color="#F43F8E" />
+                             <span style={{ fontSize: 10, fontWeight: 700 }}>128</span>
+                             <span style={{ fontSize: 10, color: "#A78BFA", marginLeft: 12, fontWeight: 700 }}>Reply</span>
+                          </div>
+                       </div>
+                    </div>
+                    <div style={{ textAlign: "center", paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.05)", fontSize: 11, color: "#A78BFA", fontWeight: 700, cursor: "pointer" }}>View all comments (36)</div>
+                  </div>
+
+                  {/* About Creator */}
+                  <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 24, padding: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
+                    <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 900 }}>About the Creator</h3>
+                    <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
+                       <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg, #7C3AED, #F43F8E)" }} />
+                       <div style={{ flex: 1 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                             <span style={{ fontWeight: 800, fontSize: 14 }}>Starryink</span>
+                             <Check size={12} color="#10B981" />
+                          </div>
+                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>12.4K Followers</div>
+                       </div>
+                       <button style={{ padding: "6px 14px", borderRadius: 10, background: "rgba(124, 58, 237, 0.1)", border: "1px solid #7C3AED", color: "white", fontSize: 11, fontWeight: 700 }}>Follow</button>
+                    </div>
+                    <p style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", lineHeight: 1.6, margin: 0 }}>
+                       I write stories about love, choices, and the magic in between.
+                    </p>
+                    <div style={{ marginTop: 16, fontSize: 11, color: "#A78BFA", fontWeight: 700, textAlign: "center", cursor: "pointer" }}>View Creator Profile</div>
                   </div>
                 </div>
               </div>

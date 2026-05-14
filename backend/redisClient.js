@@ -1,6 +1,6 @@
 const Redis = require('ioredis');
 
-const REDIS_URI = process.env.REDIS_URI || process.env.REDIS_URL || 'redis://redis:6379';
+const REDIS_URI = process.env.REDIS_URI || process.env.REDIS_URL || 'redis://toonvault-redis:6379';
 const redis = new Redis(REDIS_URI);
 
 redis.on('connect', () => {
