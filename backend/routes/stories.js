@@ -17,6 +17,21 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Get a specific story by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const story = await Story.findById(req.params.id);
+        if (!story) return res.status(404).json({ message: 'Story not found' });
+        
+        // Track view asynchronously
+        Story.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } }).exec();
+        
+        res.json(story);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Update story status (Approve/Reject)
 router.patch('/:id/status', auth, adminOnly, async (req, res) => {
     try {
