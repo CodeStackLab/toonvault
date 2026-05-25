@@ -13,6 +13,7 @@ const StorySchema = new mongoose.Schema({
     dislikes: { type: Number, default: 0 },
     status: { type: String, enum: ['Draft', 'Pending', 'Live', 'Flagged'], default: 'Draft' },
     type: { type: String, enum: ['Comic', 'Novel', 'Article'], default: 'Comic' },
+    isAgeRestricted: { type: Boolean, default: false },
     description: String,
     content: String,
     panels: [String], // URLs for AI images (Episode 1)

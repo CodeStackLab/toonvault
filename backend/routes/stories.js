@@ -191,17 +191,17 @@ router.post('/generate', auth, async (req, res) => {
                 ...storyPanels.map((p, idx) => ({
                     taskType: "imageInference",
                     taskUUID: crypto.randomUUID(),
-                    model: "civitai:257749@290640", 
+                    model: "runware:100@1",
                     positivePrompt: category === "Quotes" 
-                        ? `masterpiece, minimalist aesthetic, cinematic photography, high contrast, clean, elegant, ${p.imagePrompt}`
-                        : `score_9, score_8_up, score_7_up, masterpiece, best quality, beautiful manhwa style, official webtoon art, seamless vertical scroll style, dramatic lighting, highly detailed, safe for work, ${p.imagePrompt}`,
+                        ? `masterpiece, minimalist aesthetic, cinematic photography, high contrast, moody lighting, elegant atmosphere, ultra-detailed, ${p.imagePrompt}`
+                        : `score_9, score_8_up, masterpiece, best quality, beautiful manhwa webtoon art, official webtoon style, dynamic composition, dramatic cinematic lighting, highly detailed character design, clean linework, ${p.imagePrompt}`,
                     width: 512,
                     height: 768,
                     numberResults: 1,
                     outputFormat: "JPG",
                     seed: Math.floor(Math.random() * 2147483647),
-                    CFGScale: 7.0,
-                    steps: 25
+                    CFGScale: 3.5,
+                    steps: 6
                 }))
             ];
 
@@ -234,6 +234,7 @@ router.post('/generate', auth, async (req, res) => {
             });
         }
 
+        const isMature = category?.toLowerCase() === 'mature' || (req.body.status === 'published' && category?.toLowerCase() === 'mature');
         const newStory = new Story({
             title: title || topic || "Untitled Story",
             genre: category || "Fantasy",
@@ -242,6 +243,7 @@ router.post('/generate', auth, async (req, res) => {
             status: status === 'published' ? 'Live' : 'Draft',
             type: 'Comic',
             description: description,
+            isAgeRestricted: isMature,
             content: JSON.stringify(storyPanels), // Store the dialogue too
             panels: imageUrls,
             coverIcon: "✨"
@@ -333,15 +335,15 @@ router.post('/generate-episode', auth, async (req, res) => {
                 ...storyPanels.map((p, idx) => ({
                     taskType: "imageInference",
                     taskUUID: crypto.randomUUID(),
-                    model: "civitai:257749@290640",
-                    positivePrompt: `score_9, score_8_up, score_7_up, masterpiece, best quality, beautiful manhwa style, official webtoon art, seamless vertical scroll style, dramatic lighting, highly detailed, safe for work, ${p.imagePrompt}`,
+                    model: "runware:100@1",
+                    positivePrompt: `score_9, score_8_up, masterpiece, best quality, beautiful manhwa webtoon art, official webtoon style, dynamic composition, dramatic cinematic lighting, highly detailed character design, clean linework, ${p.imagePrompt}`,
                     width: 512,
                     height: 768,
                     numberResults: 1,
                     outputFormat: "JPG",
                     seed: Math.floor(Math.random() * 2147483647),
-                    CFGScale: 7.0,
-                    steps: 25
+                    CFGScale: 3.5,
+                    steps: 6
                 }))
             ];
 
