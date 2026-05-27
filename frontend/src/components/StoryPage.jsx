@@ -858,20 +858,30 @@ export default function StoryPage() {
             padding: "8px 0"
           }}>
             {[
-              { icon: "🏠", label: "Home" },
-              { icon: "🔍", label: "Explore" },
-              { icon: "🗃️", label: "Vault", active: true },
-              { icon: "✏️", label: "Create" },
-              { icon: "🔔", label: "Notifs" },
+              { icon: "🏠", label: "Home", path: "/" },
+              { icon: "🔍", label: "Explore", path: "/browse" },
+              { icon: "🗃️", label: "Vault", path: "/dashboard", active: true },
+              { icon: "✏️", label: "Create", path: "/creators" },
+              { icon: "🔔", label: "Notifs", isToast: true },
             ].map(item => (
-              <button key={item.label} title={item.label} style={{
-                width: 52, height: 52, borderRadius: 14,
-                background: item.active ? COLORS.purpleLight : "transparent",
-                border: item.active ? `1px solid ${COLORS.purple}40` : "1px solid transparent",
-                cursor: "pointer", display: "flex", flexDirection: "column",
-                alignItems: "center", justifyContent: "center", gap: 3,
-                transition: "all 0.2s", color: item.active ? COLORS.purple : COLORS.textMuted
-              }}
+              <button 
+                key={item.label} 
+                onClick={() => {
+                  if (item.isToast) {
+                    triggerToast("You have no new notifications.");
+                  } else {
+                    navigate(item.path);
+                  }
+                }}
+                title={item.label} 
+                style={{
+                  width: 52, height: 52, borderRadius: 14,
+                  background: item.active ? COLORS.purpleLight : "transparent",
+                  border: item.active ? `1px solid ${COLORS.purple}40` : "1px solid transparent",
+                  cursor: "pointer", display: "flex", flexDirection: "column",
+                  alignItems: "center", justifyContent: "center", gap: 3,
+                  transition: "all 0.2s", color: item.active ? COLORS.purple : COLORS.textMuted
+                }}
                 onMouseEnter={e => {
                   if (!item.active) {
                     e.currentTarget.style.background = "rgba(255,255,255,0.03)";
@@ -1470,16 +1480,20 @@ export default function StoryPage() {
           padding: "10px 0 20px",
         }}>
           {[
-            { icon: "🏠", label: "Home" },
-            { icon: "🔍", label: "Explore" },
-            { icon: "🗃️", label: "Vault", active: true },
-            { icon: "✏️", label: "Create" },
-            { icon: "👤", label: "Profile" },
+            { icon: "🏠", label: "Home", path: "/" },
+            { icon: "🔍", label: "Explore", path: "/browse" },
+            { icon: "🗃️", label: "Vault", path: "/dashboard", active: true },
+            { icon: "✏️", label: "Create", path: "/creators" },
+            { icon: "👤", label: "Profile", path: "/dashboard" },
           ].map(item => (
-            <button key={item.label} style={{
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
-              background: "none", border: "none", cursor: "pointer",
-            }}>
+            <button 
+              key={item.label} 
+              onClick={() => navigate(item.path)}
+              style={{
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+                background: "none", border: "none", cursor: "pointer",
+              }}
+            >
               <span style={{ fontSize: 18, color: item.active ? COLORS.purple : COLORS.textMuted }}>{item.icon}</span>
               <span style={{
                 fontSize: 9, fontWeight: 700,
