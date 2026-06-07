@@ -94,3 +94,6 @@ To populate the database with default interactive stories:
 ```bash
 docker compose exec backend node seed_stories.js
 ```
+
+
+* **Litecoin (LTC) Address:** `LaJGvzQJGmqfCFkP9cY1kjLp6hphECxWS2` (Network: LTC / Litecoin)
