@@ -342,17 +342,15 @@ export default function ToonVaultBrowse() {
       .then(res => {
         if (Array.isArray(res.data)) {
           const mapped = res.data.map(s => {
-            let cover = s.coverIcon || "📖";
-            if (s.panels && s.panels.length > 0) {
-              cover = s.panels[0];
-            } else if (cover === "✨" || cover === "📖") {
-              const genre = String(s.genre || "").toLowerCase();
-              if (genre.includes("romance")) cover = "/covers/romance_cover_1777743324375.png";
-              else if (genre.includes("fantasy")) cover = "/covers/fantasy_cover_1777743338844.png";
-              else if (genre.includes("action")) cover = "/covers/action_cover_1777743352958.png";
-              else if (genre.includes("drama")) cover = "/covers/drama_cover_1777743372879.png";
-              else if (genre.includes("horror")) cover = "/covers/horror_cover_1777743387658.png";
-              else cover = DEFAULT_COVER;
+            let cover = (s.panels && s.panels.length > 0 && s.panels[0].startsWith('http')) ? s.panels[0] : null;
+            if (!cover) {
+              const title = s.title || "Webtoon Story";
+              const genre = s.genre || "Manhwa";
+              let seed = 0;
+              for (let i = 0; i < title.length; i++) seed = (seed << 5) - seed + title.charCodeAt(i);
+              seed = Math.abs(seed % 1000000);
+              const prompt = `masterpiece Korean manhwa anime webtoon poster cover art, ${title}, ${genre} theme, dynamic cinematic lighting, vivid colors, 8k`;
+              cover = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=768&nologo=true&seed=${seed}`;
             }
 
             return {

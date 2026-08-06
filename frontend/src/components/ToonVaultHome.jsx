@@ -4,48 +4,60 @@ import axios from "axios";
 import StoryImage from "./StoryImage";
 
 const COLORS = {
-  bg: "#FAF7F2",
-  card: "#FFFFFF",
-  cardTint: "#F6F0E8",
-  ink: "#1F2430",
-  muted: "#6B7280",
-  mutedLight: "#9CA3AF",
-  plum: "#6D4AE8",
-  plumLight: "#EDE8FD",
-  plumDark: "#4C2DB5",
-  rose: "#E86A8A",
-  roseLight: "#FDEEF3",
-  gold: "#D79A2B",
-  goldLight: "#FEF3DC",
-  border: "#EDE8DF",
-  success: "#2E8B6E",
+  bg: "#07060E",
+  card: "#121020",
+  cardTint: "#1A172E",
+  ink: "#F8FAFC",
+  muted: "#94A3B8",
+  mutedLight: "#64748B",
+  plum: "#7C3AED",
+  plumLight: "rgba(124, 58, 237, 0.2)",
+  plumDark: "#5B21B6",
+  rose: "#F43F5E",
+  roseLight: "rgba(244, 63, 94, 0.2)",
+  cyan: "#06B6D4",
+  cyanLight: "rgba(6, 182, 212, 0.2)",
+  emerald: "#10B981",
+  emeraldLight: "rgba(16, 185, 129, 0.2)",
+  amber: "#F59E0B",
+  amberLight: "rgba(245, 158, 11, 0.2)",
+  gold: "#F59E0B",
+  goldLight: "rgba(245, 158, 11, 0.2)",
+  border: "rgba(255, 255, 255, 0.08)",
+  success: "#10B981",
 };
 
 const GENRES = [
-  { id: "all", label: "All", emoji: "✨" },
-  { id: "romance", label: "Romance", emoji: "💕" },
-  { id: "fantasy", label: "Fantasy", emoji: "🏰" },
-  { id: "drama", label: "Drama", emoji: "🎭" },
-  { id: "action", label: "Action", emoji: "⚔️" },
-  { id: "comedy", label: "Comedy", emoji: "😂" },
-  { id: "sliceoflife", label: "Slice of Life", emoji: "🌸" },
-  { id: "scifi", label: "Sci-Fi", emoji: "🚀" },
-  { id: "supernatural", label: "Supernatural", emoji: "👻" },
-  { id: "mystery", label: "Mystery", emoji: "🔍" },
-  { id: "thriller", label: "Thriller", emoji: "😱" },
-  { id: "bl", label: "BL", emoji: "💙" },
-  { id: "gl", label: "GL", emoji: "💜" },
-  { id: "historical", label: "Historical", emoji: "📜" },
-  { id: "horror", label: "Horror", emoji: "🩸" },
-  { id: "sports", label: "Sports", emoji: "🏆" },
-  { id: "superhero", label: "Superhero", emoji: "⚡" },
-  { id: "heartwarming", label: "Heartwarming", emoji: "🤍" },
-  { id: "informative", label: "Informative", emoji: "📚" },
-  { id: "graphic", label: "Graphic Novel", emoji: "🎨" },
-  { id: "mature", label: "Mature 18+", emoji: "🔥" },
+  { id: "all",         label: "All",           emoji: "✨", color: "#7C3AED", bg: "linear-gradient(135deg, #7C3AED, #4C1D95)" },
+  { id: "romance",     label: "Romance",        emoji: "💕", color: "#F43F5E", bg: "linear-gradient(135deg, #F43F5E, #BE123C)" },
+  { id: "fantasy",     label: "Fantasy",        emoji: "🏰", color: "#8B5CF6", bg: "linear-gradient(135deg, #8B5CF6, #6D28D9)" },
+  { id: "drama",       label: "Drama",          emoji: "🎭", color: "#EC4899", bg: "linear-gradient(135deg, #EC4899, #BE185D)" },
+  { id: "action",      label: "Action",         emoji: "⚔️", color: "#06B6D4", bg: "linear-gradient(135deg, #06B6D4, #0E7490)" },
+  { id: "comedy",      label: "Comedy",         emoji: "😂", color: "#F59E0B", bg: "linear-gradient(135deg, #F59E0B, #B45309)" },
+  { id: "sliceoflife", label: "Slice of Life",  emoji: "🌸", color: "#10B981", bg: "linear-gradient(135deg, #10B981, #047857)" },
+  { id: "scifi",       label: "Sci-Fi",         emoji: "🚀", color: "#3B82F6", bg: "linear-gradient(135deg, #3B82F6, #1D4ED8)" },
+  { id: "supernatural",label: "Supernatural",   emoji: "👻", color: "#A855F7", bg: "linear-gradient(135deg, #A855F7, #7E22CE)" },
+  { id: "mystery",     label: "Mystery",        emoji: "🔍", color: "#6366F1", bg: "linear-gradient(135deg, #6366F1, #4338CA)" },
+  { id: "thriller",    label: "Thriller",       emoji: "😱", color: "#E11D48", bg: "linear-gradient(135deg, #E11D48, #9F1239)" },
+  { id: "bl",          label: "BL",             emoji: "💙", color: "#2563EB", bg: "linear-gradient(135deg, #2563EB, #1E40AF)" },
+  { id: "gl",          label: "GL",             emoji: "💜", color: "#9333EA", bg: "linear-gradient(135deg, #9333EA, #6B21A8)" },
+  { id: "historical",  label: "Historical",     emoji: "📜", color: "#D97706", bg: "linear-gradient(135deg, #D97706, #92400E)" },
+  { id: "horror",      label: "Horror",         emoji: "🩸", color: "#DC2626", bg: "linear-gradient(135deg, #DC2626, #991B1B)" },
+  { id: "sports",      label: "Sports",         emoji: "🏆", color: "#EA580C", bg: "linear-gradient(135deg, #EA580C, #9A3412)" },
+  { id: "superhero",   label: "Superhero",      emoji: "⚡", color: "#0284C7", bg: "linear-gradient(135deg, #0284C7, #075985)" },
+  { id: "heartwarming",label: "Heartwarming",   emoji: "🤍", color: "#F43F5E", bg: "linear-gradient(135deg, #F43F5E, #9F1239)" },
+  { id: "informative", label: "Informative",    emoji: "📚", color: "#4F46E5", bg: "linear-gradient(135deg, #4F46E5, #3730A3)" },
+  { id: "graphic",     label: "Graphic Novel",  emoji: "🎨", color: "#8B5CF6", bg: "linear-gradient(135deg, #8B5CF6, #5B21B6)" },
+  { id: "mature",      label: "Mature 18+",     emoji: "🔥", color: "#F43F5E", bg: "linear-gradient(135deg, #F43F5E, #881337)" },
 ];
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Completed"];
+
+const formatRating = (val) => {
+  if (!val) return "4.8";
+  const num = parseFloat(val);
+  return isNaN(num) ? "4.8" : num.toFixed(1);
+};
 
 const STORIES = [
   { title: "ToonVault Originals", subtitle: "Experience stories crafted by advanced AI.", genre: "AI Powered", badge: "NEW", bg: "linear-gradient(135deg, #3D1A5C 0%, #E8336D 100%)", cover: "✨" }
@@ -71,26 +83,37 @@ function StoryCard({ story, size = "normal" }) {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 900;
   
   const cardWidth = isMobile 
-    ? (size === "large" ? 150 : size === "small" ? 110 : 130)
-    : (size === "large" ? 180 : size === "small" ? 130 : 155);
+    ? (size === "large" ? 155 : size === "small" ? 115 : 135)
+    : (size === "large" ? 190 : size === "small" ? 135 : 165);
+
+  const matchedGenre = GENRES.find(g => g.label.toLowerCase() === String(story.genre || "").toLowerCase()) || GENRES[0];
 
   return (
     <div style={{
       background: COLORS.card,
-      borderRadius: 16,
+      borderRadius: 18,
       border: `1px solid ${COLORS.border}`,
       overflow: "hidden",
       cursor: "pointer",
-      transition: "transform 0.2s, box-shadow 0.2s",
+      transition: "all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
       flexShrink: 0,
       width: cardWidth,
+      boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
     }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(109,74,232,0.12)"; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = "translateY(-6px)";
+        e.currentTarget.style.boxShadow = `0 12px 28px ${matchedGenre.color || COLORS.plum}30`;
+        e.currentTarget.style.borderColor = `${matchedGenre.color || COLORS.plum}50`;
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)";
+        e.currentTarget.style.borderColor = COLORS.border;
+      }}
       onClick={() => navigate(`/story/${story.id}`)}
     >
       <div style={{
-        height: isMobile ? (size === "large" ? 190 : size === "small" ? 130 : 160) : (size === "large" ? 220 : size === "small" ? 150 : 185),
+        height: isMobile ? (size === "large" ? 190 : size === "small" ? 130 : 160) : (size === "large" ? 225 : size === "small" ? 150 : 190),
         background: story.bg || COLORS.plumLight,
         overflow: "hidden",
         position: "relative",
@@ -103,22 +126,24 @@ function StoryCard({ story, size = "normal" }) {
         {story.updated && (
           <span style={{
             position: "absolute", top: 8, left: 8,
-            background: COLORS.rose, color: "white",
-            fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 6, letterSpacing: 0.5,
-          }}>UP</span>
+            background: "linear-gradient(135deg, #f43f5e, #be123c)", color: "white",
+            fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 8, letterSpacing: 0.5,
+            boxShadow: "0 2px 8px rgba(244,63,94,0.4)"
+          }}>NEW</span>
         )}
         {story.isPopular && (
           <span style={{
-            position: "absolute", top: 8, left: story.updated ? 40 : 8,
-            background: COLORS.gold, color: "white",
-            fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 6,
-          }}>🔥 POPULAR</span>
+            position: "absolute", top: 8, left: story.updated ? 46 : 8,
+            background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "white",
+            fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 8,
+            boxShadow: "0 2px 8px rgba(245,158,11,0.4)"
+          }}>🔥 TOP</span>
         )}
         {story.isAgeRestricted && (
           <span style={{
             position: "absolute", top: story.isPopular || story.updated ? 36 : 8, left: 8,
             background: COLORS.ink, color: "white",
-            fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 6,
+            fontSize: 9, fontWeight: 800, padding: "3px 7px", borderRadius: 6,
             border: "1px solid rgba(255,255,255,0.2)"
           }}>18+</span>
         )}
@@ -126,41 +151,32 @@ function StoryCard({ story, size = "normal" }) {
           <span style={{
             position: "absolute", top: 8, right: 8,
             background: COLORS.gold, color: "white",
-            fontSize: 9, fontWeight: 600, padding: "2px 6px", borderRadius: 6,
+            fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 6,
           }}>NOVEL</span>
         )}
         <div style={{
           position: "absolute", bottom: 0, left: 0, right: 0, height: 60,
-          background: "linear-gradient(to top, rgba(31,36,48,0.7), transparent)",
+          background: "linear-gradient(to top, rgba(15,23,42,0.7), transparent)",
         }} />
         <div style={{
           position: "absolute", bottom: 8, right: 8, display: "flex", gap: 6,
         }}>
           <button onClick={e => { e.stopPropagation(); setBookmarked(!bookmarked); }} style={{
-            background: bookmarked ? COLORS.plum : "rgba(255,255,255,0.85)",
-            border: "none", borderRadius: 6, width: 28, height: 28,
+            background: bookmarked ? (matchedGenre.color || COLORS.plum) : "rgba(255,255,255,0.9)",
+            border: "none", borderRadius: 8, width: 28, height: 28,
             display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", fontSize: 13, color: bookmarked ? "white" : COLORS.ink, transition: "all 0.2s",
+            cursor: "pointer", fontSize: 12, color: bookmarked ? "white" : COLORS.ink, transition: "all 0.2s",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.15)"
           }}>{bookmarked ? "🔖" : "🔖"}</button>
         </div>
       </div>
-      <div style={{ padding: "10px 11px 11px" }}>
-        <div style={{ fontSize: 10, color: COLORS.rose, fontWeight: 600, marginBottom: 3, letterSpacing: 0.4 }}>{story.genre}</div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.ink, marginBottom: 5, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{story.title}</div>
+      <div style={{ padding: "11px 12px 12px" }}>
+        <div style={{ fontSize: 10, color: matchedGenre.color || COLORS.rose, fontWeight: 800, marginBottom: 3, letterSpacing: 0.5, textTransform: "uppercase" }}>{story.genre}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink, marginBottom: 6, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{story.title}</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontSize: 11, color: COLORS.mutedLight }}>👁 {story.views}</span>
-          <span style={{ fontSize: 11, color: COLORS.gold }}>⭐ {story.rating}</span>
+          <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 500 }}>👁 {story.views}</span>
+          <span style={{ fontSize: 11, color: COLORS.gold, fontWeight: 700 }}>⭐ {formatRating(story.rating)}</span>
         </div>
-        {story.mood && (
-          <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
-            {story.mood.slice(0, 2).map(m => (
-              <span key={m} style={{
-                fontSize: 10, padding: "2px 7px", borderRadius: 10,
-                background: COLORS.plumLight, color: COLORS.plum, fontWeight: 500,
-              }}>{m}</span>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -223,6 +239,7 @@ function SectionHeader({ title, viewAll, sub, target }) {
 
 function ToonVaultHome() {
   const navigate = useNavigate();
+  const [themeMode, setThemeMode] = useState(() => localStorage.getItem("theme_mode") || "light");
   const [activeDay, setActiveDay] = useState("Mon");
   const [activeGenre, setActiveGenre] = useState("all");
   const [activeCategoryTab, setActiveCategoryTab] = useState("All");
@@ -247,6 +264,60 @@ function ToonVaultHome() {
     show_creator_popup: "true"
   });
   const searchRef = useRef(null);
+
+  const toggleTheme = () => {
+    const nextMode = themeMode === "dark" ? "light" : "dark";
+    setThemeMode(nextMode);
+    localStorage.setItem("theme_mode", nextMode);
+  };
+
+  const isDark = themeMode === "dark";
+
+  const COLORS = isDark ? {
+    bg: "#07060E",
+    card: "#121020",
+    cardTint: "#1A172E",
+    ink: "#F8FAFC",
+    muted: "#94A3B8",
+    mutedLight: "#64748B",
+    plum: "#7C3AED",
+    plumLight: "rgba(124, 58, 237, 0.2)",
+    plumDark: "#5B21B6",
+    rose: "#F43F5E",
+    roseLight: "rgba(244, 63, 94, 0.2)",
+    cyan: "#06B6D4",
+    cyanLight: "rgba(6, 182, 212, 0.2)",
+    emerald: "#10B981",
+    emeraldLight: "rgba(16, 185, 129, 0.2)",
+    amber: "#F59E0B",
+    amberLight: "rgba(245, 158, 11, 0.2)",
+    gold: "#F59E0B",
+    goldLight: "rgba(245, 158, 11, 0.2)",
+    border: "rgba(255, 255, 255, 0.08)",
+    success: "#10B981",
+  } : {
+    bg: "#FAF8F5",
+    card: "#FFFFFF",
+    cardTint: "#F4EFE6",
+    ink: "#0F172A",
+    muted: "#64748B",
+    mutedLight: "#94A3B8",
+    plum: "#7C3AED",
+    plumLight: "#F3E8FF",
+    plumDark: "#5B21B6",
+    rose: "#F43F5E",
+    roseLight: "#FFE4E6",
+    cyan: "#06B6D4",
+    cyanLight: "#CFFAFE",
+    emerald: "#10B981",
+    emeraldLight: "#D1FAE5",
+    amber: "#F59E0B",
+    amberLight: "#FEF3C7",
+    gold: "#F59E0B",
+    goldLight: "#FEF3C7",
+    border: "#E2E8F0",
+    success: "#10B981",
+  };
   const genreScrollRef = useRef();
 
   const scrollGenres = (dir) => {
@@ -258,18 +329,15 @@ function ToonVaultHome() {
       .then(res => {
         if (Array.isArray(res.data)) {
           const mapped = res.data.map(s => {
-            let cover = s.coverIcon || "📖";
-            if (s.panels && s.panels.length > 0) {
-              cover = s.panels[0];
-            } else if (cover === "✨" || cover === "📖") {
-              // Try to pick a thematic cover if available
-              const genre = String(s.genre || "").toLowerCase();
-              if (genre.includes("romance")) cover = "/covers/romance_cover_1777743324375.png";
-              else if (genre.includes("fantasy")) cover = "/covers/fantasy_cover_1777743338844.png";
-              else if (genre.includes("action")) cover = "/covers/action_cover_1777743352958.png";
-              else if (genre.includes("drama")) cover = "/covers/drama_cover_1777743372879.png";
-              else if (genre.includes("horror")) cover = "/covers/horror_cover_1777743387658.png";
-              else cover = DEFAULT_COVER;
+            let cover = s.coverImage || s.cover || s.image || (s.panels && s.panels.length > 0 && typeof s.panels[0] === 'string' && s.panels[0].startsWith('http') ? s.panels[0] : null);
+            if (!cover) {
+              const title = s.title || "Webtoon Story";
+              const genre = s.genre || "Manhwa";
+              let seed = 0;
+              for (let i = 0; i < title.length; i++) seed = (seed << 5) - seed + title.charCodeAt(i);
+              seed = Math.abs(seed % 1000000);
+              const prompt = `masterpiece Korean manhwa anime webtoon poster cover art, ${title}, ${genre} theme, dynamic cinematic lighting, vivid colors, 8k`;
+              cover = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=768&nologo=true&seed=${seed}`;
             }
 
             return {
@@ -280,7 +348,7 @@ function ToonVaultHome() {
               mood: s.genre ? [s.genre.toLowerCase()] : ["fantasy"],
               day: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][Math.floor(Math.random() * 7)],
               updated: true,
-              rating: s.rating || "4.9",
+              rating: formatRating(s.rating),
               views: s.views > 1000 ? (s.views / 1000).toFixed(1) + "K" : s.views
             };
           });
@@ -442,16 +510,17 @@ function ToonVaultHome() {
           border: 1px solid rgba(255,255,255,0.06);
         }
         .hero-left {
-          flex: 0 0 420px;
-          padding: 40px 42px;
+          flex: 1 1 520px;
+          padding: 36px 40px;
           z-index: 2;
           position: relative;
           display: flex;
           flex-direction: column;
           justify-content: center;
+          min-width: 0;
         }
         .hero-right {
-          flex: 1;
+          flex: 1 1 540px;
           padding: 24px 32px 24px 24px;
           display: flex;
           gap: 16px;
@@ -475,14 +544,14 @@ function ToonVaultHome() {
         }
         .hero-subtitle {
           font-size: 14px;
-          color: rgba(255,255,255,0.55);
-          margin: 0 0 24px;
+          color: rgba(255,255,255,0.65);
+          margin: 0 0 20px;
           line-height: 1.6;
-          max-width: 380px;
+          max-width: 480px;
         }
         .hero-cover {
-          width: 120px;
-          height: 280px;
+          width: 135px;
+          height: 290px;
           flex-shrink: 0;
           border-radius: 14px;
           box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.07);
@@ -500,9 +569,11 @@ function ToonVaultHome() {
         }
         .hero-cta-row {
           display: flex;
-          gap: 10px;
-          flex-wrap: wrap;
-          margin-bottom: 12px;
+          flex-direction: row;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: nowrap;
+          margin-bottom: 16px;
         }
         .hero-btn-primary {
           padding: 12px 24px;
@@ -627,17 +698,9 @@ function ToonVaultHome() {
         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 32, flexShrink: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => navigate("/")}>
-              <div style={{ width: 32, height: 32, borderRadius: 10, background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, boxShadow: "0 4px 12px rgba(109,74,232,0.2)" }}>📖</div>
-              <span style={{ fontSize: 20, fontWeight: 800, color: COLORS.ink, letterSpacing: -0.5 }}>
-                {settings.site_name.includes(" ") ? (
-                  <>
-                    {settings.site_name.split(" ")[0]}<span style={{ color: COLORS.rose }}>{settings.site_name.split(" ").slice(1).join(" ")}</span>
-                  </>
-                ) : (
-                  <>
-                    {settings.site_name.slice(0, 4)}<span style={{ color: COLORS.rose }}>{settings.site_name.slice(4)}</span>
-                  </>
-                )}
+              <img src="/logo.svg" style={{ width: 34, height: 34, filter: "drop-shadow(0 4px 12px rgba(139,92,246,0.4))" }} alt="ToonVault Logo" />
+              <span style={{ fontSize: 20, fontWeight: 900, color: COLORS.ink, letterSpacing: -0.5 }}>
+                Toon<span style={{ color: "#F43F5E" }}>Vault</span>
               </span>
             </div>
           </div>
@@ -728,7 +791,7 @@ function ToonVaultHome() {
                               <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.ink }}>{s.title}</div>
                               <div style={{ fontSize: 11, color: COLORS.muted }}>{s.genre}</div>
                             </div>
-                            <div style={{ fontSize: 12, color: COLORS.gold }}>⭐ {s.rating || "4.8"}</div>
+                            <div style={{ fontSize: 12, color: COLORS.gold }}>⭐ {formatRating(s.rating)}</div>
                           </div>
                         ))
                       ) : (
@@ -751,6 +814,28 @@ function ToonVaultHome() {
                 </button>
               )}
             </div>
+
+            <button
+              onClick={toggleTheme}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              style={{
+                padding: "7px 14px",
+                borderRadius: 20,
+                border: `1px solid ${COLORS.border}`,
+                background: isDark ? "rgba(255,255,255,0.06)" : "#FFFFFF",
+                color: COLORS.ink,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                boxShadow: isDark ? "none" : "0 2px 8px rgba(0,0,0,0.08)",
+                transition: "all 0.2s"
+              }}
+            >
+              <span>{isDark ? "☀️ Light" : "🌙 Dark"}</span>
+            </button>
 
             <button className="desktop-only" onClick={() => navigate(isLoggedIn ? '/dashboard' : '/user')} style={{
               padding: "9px 18px", border: `1.5px solid ${COLORS.plum}`,
@@ -805,19 +890,47 @@ function ToonVaultHome() {
 
         <div style={{ borderTop: `1px solid ${COLORS.border}`, position: "relative", display: "flex", alignItems: "center", maxWidth: 1280, margin: "0 auto", width: "100%" }}>
           <button onClick={() => scrollGenres(-1)} style={{ position: "absolute", left: 4, zIndex: 10, width: 32, height: 32, border: "none", borderRadius: "50%", background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, boxShadow: "0 4px 8px rgba(109,74,232,0.3)", cursor: "pointer", fontSize: 20, color: "white", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s" }}>{"<"}</button>
-          <div ref={genreScrollRef} style={{ display: "flex", gap: 6, padding: "8px 40px", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", width: "100%" }}>
-            {GENRES.map(g => (
-              <button key={g.id} onClick={() => navigate(`/browse?genre=${g.id === 'all' ? 'all' : g.label}`)} style={{
-                padding: "5px 14px", borderRadius: 20,
-                background: activeGenre === g.id ? COLORS.plum : COLORS.card,
-                color: activeGenre === g.id ? "white" : COLORS.muted,
-                fontSize: 12, fontWeight: 500, cursor: "pointer",
-                whiteSpace: "nowrap", transition: "all 0.18s", flexShrink: 0,
-                border: activeGenre === g.id ? "none" : `1px solid ${COLORS.border}`,
-              }}>
-                {g.emoji} {g.label}
-              </button>
-            ))}
+          <div ref={genreScrollRef} style={{ display: "flex", gap: 8, padding: "10px 42px", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", width: "100%" }}>
+            {GENRES.map(g => {
+              const isActive = activeGenre === g.id;
+              return (
+                <button
+                  key={g.id}
+                  onClick={() => navigate(`/browse?genre=${g.id === 'all' ? 'all' : g.label}`)}
+                  style={{
+                    padding: "6px 16px",
+                    borderRadius: 20,
+                    background: isActive ? (g.bg || COLORS.plum) : COLORS.card,
+                    color: isActive ? "white" : COLORS.ink,
+                    fontSize: 12,
+                    fontWeight: isActive ? 700 : 600,
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    transition: "all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    flexShrink: 0,
+                    border: isActive ? "none" : `1px solid ${COLORS.border}`,
+                    boxShadow: isActive ? `0 4px 14px ${g.color || COLORS.plum}45` : "0 1px 3px rgba(0,0,0,0.04)",
+                    transform: isActive ? "scale(1.04)" : "scale(1)"
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.borderColor = g.color || COLORS.plum;
+                      e.currentTarget.style.color = g.color || COLORS.plum;
+                      e.currentTarget.style.transform = "translateY(-1px)";
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.borderColor = COLORS.border;
+                      e.currentTarget.style.color = COLORS.ink;
+                      e.currentTarget.style.transform = "none";
+                    }
+                  }}
+                >
+                  {g.emoji} {g.label}
+                </button>
+              );
+            })}
           </div>
           <button onClick={() => scrollGenres(1)} style={{ position: "absolute", right: 4, zIndex: 10, width: 32, height: 32, border: "none", borderRadius: "50%", background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, boxShadow: "0 4px 8px rgba(109,74,232,0.3)", cursor: "pointer", fontSize: 20, color: "white", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s" }}>{">"}</button>
         </div>
@@ -825,22 +938,29 @@ function ToonVaultHome() {
 
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px" }}>
 
-        {/* ═══ HERO ═══ */}
-        <div style={{ padding: "28px 0 40px" }}>
-          <div className="hero-container">
+        {/* ═══ HERO REDESIGN ═══ */}
+        <div style={{ padding: "24px 0 36px" }}>
+          <div className="hero-container" style={{
+            borderRadius: 24,
+            background: "linear-gradient(135deg, #0d0b18 0%, #17112e 50%, #24123c 100%)",
+            border: "1px solid rgba(167, 139, 250, 0.22)",
+            boxShadow: "0 25px 70px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1)",
+            position: "relative",
+            overflow: "hidden"
+          }}>
 
-            {/* Ambient glow blobs */}
-            <div style={{ position: "absolute", left: -80, top: -80, width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(109,74,232,0.22) 0%, transparent 65%)", zIndex: 0, pointerEvents: "none" }} />
-            <div style={{ position: "absolute", right: 60, bottom: -100, width: 420, height: 420, borderRadius: "50%", background: "radial-gradient(circle, rgba(236,72,153,0.15) 0%, transparent 65%)", zIndex: 0, pointerEvents: "none" }} />
-            <div style={{ position: "absolute", right: -40, top: -40, width: 280, height: 280, borderRadius: "50%", background: "radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%)", zIndex: 0, pointerEvents: "none" }} />
+            {/* Ambient background glows */}
+            <div style={{ position: "absolute", left: -100, top: -100, width: 550, height: 550, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.28) 0%, transparent 65%)", zIndex: 0, pointerEvents: "none" }} />
+            <div style={{ position: "absolute", right: 80, bottom: -120, width: 480, height: 480, borderRadius: "50%", background: "radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 65%)", zIndex: 0, pointerEvents: "none" }} />
+            <div style={{ position: "absolute", right: -50, top: -50, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)", zIndex: 0, pointerEvents: "none" }} />
 
             {/* LEFT PANEL */}
             <div className="hero-left">
 
               {/* Eyebrow badge */}
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(109,74,232,0.15)", border: "1px solid rgba(109,74,232,0.35)", borderRadius: 100, padding: "5px 14px", marginBottom: 24, width: "fit-content" }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#a78bfa", animation: "heroPulse 2.4s ease-in-out infinite" }} />
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#c4b5fd", letterSpacing: 1.5, textTransform: "uppercase" }}>Interactive Storytelling</span>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(124,58,237,0.18)", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 100, padding: "6px 16px", marginBottom: 20, width: "fit-content", boxShadow: "0 4px 14px rgba(124,58,237,0.2)" }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#a78bfa", animation: "heroPulse 2s ease-in-out infinite" }} />
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#e9d5ff", letterSpacing: 1.5, textTransform: "uppercase" }}>✨ AI Interactive Webtoon Studio</span>
               </div>
 
               {/* Headline */}
@@ -848,7 +968,7 @@ function ToonVaultHome() {
                 Unlock what<br />
                 happens{" "}
                 <span style={{
-                  backgroundImage: "linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)",
+                  backgroundImage: "linear-gradient(135deg, #c084fc 0%, #f43f5e 50%, #fbbf24 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   fontStyle: "italic",
@@ -857,9 +977,9 @@ function ToonVaultHome() {
 
               {/* Subtitle */}
               <p className="hero-subtitle">
-                Read visual stories shaped by{" "}
-                <strong style={{ color: "rgba(255,255,255,0.85)", fontWeight: 700 }}>your choices</strong>.
-                {" "}Choose the next scene, follow rising storylines, or write your own chapter.
+                Read immersive visual webtoons shaped by{" "}
+                <strong style={{ color: "#ffffff", fontWeight: 700 }}>your choices</strong>.
+                {" "}Vote on branching scenes, shape community plotlines, or prompt your own chapter.
               </p>
 
               {/* CTA buttons */}
@@ -868,20 +988,45 @@ function ToonVaultHome() {
                   id="hero-start-reading"
                   className="hero-btn-primary"
                   onClick={() => navigate('/browse')}
+                  style={{
+                    padding: "13px 26px",
+                    background: "linear-gradient(135deg, #8b5cf6, #6d28d9)",
+                    boxShadow: "0 8px 24px rgba(139,92,246,0.45)",
+                  }}
                 >
                   <span>▶</span> Start Reading
                 </button>
                 <button
-                  className="hero-btn-primary" 
+                  className="hero-btn-secondary" 
                   onClick={handleWriteStoryClick}
+                  style={{
+                    padding: "13px 22px",
+                    background: "rgba(255,255,255,0.08)",
+                    borderColor: "rgba(255,255,255,0.25)",
+                  }}
                 >
-                  ✍️ Write a Story
+                  ✨ Prompt a Story
                 </button>
               </div>
 
+              {/* Stat Counters Row */}
+              <div style={{ display: "flex", gap: 20, margin: "18px 0 20px", flexWrap: "wrap" }}>
+                {[
+                  { num: "10K+", label: "Active Readers" },
+                  { num: "500+", label: "Original Webtoons" },
+                  { num: "50+", label: "Creators" },
+                  { num: "100+", label: "Genres" },
+                ].map((st, i) => (
+                  <div key={i}>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: "#C084FC", letterSpacing: -0.5 }}>{st.num}</div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>{st.label}</div>
+                  </div>
+                ))}
+              </div>
+
               {/* Money micro-note */}
-              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.28)", margin: "0 0 28px", fontStyle: "italic" }}>
-                💡 Write a story readers love — and you might earn from it.
+              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", margin: "0 0 20px", display: "flex", alignItems: "center", gap: 5 }}>
+                <span>💡</span> <span>Create stories readers love & earn ToonCoins & rewards.</span>
               </p>
 
               {/* Feature pills */}
@@ -889,14 +1034,14 @@ function ToonVaultHome() {
                 {[
                   { icon: "📖", label: "Choose", sub: "next scene" },
                   { icon: "📈", label: "Follow", sub: "storylines" },
-                  { icon: "✏️", label: "Create", sub: "your chapter" },
-                  { icon: "🧰", label: "Collect", sub: "in Vault" },
+                  { icon: "⚡", label: "Instant AI", sub: "panel art" },
+                  { icon: "🧰", label: "Vault", sub: "bookmarks" },
                 ].map((f, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ width: 32, height: 32, borderRadius: 9, background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15 }}>{f.icon}</div>
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,0.04)", padding: "6px 12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(139,92,246,0.25)", color: "#c4b5fd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{f.icon}</div>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.8)", lineHeight: 1.2 }}>{f.label}</div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>{f.sub}</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.9)", lineHeight: 1.2 }}>{f.label}</div>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>{f.sub}</div>
                     </div>
                   </div>
                 ))}
@@ -909,94 +1054,145 @@ function ToonVaultHome() {
             {/* RIGHT PANEL */}
             <div className="hero-right">
 
-              {/* Story cover image */}
+              {/* Story cover image card */}
               <div
                 className="hero-cover"
                 style={{
-                  background: (typeof featured.cover === 'string' && (featured.cover.startsWith('http') || featured.cover.startsWith('/')))
-                    ? `url(${featured.cover.includes("/src/assets/") ? featured.cover.replace("/src/assets/", "/covers/") : featured.cover}) top center / cover no-repeat`
-                    : `url(${DEFAULT_COVER}) center center / cover no-repeat`,
+                  width: 150,
+                  height: 300,
+                  borderRadius: 18,
+                  position: "relative",
+                  overflow: "hidden",
+                  boxShadow: "0 20px 45px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.15)",
+                  cursor: "pointer",
+                  flexShrink: 0
                 }}
+                onClick={() => navigate(featured._id ? `/story/${featured._id}` : '/browse')}
               >
-                {(!featured.cover || (typeof featured.cover === 'string' && !featured.cover.startsWith('http') && !featured.cover.startsWith('/'))) && (
-                  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, background: "rgba(0,0,0,0.5)", color: "white" }}>
-                    {featured.cover || "✨"}
-                  </div>
-                )}
+                <StoryImage
+                  src={featured.cover || featured.coverImage || featured.image || (featured.panels && featured.panels[0])}
+                  alt={featured.title || "Webtoon Story"}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+
+                <div style={{
+                  position: "absolute", top: 10, left: 10,
+                  background: "rgba(15, 13, 30, 0.85)", backdropFilter: "blur(6px)",
+                  color: "#F59E0B", fontSize: 11, fontWeight: 800, padding: "4px 10px", borderRadius: 10,
+                  border: "1px solid rgba(245,158,11,0.35)",
+                  display: "flex", alignItems: "center", gap: 4,
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.5)"
+                }}>⭐ {formatRating(featured.rating)}</div>
+                
+                <div style={{
+                  position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 10px 10px",
+                  background: "linear-gradient(to top, rgba(13,11,24,0.95) 20%, rgba(13,11,24,0.5) 60%, transparent)",
+                }}>
+                  <div style={{ fontSize: 10, color: "#c4b5fd", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>{featured.genre || "Featured"}</div>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: "white", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 2 }}>{featured.title || "Original Story"}</div>
+                </div>
               </div>
 
               {/* Choice cards column */}
               <div className="hero-choices">
 
-                {/* Column label */}
-                <div style={{ marginBottom: 4 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", letterSpacing: 1.5, textTransform: "uppercase" }}>Where will you take the story?</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.7)", marginTop: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {/* Column header */}
+                <div style={{ marginBottom: 6 }}>
+                  <div style={{ fontSize: 10, fontWeight: 800, color: "#a78bfa", letterSpacing: 1.5, textTransform: "uppercase" }}>🔥 WHERE WILL YOU TAKE THE STORY?</div>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: "white", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {featured.title || "ToonVault Originals"}
                   </div>
                 </div>
 
                 {/* A/B/C choices */}
                 {[
-                  { id: "A", title: "Follow the Whisper",  desc: "Uncover the hidden truth before it's too late.",  tags: ["Romance", "Mystery"],    color: "#7c3aed", votes: 62, popular: true },
-                  { id: "B", title: "Trust the Stranger",  desc: "Take the risk and step into the unknown.",          tags: ["Drama",   "Suspense"],   color: "#e8336d", votes: 45 },
-                  { id: "C", title: "Leave It Behind",     desc: "Walk away — before it changes everything.",        tags: ["Adventure","Fantasy"],  color: "#10b981", votes: 33 },
+                  { id: "A", title: "Follow the Whisper", desc: "Uncover the hidden truth before it's too late.", tags: ["Romance", "Mystery"], color: "#8b5cf6", votes: 62, popular: true },
+                  { id: "B", title: "Trust the Stranger", desc: "Take the risk and step into the unknown.", tags: ["Drama", "Suspense"], color: "#ec4899", votes: 45 },
+                  { id: "C", title: "Leave It Behind", desc: "Walk away — before it changes everything.", tags: ["Adventure", "Fantasy"], color: "#10b981", votes: 33 },
                 ].map(c => (
                   <div
                     key={c.id}
                     id={`hero-choice-${c.id.toLowerCase()}`}
                     className="hero-choice-card"
-                    style={{ border: `1px solid ${c.color}30` }}
+                    style={{
+                      border: `1px solid ${c.color}40`,
+                      background: "rgba(255,255,255,0.04)",
+                      padding: "11px 13px",
+                      borderRadius: 14,
+                    }}
                     onClick={() => navigate('/browse')}
                     onMouseEnter={e => {
-                      e.currentTarget.style.background = `${c.color}18`;
-                      e.currentTarget.style.borderColor = `${c.color}60`;
-                      e.currentTarget.style.transform = "translateX(4px)";
+                      e.currentTarget.style.background = `${c.color}20`;
+                      e.currentTarget.style.borderColor = `${c.color}80`;
+                      e.currentTarget.style.transform = "translateX(5px)";
+                      e.currentTarget.style.boxShadow = `0 4px 16px ${c.color}35`;
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = "rgba(255,255,255,0.035)";
-                      e.currentTarget.style.borderColor = `${c.color}30`;
+                      e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                      e.currentTarget.style.borderColor = `${c.color}40`;
                       e.currentTarget.style.transform = "none";
+                      e.currentTarget.style.boxShadow = "none";
                     }}
                   >
                     {c.popular && (
-                      <div style={{ position: "absolute", top: 0, right: 0, background: "#d79a2b", color: "white", fontSize: 8, fontWeight: 900, padding: "2px 8px", borderBottomLeftRadius: 8, letterSpacing: 0.8 }}>POPULAR</div>
+                      <div style={{ position: "absolute", top: 0, right: 0, background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "white", fontSize: 8, fontWeight: 900, padding: "3px 9px", borderBottomLeftRadius: 10, letterSpacing: 0.8, boxShadow: "0 2px 8px rgba(245,158,11,0.3)" }}>TOP CHOICE</div>
                     )}
-                    <div style={{ width: 26, height: 26, borderRadius: 8, background: c.color, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 12, flexShrink: 0, boxShadow: `0 4px 10px ${c.color}55` }}>{c.id}</div>
+                    <div style={{ width: 28, height: 28, borderRadius: 9, background: c.color, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, flexShrink: 0, boxShadow: `0 4px 12px ${c.color}60` }}>{c.id}</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 800, color: "white", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title}</div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 6, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
-                      {/* Vote bar */}
-                      <div style={{ height: 3, borderRadius: 4, background: "rgba(255,255,255,0.07)", overflow: "hidden" }}>
-                        <div style={{ width: `${c.votes}%`, height: "100%", borderRadius: 4, background: `linear-gradient(90deg, ${c.color}, ${c.color}99)` }} />
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+                        <div style={{ fontSize: 12, fontWeight: 800, color: "white", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title}</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: c.color, marginLeft: 6 }}>{c.votes}%</div>
                       </div>
-                      <div style={{ display: "flex", gap: 5, marginTop: 6, flexWrap: "wrap" }}>
-                        {c.tags.map(tag => (
-                          <span key={tag} style={{ fontSize: 9, fontWeight: 600, background: `${c.color}22`, color: c.color, padding: "2px 7px", borderRadius: 6 }}>{tag}</span>
-                        ))}
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 6, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
+                      {/* Vote progress bar */}
+                      <div style={{ height: 4, borderRadius: 4, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                        <div style={{ width: `${c.votes}%`, height: "100%", borderRadius: 4, background: `linear-gradient(90deg, ${c.color}, #ffffff)` }} />
                       </div>
                     </div>
-                    <div style={{ fontSize: 14, color: "rgba(255,255,255,0.25)", alignSelf: "center", flexShrink: 0 }}>›</div>
+                    <div style={{ fontSize: 15, color: "rgba(255,255,255,0.4)", alignSelf: "center", flexShrink: 0, marginLeft: 4 }}>›</div>
                   </div>
                 ))}
 
-                {/* D — Write Your Own (FUNCTIONAL) */}
+                {/* D — Write Your Own Twist Box */}
                 <div
                   id="hero-write-own"
                   style={{
                     padding: "12px 14px",
-                    borderRadius: 14,
-                    background: "linear-gradient(135deg, rgba(109,74,232,0.1), rgba(109,74,232,0.04))",
-                    border: "1px dashed rgba(109,74,232,0.45)",
+                    borderRadius: 16,
+                    background: "linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.08))",
+                    border: "1px dashed rgba(167,139,250,0.5)",
+                    boxShadow: "0 4px 16px rgba(124,58,237,0.15)"
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <div style={{ width: 26, height: 26, borderRadius: 8, background: "rgba(109,74,232,0.25)", color: "#c4b5fd", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 12, flexShrink: 0 }}>D</div>
+                    <div style={{ width: 28, height: 28, borderRadius: 9, background: "linear-gradient(135deg, #a78bfa, #ec4899)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, flexShrink: 0 }}>D</div>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 800, color: "#c4b5fd" }}>Write Your Own Story</div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)" }}>Create your own twist — you decide what happens next.</div>
+                      <div style={{ fontSize: 12, fontWeight: 800, color: "#e9d5ff" }}>Write Your Own Twist</div>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Prompt any plot twist & AI generates the next scene.</div>
                     </div>
                   </div>
+
+                  {/* Quick suggestion chips */}
+                  <div style={{ display: "flex", gap: 5, marginBottom: 8, flexWrap: "wrap" }}>
+                    {[
+                      { emoji: "⚡", label: "Time Travel Twist" },
+                      { emoji: "💕", label: "Secret Confession" },
+                      { emoji: "🔥", label: "Power Awakening" },
+                    ].map(chip => (
+                      <button
+                        key={chip.label}
+                        onClick={() => setAiPrompt(`${chip.label} in the next episode`)}
+                        style={{
+                          fontSize: 10, fontWeight: 600, color: "#ddd6fe",
+                          background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
+                          padding: "3px 8px", borderRadius: 8, cursor: "pointer", transition: "all 0.2s"
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = "rgba(139,92,246,0.3)"}
+                        onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
+                      >{chip.emoji} {chip.label}</button>
+                    ))}
+                  </div>
+
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <input
                       id="hero-prompt-input"
@@ -1004,24 +1200,31 @@ function ToonVaultHome() {
                       value={aiPrompt}
                       onChange={e => setAiPrompt(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter') handleWriteStoryClick(); }}
-                      placeholder="Type your story idea..."
+                      placeholder="e.g. The protagonist reveals a hidden superpower..."
                       className="hero-prompt-input"
+                      style={{
+                        padding: "10px 14px",
+                        borderRadius: 10,
+                        background: "rgba(0,0,0,0.35)",
+                        border: "1px solid rgba(167,139,250,0.5)",
+                        fontSize: 12,
+                      }}
                     />
                     <button
                       id="hero-prompt-submit"
                       onClick={handleWriteStoryClick}
                       style={{
-                        width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                        background: "linear-gradient(135deg, #7c3aed, #6d28d9)",
+                        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+                        background: "linear-gradient(135deg, #8b5cf6, #ec4899)",
                         border: "none", color: "white", cursor: "pointer",
                         display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 15, transition: "transform 0.15s",
-                        boxShadow: "0 4px 12px rgba(109,74,232,0.5)",
+                        fontSize: 16, transition: "transform 0.2s, box-shadow 0.2s",
+                        boxShadow: "0 6px 18px rgba(139,92,246,0.5)",
                         fontFamily: "inherit",
                       }}
-                      onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
-                      onMouseLeave={e => e.currentTarget.style.transform = "none"}
-                    >✏️</button>
+                      onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.boxShadow = "0 8px 22px rgba(236,72,153,0.6)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 6px 18px rgba(139,92,246,0.5)"; }}
+                    >✨</button>
                   </div>
                 </div>
               </div>
@@ -1049,33 +1252,122 @@ function ToonVaultHome() {
           ))}
         </div>
 
-        {/* ═══ TRENDING & POPULAR ═══ */}
+        {/* ═══ FEATURED THIS WEEK & NEWSLETTER ═══ */}
         <section style={{ marginBottom: 44 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18, flexWrap: "wrap" }}>
-            <h2 className="section-title" style={{ fontSize: 20, fontWeight: 700, color: COLORS.ink, margin: 0 }}>🔥 Trending & Popular</h2>
-            {["Trending", "Popular", "New"].map(tab => (
-              <button key={tab} 
-                onClick={() => setActiveTrendingTab(tab)}
-                style={{
-                  padding: "5px 14px", border: `1px solid ${COLORS.border}`,
-                  background: activeTrendingTab === tab ? COLORS.plum : COLORS.card,
-                  color: activeTrendingTab === tab ? "white" : COLORS.muted,
-                  borderRadius: 16, fontSize: 12, fontWeight: 500, cursor: "pointer",
-                  transition: "all 0.2s"
-                }}>{tab}</button>
-            ))}
-            <button 
-              onClick={() => navigate('/browse')}
-              style={{ marginLeft: "auto", fontSize: 13, color: COLORS.plum, fontWeight: 600, background: "none", border: "none", cursor: "pointer" }}
-            >View all →</button>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 800, color: "white", display: "flex", alignItems: "center", gap: 8 }}>
+              🔥 Featured This Week
+            </h2>
+            <button onClick={() => navigate('/browse')} style={{ fontSize: 12, fontWeight: 700, color: "#A78BFA", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", padding: "6px 14px", borderRadius: 20, cursor: "pointer" }}>
+              View All
+            </button>
           </div>
-          <HorizontalScroll>
-            {liveStories.filter(s => {
-              if (activeTrendingTab === "New") return s.badge === "NEW" || true; // Just a mock for now
-              if (activeTrendingTab === "Popular") return parseFloat(s.rating) > 4.5;
-              return true; // Trending as default
-            }).slice(0, 10).map(s => <StoryCard key={s.id} story={s} size="large" />)}
-          </HorizontalScroll>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 20 }}>
+            {/* Grid of 6 Webtoon Poster Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 14 }}>
+              {liveStories.slice(0, 6).map((s, i) => {
+                const mockChapters = [24, 18, 32, 15, 27, 10];
+                const chapterNum = mockChapters[i % mockChapters.length];
+                return (
+                  <div
+                    key={s.id}
+                    onClick={() => navigate(`/story/${s.id}`)}
+                    style={{
+                      borderRadius: 16,
+                      overflow: "hidden",
+                      background: "rgba(255,255,255,0.03)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      cursor: "pointer",
+                      position: "relative",
+                      transition: "transform 0.25s, box-shadow 0.25s"
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = "translateY(-4px)";
+                      e.currentTarget.style.boxShadow = "0 12px 30px rgba(124,58,237,0.3)";
+                      e.currentTarget.style.borderColor = "rgba(167,139,250,0.4)";
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = "none";
+                      e.currentTarget.style.boxShadow = "none";
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                    }}
+                  >
+                    <div style={{ width: "100%", height: 210, position: "relative", overflow: "hidden" }}>
+                      <StoryImage
+                        src={s.cover}
+                        alt={s.title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                      <div style={{
+                        position: "absolute", top: 8, left: 8,
+                        background: "rgba(15, 13, 30, 0.8)", backdropFilter: "blur(6px)",
+                        color: "#E9D5FF", fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 8,
+                        border: "1px solid rgba(255,255,255,0.15)", textTransform: "capitalize"
+                      }}>
+                        {s.genre || "Webtoon"}
+                      </div>
+                    </div>
+
+                    <div style={{ padding: "10px 12px 12px" }}>
+                      <div style={{ fontSize: 12, fontWeight: 800, color: "white", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: 6 }}>
+                        {s.title}
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 11, color: "rgba(255,255,255,0.5)" }}>
+                        <span>Chapter {chapterNum}</span>
+                        <span style={{ color: "#F59E0B", fontWeight: 700 }}>⭐ {formatRating(s.rating)}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Newsletter Card ("Stay in the loop") */}
+            <div style={{
+              background: "linear-gradient(135deg, rgba(13,11,24,0.95), rgba(26,17,46,0.95))",
+              borderRadius: 20,
+              border: "1px solid rgba(167,139,250,0.25)",
+              padding: "24px 20px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between"
+            }}>
+              <div>
+                <h3 style={{ fontSize: 18, fontWeight: 800, color: "white", marginBottom: 6 }}>Stay in the loop</h3>
+                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5, marginBottom: 18 }}>
+                  Get updates on new releases, events, and exclusive content.
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    style={{
+                      width: "100%", padding: "11px 14px", borderRadius: 10,
+                      background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.12)",
+                      color: "white", fontSize: 12, outline: "none"
+                    }}
+                  />
+                  <button style={{
+                    width: "100%", padding: "11px", borderRadius: 10, border: "none",
+                    background: "linear-gradient(135deg, #7C3AED, #F43F5E)",
+                    color: "white", fontWeight: 800, fontSize: 12, cursor: "pointer",
+                    boxShadow: "0 6px 18px rgba(244,63,94,0.35)"
+                  }}>Subscribe</button>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>Join 5,000+ readers</div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  {["👤", "🧑", "👩"].map((av, i) => (
+                    <div key={i} style={{ width: 22, height: 22, borderRadius: "50%", background: "#7C3AED", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, border: "2px solid #0D0B18", marginLeft: i > 0 ? -6 : 0 }}>{av}</div>
+                  ))}
+                  <div style={{ fontSize: 9, fontWeight: 800, background: "rgba(255,255,255,0.12)", color: "white", padding: "2px 5px", borderRadius: 8, marginLeft: 5 }}>+5K</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* ═══ POPULAR BY CATEGORY ═══ */}
@@ -1156,7 +1448,7 @@ function ToonVaultHome() {
                   <div style={{ fontSize: 12, color: COLORS.muted, marginBottom: 8, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{s.description}</div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: COLORS.mutedLight }}>
                     <span>👁 {s.views}</span>
-                    <span>⭐ {s.rating}</span>
+                    <span>⭐ {formatRating(s.rating)}</span>
                   </div>
                 </div>
               </div>

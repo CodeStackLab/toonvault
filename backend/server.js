@@ -18,13 +18,14 @@ const Payment = require('./models/Payment');
 const Setting = require('./models/Setting');
 const redis = require('./redisClient');
 
-// Setup Daily Automation Job (Runs at 00:00 Every Day)
-cron.schedule('0 0 * * *', () => {
-    console.log('⏰ Triggering Daily Webtoon Generation Cron Job...');
-    runDailyTasks();
-});
+// Daily Automation Job disabled per user request (User-driven generation mode active)
+// cron.schedule('0 0 * * *', () => {
+//     console.log('⏰ Triggering Daily Webtoon Generation Cron Job...');
+//     runDailyTasks();
+// });
 
 const app = express();
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 

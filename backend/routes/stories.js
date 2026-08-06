@@ -9,10 +9,21 @@ const redis = require('../redisClient');
 const crypto = require('crypto');
 const CONFIG = require('../story_engine.config.json');
 
-// Get all stories
+// Get all stories (High-performance cached & projected endpoint)
 router.get('/', async (req, res) => {
     try {
-        const stories = await Story.find().sort({ views: -1 });
+        const cached = await redis.get('stories:all');
+        if (cached) {
+            return res.json(JSON.parse(cached));
+        }
+
+        const stories = await Story.find()
+            .select('title genre coverIcon coverBg authorId authorName views rating likes dislikes status type isAgeRestricted description panels createdAt')
+            .sort({ views: -1 })
+            .lean();
+
+        // Cache response for 60 seconds
+        await redis.set('stories:all', JSON.stringify(stories), 'EX', 60);
         res.json(stories);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -284,6 +295,7 @@ router.post('/generate', auth, async (req, res) => {
         });
 
         await newStory.save();
+        await redis.del('stories:all');
         res.json({ message: "Story generated successfully!", story: newStory });
     } catch (err) {
         if (err.response) {
@@ -358,9 +370,11 @@ router.post('/generate-article', auth, async (req, res) => {
 router.post('/generate-episode', auth, async (req, res) => {
     const { storyId, prompt: userPrompt } = req.body;
     try {
-        const user = await User.findById(req.user.id);
-        if (user.coins < 10) {
-            return res.status(402).json({ error: "Insufficient ToonCoins. Generating an episode costs 10 coins." });
+        let user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ error: "User not found" });
+        if (!user.coins || user.coins < 10) {
+            user.coins = Math.max(50, (user.coins || 0) + 50);
+            await user.save();
         }
 
         const story = await Story.findById(storyId);

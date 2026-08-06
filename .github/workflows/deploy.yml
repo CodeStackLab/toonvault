@@ -1,0 +1,46 @@
+name: ToonVault Auto Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Production VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: SSH and Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            echo "🚀 Starting Automated Deployment..."
+            
+            cd /root/toonvault
+            
+            echo "📥 Pulling latest code from GitHub..."
+            git pull origin main
+            
+            echo "🏗️ Building Frontend Bundle inside Container..."
+            docker exec toonvault-frontend-1 npm run build
+            
+            echo "🔄 Reloading Nginx Proxy..."
+            docker exec toonvault-nginx-1 nginx -t
+            docker exec toonvault-nginx-1 nginx -s reload
+            
+            echo "✅ Verifying site response..."
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://toonvault.com)
+            if [ "$HTTP_CODE" -eq 200 ]; then
+              echo "🎉 Deployment Successful! (HTTP 200 OK)"
+            else
+              echo "❌ Verification Failed with HTTP Status: $HTTP_CODE"
+              exit 1
+            fi

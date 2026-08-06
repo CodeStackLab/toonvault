@@ -70,18 +70,42 @@ const DashboardHub = ({ settings, isMaintenance }) => {
 
 function App() {
   const [settings, setSettings] = React.useState({ site_name: "ToonVault", maintenance_mode: "false" });
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     axios.get('/api/settings/public')
       .then(res => {
         setSettings(prev => ({ ...prev, ...res.data }));
       })
-      .catch(err => console.error("Settings fetch error:", err))
-      .finally(() => setLoading(false));
+      .catch(err => console.error("Settings fetch error:", err));
   }, []);
 
-  if (loading) return null; // Or a splash screen
+  if (loading) {
+    return (
+      <div style={{
+        position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+        background: "#0F0D1E", color: "white", zIndex: 10000,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        fontFamily: "'Inter', sans-serif"
+      }}>
+        <div style={{ position: "relative", width: 80, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div className="tv-loader-spinner"></div>
+          <div style={{ position: "absolute", fontSize: 30, filter: "drop-shadow(0 0 10px rgba(139, 92, 246, 0.8))" }}>✨</div>
+        </div>
+        <h2 style={{
+          marginTop: 20, fontSize: 24, fontWeight: 800,
+          background: "linear-gradient(135deg, #A78BFA 0%, #F43F5E 100%)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          letterSpacing: "1px"
+        }}>
+          ToonVault
+        </h2>
+        <div style={{ width: 140, height: 4, background: "rgba(255,255,255,0.1)", borderRadius: 2, marginTop: 16, overflow: "hidden", position: "relative" }}>
+          <div className="tv-loader-bar"></div>
+        </div>
+      </div>
+    );
+  }
 
   // Maintenance Page Component
   const MaintenancePage = () => (

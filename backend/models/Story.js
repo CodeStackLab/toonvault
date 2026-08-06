@@ -69,4 +69,8 @@ const StorySchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+StorySchema.index({ views: -1 });
+StorySchema.index({ genre: 1 });
+StorySchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Story', StorySchema);

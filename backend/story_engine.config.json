@@ -5,7 +5,7 @@
     "name": "ToonVault Manhwa Engine v1",
     "provider": "Runware AI",
     "model": "runware:100@1",
-    "apiKey": "YOUR_RUNWARE_API_KEY",
+    "apiKey": "3pPwlJnuUrB2N6pqS0vwJ1yqiGlMvEQA",
     "apiEndpoint": "https://api.runware.ai/v1"
   },
 

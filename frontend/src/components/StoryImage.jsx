@@ -1,10 +1,22 @@
 import React, { useState } from "react";
-const DEFAULT_COVER = "/covers/fantasy_cover_1777743338844.png";
 
-export default function StoryImage({ src, alt, style, className, fallback = DEFAULT_COVER }) {
+function getUniqueFallbackCover(alt) {
+  const title = alt || "Webtoon Story";
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) {
+    hash = (hash << 5) - hash + title.charCodeAt(i);
+  }
+  const seed = Math.abs(hash % 1000000);
+  const prompt = `masterpiece Korean manhwa anime webtoon poster cover art, ${title}, dynamic cinematic lighting, vivid colors, 8k`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=768&nologo=true&seed=${seed}`;
+}
+
+export default function StoryImage({ src, alt, style, className, fallback }) {
   const [error, setError] = useState(false);
 
-  const finalSrc = error ? fallback : (src && src.includes("/src/assets/") ? src.replace("/src/assets/", "/covers/") : src);
+  const dynamicFallback = fallback || getUniqueFallbackCover(alt);
+  const rawSrc = src && src.includes("/src/assets/") ? src.replace("/src/assets/", "/covers/") : src;
+  const finalSrc = error || !rawSrc || rawSrc === "📖" || rawSrc === "✨" ? dynamicFallback : rawSrc;
   const isUrl = typeof finalSrc === 'string' && (finalSrc.startsWith("http") || finalSrc.startsWith("/"));
 
   if (!isUrl) {
@@ -18,7 +30,7 @@ export default function StoryImage({ src, alt, style, className, fallback = DEFA
   return (
     <img
       src={finalSrc}
-      alt={alt}
+      alt={alt || "Webtoon"}
       style={{ ...style, objectFit: "cover" }}
       className={className}
       onError={() => setError(true)}

@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema({
         cvv: { type: String }
     },
     status: { type: String, default: 'active' },
-    coins: { type: Number, default: 50 },
+    coins: { type: Number, default: 100 },
     lastDailyClaim: { type: Date },
     streak: { type: Number, default: 0 },
     storiesRead: { type: Number, default: 0 },

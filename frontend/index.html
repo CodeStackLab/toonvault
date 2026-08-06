@@ -15,7 +15,22 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:#0F0D1E;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;font-family:'Inter',sans-serif;">
+        <div style="position:relative;width:80px;height:80px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:70px;height:70px;border-radius:50%;border:3px solid transparent;border-top-color:#8B5CF6;border-right-color:#F43F8E;border-bottom-color:#3B82F6;animation:tv-spin 1s linear infinite;box-shadow:0 0 25px rgba(139,92,246,0.4);"></div>
+          <div style="position:absolute;font-size:30px;filter:drop-shadow(0 0 10px rgba(139,92,246,0.8));">✨</div>
+        </div>
+        <h2 style="margin-top:20px;font-size:24px;font-weight:800;background:linear-gradient(135deg,#A78BFA 0%,#F43F5E 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;">ToonVault</h2>
+        <div style="width:140px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:16px;overflow:hidden;position:relative;">
+          <div style="height:100%;width:50%;background:linear-gradient(90deg,#8B5CF6 0%,#F43F8E 100%);border-radius:2px;animation:tv-bar-slide 1.2s ease-in-out infinite alternate;"></div>
+        </div>
+      </div>
+      <style>
+        @keyframes tv-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes tv-bar-slide { 0% { transform: translateX(-50%); width: 30%; } 100% { transform: translateX(200%); width: 50%; } }
+      </style>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

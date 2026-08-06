@@ -61,3 +61,35 @@ h1, h2, h3 {
     display: none !important;
   }
 }
+
+/* Premium ToonVault Loader Styles */
+.tv-loader-spinner {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: #8B5CF6;
+  border-right-color: #F43F8E;
+  border-bottom-color: #3B82F6;
+  animation: tv-spin 1s linear infinite;
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+}
+
+.tv-loader-bar {
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, #8B5CF6 0%, #F43F8E 50%, #3B82F6 100%);
+  border-radius: 2px;
+  animation: tv-bar-slide 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes tv-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes tv-bar-slide {
+  0% { transform: translateX(-50%); width: 30%; }
+  100% { transform: translateX(200%); width: 50%; }
+}
+
