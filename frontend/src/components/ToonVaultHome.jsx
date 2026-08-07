@@ -266,6 +266,15 @@ export default function ToonVaultHome() {
           }
         }
 
+        @media (max-width: 900px) {
+          .desktop-nav-links {
+            display: none !important;
+          }
+          .desktop-search-bar {
+            width: 130px !important;
+          }
+        }
+
         @media (max-width: 768px) {
           .hero-layout {
             grid-template-columns: 1fr;
@@ -281,32 +290,31 @@ export default function ToonVaultHome() {
       <div style={{ maxWidth: 1340, margin: "0 auto", padding: "16px 20px 0" }}>
         <nav className="glass-card" style={{
           borderRadius: 40,
-          padding: "10px 24px",
+          padding: "10px 20px",
           display: "flex",
           alignItems: "center",
-          justify: "space-between",
+          justifyContent: "space-between",
+          gap: 16,
           boxShadow: "0 10px 30px rgba(220, 170, 230, 0.25)"
         }}>
-          {/* Logo & Tagline */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => navigate("/")}>
+          {/* Brand Logo (Clean & Compact) */}
+          <div 
+            style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", flexShrink: 0 }} 
+            onClick={() => navigate("/")}
+          >
             <div style={{
-              width: 40, height: 40, borderRadius: 14,
-              background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+              width: 38, height: 38, borderRadius: 12,
+              background: "linear-gradient(135deg, #F43F8E 0%, #8B5CF6 100%)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 20, boxShadow: "0 4px 14px rgba(244, 63, 142, 0.4)", color: "white"
-            }}>📖</div>
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 900, color: "#1E1B4B", letterSpacing: "-0.5px", lineHeight: 1.1 }}>
-                Toon<span style={{ color: "#F43F8E" }}>Vault</span>
-              </div>
-              <div style={{ fontSize: 11, color: "#64748B", fontWeight: 500, marginTop: 1 }}>
-                Stories you choose. Worlds you unlock.
-              </div>
+              fontSize: 19, boxShadow: "0 4px 14px rgba(244, 63, 142, 0.35)", color: "white"
+            }}>⚡</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#1E1B4B", letterSpacing: "-0.5px", lineHeight: 1 }}>
+              Toon<span style={{ color: "#F43F8E" }}>Vault</span>
             </div>
           </div>
 
-          {/* Nav Links */}
-          <div className="desktop-only" style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          {/* Nav Links (Spaced cleanly without touching logo or search bar) */}
+          <div className="desktop-nav-links" style={{ display: "flex", alignItems: "center", gap: 22, flexShrink: 0 }}>
             {[
               { label: "Originals", path: "/browse" },
               { label: "Rankings", path: "/browse" },
@@ -320,7 +328,7 @@ export default function ToonVaultHome() {
                 style={{
                   border: "none", background: "none",
                   fontSize: 14, fontWeight: 700, color: "#334155", cursor: "pointer",
-                  transition: "all 0.2s",
+                  transition: "all 0.2s", whiteSpace: "nowrap", padding: 0
                 }}
                 onMouseEnter={e => e.currentTarget.style.color = "#F43F8E"}
                 onMouseLeave={e => e.currentTarget.style.color = "#334155"}
@@ -331,19 +339,20 @@ export default function ToonVaultHome() {
           </div>
 
           {/* Search, Dark mode, Login */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             <div ref={searchRef} style={{ position: "relative" }}>
-              <div style={{
+              <div className="desktop-search-bar" style={{
                 display: "flex", alignItems: "center", gap: 8,
                 background: "rgba(255, 255, 255, 0.85)",
                 border: "1px solid rgba(255, 255, 255, 0.95)",
-                borderRadius: 24, padding: "7px 14px", width: 210,
-                boxShadow: "0 2px 10px rgba(0,0,0,0.04)"
+                borderRadius: 24, padding: "7px 14px", width: 170,
+                boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+                transition: "all 0.2s ease"
               }}>
                 <span style={{ fontSize: 13, color: "#94A3B8" }}>🔍</span>
                 <input 
                   type="text"
-                  placeholder="Search webtoons, genres..."
+                  placeholder="Search webtoons..."
                   value={searchVal}
                   onChange={e => { setSearchVal(e.target.value); setSearchOpen(true); }}
                   onFocus={() => setSearchOpen(true)}
@@ -388,11 +397,12 @@ export default function ToonVaultHome() {
             <button 
               title="Toggle theme"
               style={{
-                width: 38, height: 38, borderRadius: "50%",
+                width: 36, height: 36, borderRadius: "50%",
                 border: "1px solid rgba(255, 255, 255, 0.95)",
                 background: "rgba(255, 255, 255, 0.85)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", fontSize: 15, boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+                cursor: "pointer", fontSize: 14, boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                flexShrink: 0
               }}
             >
               🌙
