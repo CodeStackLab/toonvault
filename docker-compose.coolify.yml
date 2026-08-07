@@ -83,6 +83,12 @@ services:
       - backend
     networks:
       - toonvault_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.toonvault-frontend.rule=Host(`toonvault.com`) || Host(`www.toonvault.com`)"
+      - "traefik.http.routers.toonvault-frontend.entrypoints=http,https"
+      - "traefik.http.routers.toonvault-frontend.tls=true"
+      - "traefik.http.services.toonvault-frontend.loadbalancer.server.port=80"
     # Coolify will expose this container natively on port 80
 
 networks:
