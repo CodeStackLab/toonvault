@@ -297,19 +297,24 @@ export default function ToonVaultHome() {
           gap: 16,
           boxShadow: "0 10px 30px rgba(220, 170, 230, 0.25)"
         }}>
-          {/* Brand Logo (Clean & Compact) */}
+          {/* Brand Logo & Tagline (Exact Reference Match) */}
           <div 
             style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", flexShrink: 0 }} 
             onClick={() => navigate("/")}
           >
             <div style={{
               width: 38, height: 38, borderRadius: 12,
-              background: "linear-gradient(135deg, #F43F8E 0%, #8B5CF6 100%)",
+              background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 19, boxShadow: "0 4px 14px rgba(244, 63, 142, 0.35)", color: "white"
-            }}>⚡</div>
-            <div style={{ fontSize: 22, fontWeight: 900, color: "#1E1B4B", letterSpacing: "-0.5px", lineHeight: 1 }}>
-              Toon<span style={{ color: "#F43F8E" }}>Vault</span>
+              fontSize: 18, boxShadow: "0 4px 14px rgba(244, 63, 142, 0.35)", color: "white"
+            }}>📖</div>
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 900, color: "#1E1B4B", letterSpacing: "-0.5px", lineHeight: 1 }}>
+                Toon<span style={{ color: "#F43F8E" }}>Vault</span>
+              </div>
+              <div style={{ fontSize: 10, color: "#64748B", fontWeight: 500, marginTop: 2, whiteSpace: "nowrap" }}>
+                Stories you choose. Worlds you unlock.
+              </div>
             </div>
           </div>
 
