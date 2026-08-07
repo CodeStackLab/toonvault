@@ -60,6 +60,9 @@ services:
       target: production
     expose:
       - "80"
+      - "3000"
+      - "5000"
+      - "8080"
     restart: always
     volumes:
       - uploads_data:/usr/share/nginx/html/uploads
