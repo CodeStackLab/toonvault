@@ -69,13 +69,18 @@ services:
         condition: service_healthy
     networks:
       - toonvault_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5000/api/stories || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   frontend:
     build:
       context: ./frontend
       target: production
     ports:
-      - "80"
+      - "80:80"
     restart: always
     volumes:
       - uploads_data:/usr/share/nginx/html/uploads
@@ -83,6 +88,11 @@ services:
       - backend
     networks:
       - toonvault_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     # Coolify will expose this container natively on port 80
 
 networks:
