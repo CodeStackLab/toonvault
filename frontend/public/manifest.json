@@ -1,0 +1,42 @@
+{
+  "name": "ToonVault - Interactive Storytelling",
+  "short_name": "ToonVault",
+  "description": "Stories you choose. Worlds you unlock. Interactive webtoon storytelling powered by AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDE8E8",
+  "theme_color": "#F43F8E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/toonvault_icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/toonvault_icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "books", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/toonvault_logo_full.png",
+      "sizes": "300x100",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Stories",
+      "short_name": "Browse",
+      "description": "Explore all webtoons",
+      "url": "/browse",
+      "icons": [{ "src": "/toonvault_icon.png", "sizes": "96x96" }]
+    }
+  ]
+}

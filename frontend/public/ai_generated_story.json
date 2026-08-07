@@ -1,0 +1,99 @@
+{
+  "_id": "the-crowns-secret-vow",
+  "slug": "the-crowns-secret-vow",
+  "title": "The Crown's Secret Vow",
+  "genre": "Romance",
+  "description": "In the opulent world of the royal court, a forbidden love blossoms between a rebellious princess and a humble court musician. When a secret vow from their childhood resurfaces, they must navigate court intrigue, political alliances, and their own hearts to decide whether love can conquer duty. Will their secret vow lead to happiness or ruin?",
+  "authorName": "Mistral + Runware AI",
+  "cover": "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/d242ef87-5766-457b-8596-cecdf9d6c49c.jpg",
+  "panels": [
+    "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/d242ef87-5766-457b-8596-cecdf9d6c49c.jpg",
+    "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/84e22dbb-4f85-4e6d-bbc3-5081a15d5cb5.jpg",
+    "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/34ded247-f35c-4bbc-8c89-7b5412ef5844.jpg",
+    "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/abc3b76e-6753-463c-a410-6aa648e4aef0.jpg",
+    "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/54aa19b2-4fbd-4c33-a527-8d7e2aa2b6bd.jpg",
+    "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/c0d852fd-3ad5-4828-9637-6fe6b0287540.jpg",
+    "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/21bb57c5-9ada-46ac-aa9b-9b77f757bce9.jpg",
+    "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/008dc3de-eb0f-44d2-9b64-a67c8c435bda.jpg"
+  ],
+  "episodes": [
+    {
+      "number": 1,
+      "title": "A Promise in the Shadows",
+      "panels": [
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/d242ef87-5766-457b-8596-cecdf9d6c49c.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/84e22dbb-4f85-4e6d-bbc3-5081a15d5cb5.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/34ded247-f35c-4bbc-8c89-7b5412ef5844.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/abc3b76e-6753-463c-a410-6aa648e4aef0.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/54aa19b2-4fbd-4c33-a527-8d7e2aa2b6bd.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/c0d852fd-3ad5-4828-9637-6fe6b0287540.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/21bb57c5-9ada-46ac-aa9b-9b77f757bce9.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/008dc3de-eb0f-44d2-9b64-a67c8c435bda.jpg"
+      ],
+      "content": "[{\"speaker\":\"Narration\",\"text\":\"The grand halls of the royal palace echo with whispers of war. Princess Elara, heir to the throne, hides in the palace gardens, away from the suffocating expectations of her royal duties.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/d242ef87-5766-457b-8596-cecdf9d6c49c.jpg\"},{\"speaker\":\"Elara\",\"text\":\"Another ball tonight. Another night of pretending I care about alliances and treaties.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/84e22dbb-4f85-4e6d-bbc3-5081a15d5cb5.jpg\"},{\"speaker\":\"Narration\",\"text\":\"Unbeknownst to her, someone else is also avoiding the royal festivities. Liran, the court musician, sneaks into the garden to practice his lute in peace.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/34ded247-f35c-4bbc-8c89-7b5412ef5844.jpg\"},{\"speaker\":\"Liran\",\"text\":\"The melody should flow like this...\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/abc3b76e-6753-463c-a410-6aa648e4aef0.jpg\"},{\"speaker\":\"Elara\",\"text\":\"That's... beautiful. I didn't know the garden was occupied tonight.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/54aa19b2-4fbd-4c33-a527-8d7e2aa2b6bd.jpg\"},{\"speaker\":\"Liran\",\"text\":\"Your Highness! I didn't mean to intrude. I often come here to practice in peace.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/c0d852fd-3ad5-4828-9637-6fe6b0287540.jpg\"},{\"speaker\":\"Elara\",\"text\":\"No need to bow. I come here to escape too. Though I doubt my escape is as peaceful as yours.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/21bb57c5-9ada-46ac-aa9b-9b77f757bce9.jpg\"},{\"speaker\":\"Liran\",\"text\":\"Perhaps music and solitude aren't so different after all.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/008dc3de-eb0f-44d2-9b64-a67c8c435bda.jpg\"}]",
+      "choices": [
+        {
+          "text": "Elara invites Liran to play a duet with her, curious to hear more of his music.",
+          "votes": 0
+        },
+        {
+          "text": "Liran excuses himself, not wanting to overstep his place in the palace hierarchy.",
+          "votes": 0
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Whispers of the Past",
+      "panels": [
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/4a62f95e-b15c-4b0f-92c2-8d5c31b7ad4c.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/247c7b10-eef0-4fee-b393-a6b2bcf75100.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/6755ebcd-0da5-4846-b547-8dacb9046bd2.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/b69715a5-c0f4-4c57-9c27-3e1e33da4dca.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/9345d429-0c85-438d-ae93-53db567852c8.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/046f132c-68e4-4c60-98d4-567a9d0ece4c.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/b01f0b0c-5fda-4a13-8062-ac8979298dce.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/3930302c-9c16-4fab-be91-a19018ded82b.jpg"
+      ],
+      "content": "[{\"speaker\":\"Narration\",\"text\":\"Days pass, and Elara finds herself drawn to the garden more often, hoping to catch another glimpse of Liran. Today, she brings a book of old royal ballads.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/4a62f95e-b15c-4b0f-92c2-8d5c31b7ad4c.jpg\"},{\"speaker\":\"Elara\",\"text\":\"Maybe today...\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/247c7b10-eef0-4fee-b393-a6b2bcf75100.jpg\"},{\"speaker\":\"Narration\",\"text\":\"Liran arrives, his lute in hand. He doesn't see Elara at first, lost in his own world as he hums a tune.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/6755ebcd-0da5-4846-b547-8dacb9046bd2.jpg\"},{\"speaker\":\"Liran\",\"text\":\"Ah, Your Highness. I didn't expect to see you here again.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/b69715a5-c0f4-4c57-9c27-3e1e33da4dca.jpg\"},{\"speaker\":\"Elara\",\"text\":\"I brought something for you. A book of ballads. I thought you might like to see them.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/9345d429-0c85-438d-ae93-53db567852c8.jpg\"},{\"speaker\":\"Liran\",\"text\":\"This is... incredible. Thank you. But why?\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/046f132c-68e4-4c60-98d4-567a9d0ece4c.jpg\"},{\"speaker\":\"Elara\",\"text\":\"Because your music deserves to be heard. Not just in the shadows.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/b01f0b0c-5fda-4a13-8062-ac8979298dce.jpg\"},{\"speaker\":\"Liran\",\"text\":\"Then let me play something for you. Something I wrote... in secret.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/3930302c-9c16-4fab-be91-a19018ded82b.jpg\"}]",
+      "choices": [
+        {
+          "text": "Elara agrees to listen, her heart pounding with anticipation.",
+          "votes": 0
+        },
+        {
+          "text": "Elara hesitates, worried about the consequences of being seen alone with a court musician.",
+          "votes": 0
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "The Vow Revealed",
+      "panels": [
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/53285b6d-552e-4a61-9de2-91271ec9c03a.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/eee4a744-3f89-4eba-af8e-c3c5b5aebac5.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/8f38c425-47af-4142-aaf3-4a3e18c0878d.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/cb120902-b13e-4a2a-ab22-a95637dd56db.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/959932bf-98e2-4e3f-98ea-c746b09c7bf6.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/5a15f75d-4f8e-4497-8e92-a319fc7ea468.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/2490887d-d640-4f84-9e77-7cdc96d6dbe7.jpg",
+        "https://im.runware.ai/image/os/a07dlim3/ws/3/ii/057ebea2-4a4c-46a0-977b-cef5c7fb6236.jpg"
+      ],
+      "content": "[{\"speaker\":\"Narration\",\"text\":\"As Liran plays, the melody is hauntingly beautiful. Elara listens, transfixed, until the music stops abruptly. Liran looks at her with a strange intensity.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/53285b6d-552e-4a61-9de2-91271ec9c03a.jpg\"},{\"speaker\":\"Liran\",\"text\":\"Do you remember this tune, Elara?\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/eee4a744-3f89-4eba-af8e-c3c5b5aebac5.jpg\"},{\"speaker\":\"Elara\",\"text\":\"I... I think I do. It's familiar somehow.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/8f38c425-47af-4142-aaf3-4a3e18c0878d.jpg\"},{\"speaker\":\"Liran\",\"text\":\"We were children when we made this vow. Do you remember now?\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/cb120902-b13e-4a2a-ab22-a95637dd56db.jpg\"},{\"speaker\":\"Elara\",\"text\":\"A vow... to meet again when we were older? To share our dreams and secrets?\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/959932bf-98e2-4e3f-98ea-c746b09c7bf6.jpg\"},{\"speaker\":\"Liran\",\"text\":\"Yes. And now, standing here, I realize I never stopped believing in it. In you.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/5a15f75d-4f8e-4497-8e92-a319fc7ea468.jpg\"},{\"speaker\":\"Elara\",\"text\":\"But the court... the kingdom... they would never accept this.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/2490887d-d640-4f84-9e77-7cdc96d6dbe7.jpg\"},{\"speaker\":\"Liran\",\"text\":\"Then we'll find a way. Together.\",\"imageUrl\":\"https://im.runware.ai/image/os/a07dlim3/ws/3/ii/057ebea2-4a4c-46a0-977b-cef5c7fb6236.jpg\"}]",
+      "choices": [
+        {
+          "text": "Elara takes Liran's hand, deciding to defy the expectations of the court for their love.",
+          "votes": 0
+        },
+        {
+          "text": "Elara pulls away, insisting they must keep their feelings secret for now, at least until she can find a way to bridge their worlds.",
+          "votes": 0
+        }
+      ]
+    }
+  ],
+  "rating": "4.9",
+  "views": 15200,
+  "likes": 3400
+}

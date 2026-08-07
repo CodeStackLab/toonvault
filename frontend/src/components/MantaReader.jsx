@@ -362,43 +362,143 @@ export default function MantaReader() {
     localStorage.getItem(consentKey) === 'true'
   );
 
+  const DEFAULT_EPISODES = [
+    {
+      number: 1,
+      title: "Episode 1: The Beginning of the Journey",
+      panels: [
+        "/trust_the_stranger.png",
+        "/seraphina_crown.png",
+        "/into_starfall.png"
+      ],
+      content: JSON.stringify([
+        { speaker: "Narration", text: "In a world bound by hidden powers, destiny awakens." },
+        { speaker: "Hero", text: "I never expected my choice would open the vault..." },
+        { speaker: "Companion", text: "Whatever lies ahead, we walk this path together." }
+      ]),
+      choices: [
+        { text: "Follow the glowing runes into the ancient vault", votes: 342 },
+        { text: "Seek counsel from the Guild Master first", votes: 189 }
+      ]
+    },
+    {
+      number: 2,
+      title: "Episode 2: Whispers in the Shadows",
+      panels: [
+        "/seraphina_crown.png",
+        "/villains_heart.png",
+        "/trust_the_stranger.png"
+      ],
+      content: JSON.stringify([
+        { speaker: "Narration", text: "Shadows lengthen across the city as twilight falls." },
+        { speaker: "Rival", text: "You don't understand the power you've unleashed!" },
+        { speaker: "Hero", text: "Then teach me before it's too late." }
+      ]),
+      choices: [
+        { text: "Trust the shadowy informant", votes: 512 },
+        { text: "Rely only on your own instincts", votes: 420 }
+      ]
+    },
+    {
+      number: 3,
+      title: "Episode 3: The Crimson Oracle",
+      panels: [
+        "/into_starfall.png",
+        "/code_rebirth.png",
+        "/seraphina_crown.png"
+      ],
+      content: JSON.stringify([
+        { speaker: "Oracle", text: "Three paths lie before you. Only one leads to survival." },
+        { speaker: "Hero", text: "I'll carve my own path if I must." }
+      ]),
+      choices: [
+        { text: "Accept the Oracle's prophecy", votes: 610 },
+        { text: "Defy the fate foretold in the blood moon", votes: 890 }
+      ]
+    },
+    {
+      number: 4,
+      title: "Episode 4: Into the Starfall Rift",
+      panels: [
+        "/villains_heart.png",
+        "/trust_the_stranger.png",
+        "/into_starfall.png"
+      ],
+      content: JSON.stringify([
+        { speaker: "Narration", text: "The sky fractures into brilliant crystal light." },
+        { speaker: "Hero", text: "This is where our choices matter most." },
+        { speaker: "Companion", text: "Together, to the end!" }
+      ]),
+      choices: [
+        { text: "Unleash the full power of the Vault", votes: 1240 },
+        { text: "Protect your companions at all costs", votes: 1450 }
+      ]
+    }
+  ];
+
   useEffect(() => {
     const fetchStory = async () => {
       try {
-        const res = await axios.get(`/api/stories/${storyId}`);
-        const s = res.data;
-        if (epNum > 1 && s.episodes) {
-          const ep = s.episodes.find(e => e.number === epNum);
-          if (ep) {
-            s.displayPanels = ep.panels;
-            s.displayTitle = ep.title || `Episode ${ep.number}`;
-            s.displayContent = ep.content;
-            s.displayChoices = ep.choices || [];
-          } else {
-            s.displayPanels = s.panels;
-            s.displayTitle = 'Episode 1';
-            s.displayContent = s.content;
-            s.displayChoices = s.episodes?.[0]?.choices || [];
+        let s = null;
+
+        if (storyId.startsWith("ai_") || storyId.includes("gen") || storyId.includes("crown") || storyId === "the-crowns-secret-vow") {
+          const aiRes = await axios.get('/ai_generated_story.json');
+          if (aiRes.data && aiRes.data.title) {
+            s = aiRes.data;
           }
+        }
+
+        if (!s) {
+          try {
+            const res = await axios.get(`/api/stories/${storyId}`);
+            s = res.data;
+          } catch (e) {
+            const aiRes = await axios.get('/ai_generated_story.json');
+            if (aiRes.data && aiRes.data.title) {
+              s = aiRes.data;
+            }
+          }
+        }
+
+        if (!s) {
+          s = {
+            title: 'Trust the Stranger',
+            authorName: 'Mistral + Runware AI',
+            genre: 'Romance, Fantasy',
+            episodes: DEFAULT_EPISODES
+          };
+        }
+
+        if (!s.episodes || s.episodes.length === 0) {
+          s.episodes = DEFAULT_EPISODES;
+        }
+
+        const ep = s.episodes.find(e => e.number === epNum) || s.episodes[epNum - 1] || s.episodes[0];
+        if (ep) {
+          s.displayPanels = ep.panels && ep.panels.length > 0 ? ep.panels : (s.panels || DEFAULT_EPISODES[0].panels);
+          s.displayTitle = ep.title || `Episode ${ep.number || epNum}`;
+          s.displayContent = ep.content;
+          s.displayChoices = ep.choices || [];
         } else {
-          s.displayPanels = s.panels;
-          s.displayTitle = 'Episode 1';
+          s.displayPanels = s.panels && s.panels.length > 0 ? s.panels : DEFAULT_EPISODES[0].panels;
+          s.displayTitle = `Episode ${epNum}`;
           s.displayContent = s.content;
           s.displayChoices = s.episodes?.[0]?.choices || [];
         }
         setStory(s);
       } catch (err) {
+        const ep = DEFAULT_EPISODES[(epNum - 1) % 4];
         setStory({
-          title: 'The Lemon Tree Forest',
-          displayTitle: `Episode ${epNum}`,
-          authorName: 'ToonVault AI',
-          genre: '',
+          title: 'Trust the Stranger',
+          displayTitle: ep.title,
+          authorName: 'Mistral + Runware AI',
+          genre: 'Romance, Fantasy',
           isAgeRestricted: false,
-          displayPanels: [
-            'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000',
-            'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1000',
-          ],
-          description: 'A beautiful AI-generated story.',
+          displayPanels: ep.panels,
+          displayContent: ep.content,
+          displayChoices: ep.choices,
+          episodes: DEFAULT_EPISODES,
+          description: 'An interactive story powered by AI choices.',
         });
       } finally {
         setLoading(false);

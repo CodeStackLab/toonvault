@@ -2,23 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/toonvault_icon.png" />
+    <link rel="apple-touch-icon" href="/toonvault_icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ToonVault" />
     <meta name="description" content="Toonvault - Interactive storytelling where your choices shape the story. Explore romance, fantasy, drama and more." />
-    <meta name="theme-color" content="#0f0f23" />
+    <meta name="theme-color" content="#F43F8E" />
     <meta property="og:title" content="Toonvault - Interactive Storytelling" />
     <meta property="og:description" content="Your choices shape the story. Interactive storytelling where every decision leads to a unique adventure." />
+    <meta property="og:image" content="/toonvault_logo_full.png" />
     <meta property="og:type" content="website" />
     <title>Toonvault - Interactive Storytelling</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root">
       <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:url('/cloud_bg.png') center/cover no-repeat fixed, linear-gradient(135deg, #FDE8E8 0%, #F5D0FE 50%, #E0E7FF 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;font-family:'Outfit','Inter',sans-serif;">
         <div style="background:rgba(255,255,255,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.95);border-radius:36px;padding:42px 52px;text-align:center;box-shadow:0 20px 50px rgba(244,63,142,0.18), 0 8px 24px rgba(139,92,246,0.15);display:flex;flex-direction:column;align-items:center;">
-          <div style="width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg, #F43F8E 0%, #8B5CF6 100%);display:flex;align-items:center;justify-content:center;font-size:34px;color:white;box-shadow:0 10px 30px rgba(244, 63, 142, 0.45);animation:tv-pulse 1.8s ease-in-out infinite alternate;">⚡</div>
+          <img src="/toonvault_icon.png" alt="ToonVault" style="width:68px;height:auto;animation:tv-pulse 1.8s ease-in-out infinite alternate;" />
           <h2 style="margin-top:18px;font-size:26px;font-weight:900;color:#1E1B4B;letter-spacing:-0.5px;">
             Toon<span style="color:#F43F8E;">Vault</span>
           </h2>
@@ -36,5 +43,15 @@
       </style>
     </div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Register Service Worker for PWA offline support
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
+            .catch(err => console.log('[PWA] Service Worker registration failed:', err));
+        });
+      }
+    </script>
   </body>
 </html>

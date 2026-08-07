@@ -1,1105 +1,924 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Heart, 
-  MessageSquare, 
   Share2, 
-  ArrowLeft, 
-  AlertTriangle, 
-  Send, 
-  Sparkles, 
-  Bookmark, 
-  ChevronRight, 
-  UserPlus, 
-  UserCheck, 
   Star,
-  ChevronLeft,
   BookOpen,
-  Maximize2,
-  Clock,
-  ThumbsUp,
-  ExternalLink,
   Lock,
-  Unlock,
-  Flame,
+  ChevronDown,
   Globe,
-  MoreHorizontal,
-  Layers,
-  Zap,
+  Bookmark,
+  Sparkles,
+  Play,
+  Search,
+  Menu,
+  X,
   Trophy,
-  Activity,
-  BarChart3,
-  TrendingUp,
+  Check,
   Gamepad2,
-  Check
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
-import Header from "./Header";
-import Footer from "./Footer";
-import StoryMap from "./StoryMap";
 
-// ─── Theme Configuration ──────────────────────────────────────────
+// ─── Theme Tokens (Matching Homepage Pastel Glassmorphism) ─────────────
 const COLORS = {
-  bg: "#080710",
-  bgSubtle: "#0F0D1F",
-  card: "rgba(255, 255, 255, 0.02)",
-  cardHover: "rgba(255, 255, 255, 0.04)",
-  border: "rgba(255, 255, 255, 0.06)",
-  borderHover: "rgba(139, 92, 246, 0.3)",
-  text: "#FFFFFF",
-  textMuted: "#88849E",
-  purple: "#8B5CF6",
-  purpleLight: "rgba(139, 92, 246, 0.1)",
-  rose: "#F43F8E",
-  roseLight: "rgba(244, 63, 142, 0.1)",
+  bg: "#1E1B4B",
+  pink: "#F43F8E",
+  purple: "#A855F7",
   gold: "#F59E0B",
   emerald: "#10B981",
+  textDark: "#1E1B4B",
+  textMuted: "#64748B",
+  cardBg: "rgba(255, 255, 255, 0.88)",
+  cardBorder: "rgba(255, 255, 255, 0.95)",
+  glassCard: "rgba(255, 255, 255, 0.82)",
 };
 
-const DEFAULT_COVER = "/covers/fantasy_cover_1777743338844.png";
+const DEFAULT_COVER = "/hero_bg.png";
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function StoryImage({ src, alt, style, className, fallback = DEFAULT_COVER }) {
-  const [error, setError] = useState(false);
-  const finalSrc = error ? fallback : (src && src.includes("/src/assets/") ? src.replace("/src/assets/", "/covers/") : src);
-  const isUrl = typeof finalSrc === 'string' && (finalSrc.startsWith("http") || finalSrc.startsWith("/"));
-
-  if (!isUrl) {
-    return <div style={{ ...style, display: "flex", alignItems: "center", justifyContent: "center", background: COLORS.bgSubtle }} className={className}>{finalSrc || "📖"}</div>;
+// Exact 10 Mock Episodes from Screenshot
+const SAMPLE_EPISODES = [
+  {
+    number: 1,
+    title: "The Awakening",
+    isNew: true,
+    isUnlocked: true,
+    synopsis: "In the ruins of an ancient city, you awaken with no memories. The world holds its breath.",
+    score: "92%",
+    likes: "1.2K",
+    thumbnail: "/hero_bg.png"
+  },
+  {
+    number: 2,
+    title: "Whispers in the Dark",
+    isUnlocked: false,
+    synopsis: "A mysterious stranger offers guidance, but trust comes at a price.",
+    score: "89%",
+    likes: "980",
+    thumbnail: "/seraphina_crown.png"
+  },
+  {
+    number: 3,
+    title: "The Broken Oath",
+    isUnlocked: false,
+    synopsis: "Old alliances crumble as you are forced to make an impossible choice.",
+    score: "91%",
+    likes: "870",
+    thumbnail: "/into_starfall.png"
+  },
+  {
+    number: 4,
+    title: "Blood and Loyalty",
+    isUnlocked: false,
+    synopsis: "Your decision ignites a war that will reshape the kingdoms forever.",
+    score: "88%",
+    likes: "760",
+    thumbnail: "/villains_heart.png"
+  },
+  {
+    number: 5,
+    title: "Edge of Betrayal",
+    isUnlocked: false,
+    synopsis: "The truth comes to light, and betrayal cuts deeper than any blade.",
+    score: "90%",
+    likes: "690",
+    thumbnail: "/trust_the_stranger.png"
+  },
+  {
+    number: 6,
+    title: "The Crown of Ashes",
+    isUnlocked: false,
+    synopsis: "To claim power, you must sacrifice what matters most.",
+    score: "93%",
+    likes: "610",
+    thumbnail: "/code_rebirth.png"
+  },
+  {
+    number: 7,
+    title: "Rise of the Rebellion",
+    isUnlocked: false,
+    synopsis: "The oppressed rise. Will you lead them to freedom or crush their dreams?",
+    score: "87%",
+    likes: "540",
+    thumbnail: "/hero_bg.png"
+  },
+  {
+    number: 8,
+    title: "Storm of Fate",
+    isUnlocked: false,
+    synopsis: "A force beyond comprehension descends, testing every choice you've made.",
+    score: "86%",
+    likes: "510",
+    thumbnail: "/seraphina_crown.png"
+  },
+  {
+    number: 9,
+    title: "Shadows of the Past",
+    isUnlocked: false,
+    synopsis: "Hidden truths from long ago return to haunt the present.",
+    score: "85%",
+    likes: "460",
+    thumbnail: "/into_starfall.png"
+  },
+  {
+    number: 10,
+    title: "Dawn of Hope",
+    isUnlocked: false,
+    synopsis: "As darkness fades, a new beginning awaits. The journey continues...",
+    score: "94%",
+    likes: "430",
+    thumbnail: "/villains_heart.png"
   }
-  return <img src={finalSrc} alt={alt} style={{ ...style, objectFit: "cover" }} className={className} onError={() => setError(true)} />;
-}
+];
 
-function Badge({ label, color = COLORS.purple, icon: Icon }) {
-  return (
-    <span style={{
-      display: "inline-flex", alignItems: "center", gap: 6,
-      fontSize: 10, fontWeight: 800, textTransform: "uppercase",
-      padding: "6px 14px", borderRadius: 12,
-      background: `${color}15`, color,
-      border: `1px solid ${color}25`, letterSpacing: 1,
-    }}>
-      {Icon && <Icon size={12} />} {label}
-    </span>
-  );
-}
-
-function Avatar({ initials, size = 40, color = COLORS.purple }) {
-  return (
-    <div style={{
-      width: size, height: size, borderRadius: 16,
-      background: `linear-gradient(135deg, ${color}, ${color}99)`,
-      display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: size * 0.35, fontWeight: 900, color: "#FFF",
-      flexShrink: 0, boxShadow: "0 12px 24px rgba(0,0,0,0.4)",
-      border: `1px solid rgba(255,255,255,0.1)`
-    }}>{initials}</div>
-  );
-}
-
-function RatingBreakdown() {
-  const categories = [
-    { label: "Visuals", score: 4.9, color: COLORS.purple },
-    { label: "Plot", score: 4.7, color: COLORS.rose },
-    { label: "Pace", score: 4.5, color: COLORS.gold },
-    { label: "Vibe", score: 4.8, color: COLORS.emerald },
-  ];
-
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
-      {categories.map(c => (
-        <div key={c.label} style={{ background: "rgba(255,255,255,0.02)", padding: "16px", borderRadius: 20, border: `1px solid ${COLORS.border}` }}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: COLORS.textMuted, textTransform: "uppercase", marginBottom: 8 }}>{c.label}</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ fontSize: 20, fontWeight: 900, color: "#FFF" }}>{c.score}</div>
-            <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.05)", borderRadius: 2, overflow: "hidden" }}>
-              <div style={{ width: `${(c.score / 5) * 100}%`, height: "100%", background: c.color }} />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function CommunityMilestones() {
-  const milestones = [
-    { label: "10k Souls bound", progress: 85, icon: Heart, color: COLORS.rose },
-    { label: "Quest Map: Chapter 2", progress: 40, icon: Gamepad2, color: COLORS.purple },
-    { label: "Global Reach", progress: 65, icon: Globe, color: COLORS.emerald },
-  ];
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      {milestones.map(m => (
-        <div key={m.label}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <m.icon size={16} color={m.color} />
-              <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>{m.label}</span>
-            </div>
-            <span style={{ fontSize: 11, fontWeight: 900, color: m.color }}>{m.progress}%</span>
-          </div>
-          <div style={{ height: 6, background: "rgba(255,255,255,0.05)", borderRadius: 3, overflow: "hidden" }}>
-             <motion.div initial={{ width: 0 }} whileInView={{ width: `${m.progress}%` }} transition={{ duration: 1.5, ease: "easeOut" }} style={{ height: "100%", background: m.color }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function AgeGateModal({ rating, onConsent, onDecline }) {
-  return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "rgba(5, 4, 10, 0.9)", backdropFilter: "blur(12px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: COLORS.bgSubtle, border: `1px solid ${COLORS.border}`, borderRadius: 30, padding: "40px", maxWidth: 420, width: "90%", textAlign: "center", boxShadow: "0 30px 60px rgba(0,0,0,0.6)" }}>
-        <div style={{ width: 64, height: 64, borderRadius: 20, background: `${COLORS.rose}20`, border: `2px solid ${COLORS.rose}`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", fontSize: 24, fontWeight: 900, color: COLORS.rose }}>{rating}</div>
-        <h2 style={{ color: "#FFF", fontSize: 24, fontWeight: 900, marginBottom: 15 }}>Restricted Content</h2>
-        <p style={{ color: COLORS.textMuted, fontSize: 15, lineHeight: 1.6, marginBottom: 30 }}>This storyline contains mature themes. Please confirm that you are at least {rating.replace("+", "")} years old.</p>
-        <div style={{ display: "flex", gap: 15 }}>
-          <button onClick={onDecline} style={{ flex: 1, padding: "14px", borderRadius: 15, border: `1px solid ${COLORS.border}`, background: "transparent", color: COLORS.textMuted, cursor: "pointer", fontWeight: 700 }}>Go Back</button>
-          <button onClick={onConsent} style={{ flex: 1, padding: "14px", borderRadius: 15, background: COLORS.rose, border: "none", color: "#FFF", cursor: "pointer", fontWeight: 800, boxShadow: `0 10px 20px ${COLORS.rose}30` }}>I Agree</button>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-function WriteModal({ onClose, onSubmit }) {
-  const [text, setText] = useState("");
-  return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 2000, background: "rgba(5, 4, 10, 0.9)", backdropFilter: "blur(12px)", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={onClose}>
-      <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ background: COLORS.bgSubtle, border: `1px solid ${COLORS.border}`, borderRadius: 30, padding: "34px", maxWidth: 550, width: "92%", boxShadow: "0 30px 70px rgba(0,0,0,0.7)" }} onClick={e => e.stopPropagation()}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 25 }}>
-          <div>
-            <h2 style={{ color: "#FFF", fontSize: 24, fontWeight: 900, marginBottom: 8 }}>Write Your Twist ✦</h2>
-            <p style={{ color: COLORS.textMuted, fontSize: 14 }}>Become the architect of this scene. Describe the next move.</p>
-          </div>
-          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.05)", border: "none", color: "#FFF", width: 36, height: 36, borderRadius: "50%", cursor: "pointer" }}>✕</button>
-        </div>
-        <textarea value={text} onChange={e => setText(e.target.value)} placeholder="Elara reached out, her fingers trembling as she whispered the forbidden incantation..." style={{ width: "100%", minHeight: 180, background: "rgba(0,0,0,0.3)", border: `1px solid ${COLORS.border}`, borderRadius: 18, color: "#FFF", padding: "18px", fontSize: 15, lineHeight: 1.6, resize: "none", outline: "none", transition: "border-color 0.3s" }} onFocus={e => e.target.style.borderColor = COLORS.purple} />
-        <button onClick={() => { if (text.trim()) onSubmit(text); }} style={{ marginTop: 20, width: "100%", padding: "16px", background: COLORS.purple, border: "none", borderRadius: 16, color: "#FFF", fontSize: 16, fontWeight: 800, cursor: "pointer", boxShadow: `0 15px 30px ${COLORS.purple}40` }}>Submit to Creator Hub</button>
-      </motion.div>
-    </div>
-  );
-}
-
-function VaultPanel({ onNavigate, bookmarks = [] }) {
-  return (
-    <div style={{ 
-      background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%)", 
-      border: `1px solid ${COLORS.border}`, 
-      borderRadius: 28, 
-      padding: "28px",
-      boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
-    }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Bookmark size={20} color={COLORS.purple} fill={COLORS.purple} />
-          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "#FFF" }}>Personal Vault</h3>
-        </div>
-        <Badge label={`${bookmarks.length}`} color={COLORS.purple} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        {bookmarks.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '20px 0', color: COLORS.textMuted, fontSize: 13 }}>Your vault is empty.</div>
-        ) : (
-          bookmarks.slice(0, 3).map((s, idx) => (
-            <motion.div 
-              key={idx} 
-              whileHover={{ x: 5, background: "rgba(255,255,255,0.05)" }}
-              style={{ display: "flex", gap: 14, alignItems: "center", padding: "14px", background: "rgba(255,255,255,0.02)", border: `1px solid ${COLORS.border}`, borderRadius: 18, cursor: "pointer" }} 
-              onClick={() => onNavigate(s)}
-            >
-               <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>📖</div>
-               <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 800 }}>Story #{idx + 1}</div>
-                  <div style={{ fontSize: 11, color: COLORS.purple, fontWeight: 700 }}>Continue Reading</div>
-               </div>
-               <ChevronRight size={18} color={COLORS.textMuted} />
-            </motion.div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function StoryPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  
-  // Basic States
+
   const [story, setStory] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeEpisode, setActiveEpisode] = useState(null);
-  const [activeScene, setActiveScene] = useState(null);
-  const [viewMode, setViewMode] = useState("dashboard"); 
-  const [activeTab, setActiveTab] = useState("episodes"); 
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [recommendations, setRecommendations] = useState([]);
-  
-  // Feature States
-  const [toast, setToast] = useState("");
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [activeTab, setActiveTab] = useState("episodes");
+  const [searchVal, setSearchVal] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [showAgeGate, setShowAgeGate] = useState(false);
-  const [showWriteModal, setShowWriteModal] = useState(false);
-  const [showUnlock, setShowUnlock] = useState(false);
-  const [pendingChoice, setPendingChoice] = useState(null);
-  const [chosenLabel, setChosenLabel] = useState(null);
-  const [totalVotes, setTotalVotes] = useState(15420);
-  
-  const [commentText, setCommentText] = useState("");
-  const [comments, setComments] = useState([
-    { id: 1, user: "LunaDreams", text: "The art style is incredible! Love the character development.", likes: 42, avatar: "LD" },
-    { id: 2, user: "ChronoMage", text: "Wait, the choice in Episode 1 really changed the dialogue in Episode 2? That's insane!", likes: 28, avatar: "CM" }
-  ]);
-
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.get('/api/users/me', { headers: { 'Authorization': `Bearer ${token}` } })
-        .then(res => setUserData(res.data))
-        .catch(err => console.error("Error fetching user profile:", err));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (userData && story) {
-      setIsFollowing(!!(userData.following && userData.following.includes(story.authorName)));
-    }
-  }, [userData, story]);
-
-  const handleToggleFollow = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return navigate('/login');
-      if (!story || !story.authorName) return;
-      const res = await axios.post(`/api/users/follow/${story.authorName}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
-      setUserData(prev => ({
-        ...prev,
-        following: res.data.following 
-          ? [...(prev?.following || []), story.authorName]
-          : (prev?.following || []).filter(f => f !== story.authorName)
-      }));
-      setIsFollowing(res.data.following);
-      triggerToast(res.data.message);
-    } catch (err) {
-      triggerToast(err.response?.data?.error || "Error toggling follow");
-    }
-  };
-
-  const handleToggleBookmark = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return navigate('/login');
-      const res = await axios.post(`/api/users/bookmarks/${id}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
-      setUserData(prev => ({
-        ...prev,
-        bookmarks: res.data.bookmarked 
-          ? [...(prev?.bookmarks || []), id]
-          : (prev?.bookmarks || []).filter(b => b !== id)
-      }));
-      triggerToast(res.data.message);
-    } catch (err) {
-      triggerToast("Error updating bookmark");
-    }
-  };
-
-  const handleToggleRead = async (nodeId) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return navigate('/login');
-      
-      const isRead = userData?.readNodes?.some(n => n.nodeId === nodeId);
-      if (isRead) {
-        await axios.delete(`/api/users/read-nodes/${id}/${nodeId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-        setUserData(prev => ({
-          ...prev,
-          readNodes: (prev?.readNodes || []).filter(n => n.nodeId !== nodeId)
-        }));
-        triggerToast("Marked as unread");
-      } else {
-        await axios.post(`/api/users/read-nodes/${id}/${nodeId}`, {}, { headers: { 'Authorization': `Bearer ${token}` } });
-        setUserData(prev => ({
-          ...prev,
-          readNodes: [...(prev?.readNodes || []), { storyId: id, nodeId }]
-        }));
-        triggerToast("Marked as read");
-      }
-    } catch (err) {
-      triggerToast("Error updating read status");
-    }
-  };
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 900);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`/api/stories/${id}`)
-      .then(res => {
-        setStory(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching story:", err);
-        setLoading(false);
-      });
+    const loadData = async () => {
+      let storyData = null;
 
-    axios.get('/api/stories')
-      .then(res => {
-        if (Array.isArray(res.data)) {
-          const others = res.data.filter(s => s._id !== id);
-          const shuffled = others.sort(() => 0.5 - Math.random());
-          setRecommendations(shuffled.slice(0, 3));
+      // Try AI generated story json
+      try {
+        const aiRes = await axios.get('/ai_generated_story.json');
+        if (aiRes.data && aiRes.data.title) {
+          storyData = aiRes.data;
         }
-      })
-      .catch(err => {
-        console.error("Error fetching recommended stories:", err);
-      });
+      } catch (e) {}
+
+      // Try backend API
+      if (!storyData) {
+        try {
+          const res = await axios.get(`/api/stories/${id}`);
+          storyData = res.data;
+        } catch (e) {}
+      }
+
+      // Default Story fallback if none found
+      if (!storyData) {
+        storyData = {
+          _id: id || "the-crowns-secret-vow",
+          title: "Trust the Stranger",
+          genre: "Romance, Fantasy",
+          rating: "4.9",
+          chaptersCount: 12,
+          soulsCount: "10k",
+          description: "In a realm where light and shadow are at war, your choices determine the survival of entire civilizations. Will you be the savior, or the architect of ruin?",
+          authorName: "LunaRead",
+          cover: "/trust_the_stranger.png",
+          episodes: SAMPLE_EPISODES
+        };
+      }
+
+      // Format episodes to make sure we have 10 full items matching clone
+      if (!storyData.episodes || storyData.episodes.length < 10) {
+        const mergedEps = SAMPLE_EPISODES.map((sample, idx) => {
+          const existing = storyData.episodes?.[idx];
+          return {
+            ...sample,
+            title: existing?.title || sample.title,
+            synopsis: existing?.description || sample.synopsis,
+            thumbnail: existing?.panels?.[0] || sample.thumbnail,
+            number: idx + 1
+          };
+        });
+        storyData.episodes = mergedEps;
+      }
+
+      setStory(storyData);
+      setLoading(false);
+    };
+
+    loadData();
+    window.scrollTo(0, 0);
   }, [id]);
 
-  useEffect(() => {
-    if (story) {
-      const isMature = story.isAgeRestricted || story.isAdult || story.genre?.toLowerCase() === 'mature';
-      if (isMature && localStorage.getItem('ageConfirmed') !== 'true') {
-        setShowAgeGate(true);
-      }
-    }
-  }, [story]);
-
-  useEffect(() => {
-    if (viewMode !== "reader") return;
-    const handleScroll = () => {
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (docHeight > 0) {
-        setScrollProgress((window.scrollY / docHeight) * 100);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [viewMode]);
-
-  if (loading) return (
-    <div style={{ background: COLORS.bg, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-       <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} style={{ width: 40, height: 40, border: `3px solid ${COLORS.purple}20`, borderTopColor: COLORS.purple, borderRadius: "50%" }} />
-       <p style={{ marginTop: 16, color: COLORS.textMuted, fontSize: 14, fontWeight: 600 }}>Summoning your adventure...</p>
-    </div>
-  );
-
-  if (!story) return (
-    <div style={{ background: COLORS.bg, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 20, textAlign: "center" }}>
-      <AlertTriangle size={48} color={COLORS.rose} style={{ marginBottom: 20 }} />
-      <h2 style={{ color: "#FFF", marginBottom: 10 }}>This Story is Lost in the Vault</h2>
-      <button onClick={() => navigate("/")} style={{ background: COLORS.purple, color: "#FFF", padding: "12px 30px", borderRadius: 12, border: "none", fontWeight: 700, cursor: "pointer" }}>Return to Library</button>
-    </div>
-  );
-
-  const handleSelectEpisode = (ep) => {
-    if (story.isAgeRestricted || story.isAdult) {
-      setPendingChoice({ type: 'EPISODE', episode: ep });
-      setShowAgeGate(true);
-    } else {
-      navigate(`/manta/${id}?ep=${ep.number || 1}`);
-    }
+  const handleStartJourney = () => {
+    const targetEp = story?.episodes?.[0]?.number || 1;
+    navigate(`/manta/${id || 'the-crowns-secret-vow'}?ep=${targetEp}`);
   };
 
-  const triggerToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 3000);
+  const handlePlayEpisode = (epNum) => {
+    navigate(`/manta/${id || 'the-crowns-secret-vow'}?ep=${epNum}`);
   };
 
-  const handleChoice = (choice) => {
-    if (choice.ageRestricted) {
-      setPendingChoice(choice);
-      setShowAgeGate(true);
-      return;
-    }
-    executeChoice(choice);
-  };
+  if (loading) {
+    return (
+      <div style={{
+        background: "url('/cloud_bg.png') center/cover no-repeat fixed, linear-gradient(180deg, #FDE8E8 0%, #F5D0FE 50%, #E0E7FF 100%)",
+        minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
+      }}>
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} style={{ width: 44, height: 44, border: "4px solid rgba(244,63,142,0.2)", borderTopColor: "#F43F8E", borderRadius: "50%" }} />
+        <p style={{ marginTop: 16, color: "#1E1B4B", fontSize: 14, fontWeight: 800 }}>Loading ToonVault Story...</p>
+      </div>
+    );
+  }
 
-  const executeChoice = (choice) => {
-    setChosenLabel(choice.label);
-    setShowUnlock(true);
-    
-    if (choice.targetScene && activeEpisode) {
-      const next = activeEpisode.scenes.find(s => s.number === choice.targetScene);
-      if (next) {
-        setActiveScene(next);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        triggerToast(`Pathway Unlocked: ${next.title}`);
-      }
-    }
-  };
-
-  const seoTitle = `${story.title} — Interactive AI Webtoon | ToonVault`;
-  const seoDesc = story.description || `Read ${story.title} on ToonVault. An immersive interactive AI manhwa where your choices matter.`;
+  const titleText = story.title || "Trust the Stranger";
+  const seoTitle = `${titleText} — Interactive AI Webtoon | ToonVault`;
+  const seoDesc = story.description || "Read interactive webtoons shaped by your decisions on ToonVault.";
 
   return (
-    <div style={{ background: COLORS.bg, minHeight: "100vh", color: COLORS.text, fontFamily: "'Plus Jakarta Sans', sans-serif", overflowX: "hidden" }}>
+    <div style={{
+      fontFamily: "'Outfit', 'Inter', -apple-system, sans-serif",
+      background: "url('/cloud_bg.png') center/cover no-repeat fixed, linear-gradient(180deg, #FDE8E8 0%, #F5D0FE 50%, #E0E7FF 100%)",
+      minHeight: "100vh",
+      color: "#1E1B4B",
+      paddingBottom: 60,
+      overflowX: "hidden"
+    }}>
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDesc} />
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDesc} />
-        <meta property="og:image" content={story.panels?.[0] || DEFAULT_COVER} />
-        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-      
-      {/* Dynamic Modals */}
-      <AnimatePresence>
-        {showAgeGate && <AgeGateModal rating="18+" onConsent={() => { 
-          localStorage.setItem('ageConfirmed', 'true');
-          setShowAgeGate(false); 
-          if(pendingChoice?.type === 'EPISODE') {
-              navigate(`/manta/${id}?ep=${pendingChoice.episode.number || 1}`);
-          } else if(pendingChoice) {
-              executeChoice(pendingChoice); 
-          }
-        }} onDecline={() => {
-          setShowAgeGate(false);
-          navigate('/browse');
-        }} />}
-        {showWriteModal && <WriteModal onClose={() => setShowWriteModal(false)} onSubmit={(txt) => { setShowWriteModal(false); triggerToast("Plot twist submitted!"); }} />}
-      </AnimatePresence>
-
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.9 }}
-            style={{
-              position: "fixed", bottom: isMobile ? 100 : 30, right: isMobile ? 20 : 30, zIndex: 3000,
-              background: "rgba(139, 92, 246, 0.95)", backdropFilter: "blur(20px)",
-              color: "#FFF", padding: "16px 24px", borderRadius: 20,
-              boxShadow: "0 20px 40px rgba(0,0,0,0.4)", display: "flex", alignItems: "center", gap: 12,
-              border: "1px solid rgba(255,255,255,0.1)", fontWeight: 800
-            }}
-          >
-            <Sparkles size={18} /> {toast}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence mode="wait">
-        {viewMode === "reader" ? (
-          
-          /* ─── PROFESSIONAL READER VIEW ─── */
-          <motion.div key="reader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ background: "#05040A", minHeight: "100vh" }}>
-            <div style={{ position: "sticky", top: 0, zIndex: 1000, background: "rgba(8,7,16,0.85)", backdropFilter: "blur(30px)", borderBottom: `1px solid ${COLORS.border}`, padding: "16px 24px" }}>
-              <div style={{ maxWidth: 1000, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <button onClick={() => setViewMode("dashboard")} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${COLORS.border}`, color: "#FFF", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, padding: "10px 20px", borderRadius: 14, fontWeight: 800, transition: "all 0.2s" }}>
-                  <ArrowLeft size={18} /> <span className="desktop-only">Back to Deck</span>
-                </button>
-                <div style={{ textAlign: "center", flex: 1, minWidth: 0, padding: "0 10px" }}>
-                  <div style={{ fontSize: 13, fontWeight: 900, color: COLORS.purple, textTransform: "uppercase", letterSpacing: 1.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{story.title}</div>
-                  <div style={{ fontSize: 11, color: COLORS.textMuted, fontWeight: 600, marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeEpisode?.title} {activeScene ? `✦ ${activeScene.title}` : ""}</div>
-                </div>
-                <div style={{ width: 100, display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 10 }}>
-                  <span style={{ fontSize: 12, fontWeight: 900, color: COLORS.purple }}>{Math.round(scrollProgress)}%</span>
-                  <div style={{ width: 44, height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
-                     <div style={{ height: "100%", width: `${scrollProgress}%`, background: COLORS.purple }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ maxWidth: 720, margin: "0 auto", padding: "40px 20px 140px" }}>
-              {(activeScene?.panels || activeEpisode?.panels || story.panels || []).map((url, i) => {
-                let meta = null;
-                try {
-                  if (activeScene?.content) meta = JSON.parse(activeScene.content)[i];
-                  else if (activeEpisode?.content) meta = JSON.parse(activeEpisode.content)[i];
-                  else if (story.content) meta = JSON.parse(story.content)[i];
-                } catch(e) { console.error(e); }
-                
-                return (
-                  <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-150px" }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} style={{ marginBottom: 60, borderRadius: 32, overflow: "hidden", border: `1px solid ${COLORS.border}`, position: "relative", boxShadow: "0 30px 60px rgba(0,0,0,0.6)" }}>
-                    <StoryImage src={url} style={{ width: "100%", height: "auto", display: "block" }} alt={`Panel ${i+1}`} />
-                    {meta && (
-                      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%)", padding: "60px 32px 32px" }}>
-                        <div style={{ background: "rgba(15, 13, 31, 0.7)", backdropFilter: "blur(20px)", padding: "24px 28px", borderRadius: 24, border: `1px solid ${COLORS.purple}40`, boxShadow: "0 20px 40px rgba(0,0,0,0.4)" }}>
-                           <p style={{ margin: 0, fontSize: 16, lineHeight: 1.8, fontWeight: 500, color: "#E5E7EB", letterSpacing: 0.2 }}>{meta.text}</p>
-                        </div>
-                      </div>
-                    )}
-                  </motion.div>
-                );
-              })}
-
-              {activeScene?.choicePrompts?.length > 0 && (
-                <div style={{ padding: "60px 0 40px", textAlign: "center" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 15, justifyContent: "center", marginBottom: 30 }}>
-                    <div style={{ height: 1, flex: 1, background: `linear-gradient(to right, transparent, ${COLORS.purple})` }} />
-                    <h3 style={{ margin: 0, color: "#FFF", fontSize: 18, fontWeight: 900, letterSpacing: 2, textTransform: "uppercase" }}>Decide the Fate</h3>
-                    <div style={{ height: 1, flex: 1, background: `linear-gradient(to left, transparent, ${COLORS.purple})` }} />
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                    {activeScene.choicePrompts.map((c, idx) => (
-                      <motion.button key={idx} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => handleChoice(c)} style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))", border: `1px solid ${COLORS.border}`, color: "#FFF", padding: "24px", borderRadius: 24, cursor: "pointer", fontWeight: 800, fontSize: 16, textAlign: "left", display: "flex", alignItems: "center", gap: 18, boxShadow: "0 10px 20px rgba(0,0,0,0.1)" }}>
-                        <span style={{ width: 36, height: 36, borderRadius: 12, background: COLORS.purple, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900 }}>{c.label}</span>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ color: "#FFF" }}>{c.title}</div>
-                          {c.desc && <div style={{ fontSize: 13, color: COLORS.textMuted, fontWeight: 500, marginTop: 4 }}>{c.desc}</div>}
-                        </div>
-                        <ChevronRight size={20} color={COLORS.textMuted} />
-                      </motion.button>
-                    ))}
-                    <button onClick={() => setShowWriteModal(true)} style={{ background: "rgba(139, 92, 246, 0.08)", border: `1px dashed ${COLORS.purple}50`, color: COLORS.purple, padding: "20px", borderRadius: 24, cursor: "pointer", fontWeight: 900, marginTop: 12, fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-                      <Sparkles size={18} /> Write Your Own Twist
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div style={{ marginTop: 80, padding: "50px", textAlign: "center", background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%)", borderRadius: 40, border: `1px solid ${COLORS.border}` }}>
-                <h3 style={{ fontSize: 24, fontWeight: 900, marginBottom: 12 }}>Episode {activeEpisode?.number} Concluded</h3>
-                <p style={{ color: COLORS.textMuted, fontSize: 15, marginBottom: 32, lineHeight: 1.6 }}>Your decisions have been woven into the tapestry of the Labyrinth. What will you discover next?</p>
-                <button onClick={() => setViewMode("dashboard")} style={{ background: COLORS.purple, color: "#FFF", padding: "16px 40px", borderRadius: 18, border: "none", fontWeight: 900, cursor: "pointer", fontSize: 16, boxShadow: `0 15px 30px ${COLORS.purple}40` }}>Return to Labyrinth Hub</button>
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          
-          /* ─── PROFESSIONAL DASHBOARD VIEW ─── */
-          <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <Header />
-            
-            {/* ENHANCED HERO SECTION */}
-            <div style={{ position: "relative", width: "100%", height: isMobile ? "auto" : "400px", background: COLORS.bg, overflow: "hidden" }}>
-               <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-                  <motion.div 
-                    animate={{ scale: [1, 1.05, 1], rotate: [0, 1, 0] }} 
-                    transition={{ repeat: Infinity, duration: 25, ease: "easeInOut" }}
-                    style={{ width: "100%", height: "100%" }}
-                  >
-                    <StoryImage src={story.panels?.[0]} style={{ width: "100%", height: "100%", filter: "blur(40px) opacity(0.25)", transform: "scale(1.15)" }} />
-                  </motion.div>
-                  <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, rgba(8, 7, 16, 0.5) 0%, ${COLORS.bg} 98%)` }} />
-               </div>
-               
-               <div style={{ position: "relative", maxWidth: 1100, margin: "0 auto", height: "100%", display: "flex", alignItems: isMobile ? "flex-start" : "flex-end", padding: isMobile ? "60px 24px 32px" : "0 40px 60px" }}>
-                  <div style={{ display: "flex", gap: isMobile ? 24 : 32, flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "center" : "flex-end", width: "100%" }}>
-                     <motion.div 
-                       initial={{ y: 60, opacity: 0, scale: 0.95 }} 
-                       animate={{ y: 0, opacity: 1, scale: 1 }} 
-                       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                       style={{ width: isMobile ? 120 : 180, flexShrink: 0, borderRadius: 24, overflow: "hidden", boxShadow: "0 20px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.12)", aspectRatio: "3/4.4", position: "relative" }}
-                     >
-                        <StoryImage src={story.panels?.[0]} style={{ width: "100%", height: "100%" }} />
-                        <div style={{ position: "absolute", top: 12, right: 12, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(10px)", padding: "4px 10px", borderRadius: 8, color: "#FFF", fontSize: 10, fontWeight: 800, display: "flex", alignItems: "center", gap: 6, border: "1px solid rgba(255,255,255,0.1)" }}>
-                           <Activity size={10} color={COLORS.emerald} /> LIVE
-                        </div>
-                     </motion.div>
-                     
-                     <div style={{ flex: 1, textAlign: isMobile ? "center" : "left", paddingBottom: isMobile ? 0 : 20 }}>
-                        <motion.div 
-                          initial={{ x: -20, opacity: 0 }} 
-                          animate={{ x: 0, opacity: 1 }} 
-                          transition={{ delay: 0.3, duration: 0.6 }}
-                          style={{ display: "flex", gap: 10, justifyContent: isMobile ? "center" : "flex-start", marginBottom: 28 }}
-                        >
-                           <Badge label={story.genre} icon={Sparkles} />
-                           <Badge label="Interactive AI" color={COLORS.rose} icon={Zap} />
-                           {story.isAgeRestricted && <Badge label="18+" color={COLORS.rose} />}
-                        </motion.div>
-                        
-                        <motion.h1 
-                          initial={{ y: 10, opacity: 0 }} 
-                          animate={{ y: 0, opacity: 1 }} 
-                          transition={{ delay: 0.4, duration: 0.6 }}
-                          style={{ fontSize: isMobile ? 28 : 42, margin: "0 0 16px", fontWeight: 800, letterSpacing: -1, lineHeight: 1.2, color: "#FFF" }}
-                        >
-                          {story.title}
-                        </motion.h1>
-                        
-                        <motion.div 
-                          initial={{ y: 10, opacity: 0 }} 
-                          animate={{ y: 0, opacity: 1 }} 
-                          transition={{ delay: 0.5, duration: 0.6 }}
-                          style={{ display: "flex", gap: 20, justifyContent: isMobile ? "center" : "flex-start", color: "rgba(255,255,255,0.6)", fontSize: 13, fontWeight: 600, marginBottom: 24 }}
-                        >
-                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}><Star size={16} color={COLORS.gold} fill={COLORS.gold} /> <span style={{ color: "#FFF" }}>{story.rating || "4.9"}</span></div>
-                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}><BookOpen size={16} /> <span style={{ color: "#FFF" }}>{story.episodes?.length || 0} Chapters</span></div>
-                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}><Heart size={16} /> <span style={{ color: "#FFF" }}>{story.likes || 0} Souls</span></div>
-                        </motion.div>
-                        
-                        <motion.div 
-                          initial={{ y: 10, opacity: 0 }} 
-                          animate={{ y: 0, opacity: 1 }} 
-                          transition={{ delay: 0.6, duration: 0.6 }}
-                          style={{ display: "flex", gap: 16, justifyContent: isMobile ? "center" : "flex-start" }}
-                        >
-                           <button 
-                             onClick={() => story.episodes?.length > 0 && handleSelectEpisode(story.episodes[0])} 
-                             style={{ 
-                               background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.rose})`, 
-                               color: "#FFF", padding: "12px 24px", borderRadius: 12, border: "none", 
-                               fontWeight: 700, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", 
-                               gap: 8, boxShadow: `0 10px 20px rgba(139, 92, 246, 0.2)`, transition: 'all 0.3s' 
-                             }} 
-                             onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} 
-                             onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-                           >
-                             <Sparkles size={16} /> Start Journey
-                           </button>
-                           
-                           {!isMobile && (
-                             <button 
-                               onClick={() => { setIsLiked(!isLiked); triggerToast(isLiked ? "Soul untethered" : "Soul bound to this story!"); }} 
-                               style={{ 
-                                 width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,0.06)", 
-                                 border: `1px solid ${COLORS.border}`, display: "flex", alignItems: "center", 
-                                 justifyContent: "center", cursor: "pointer", color: isLiked ? COLORS.rose : "#FFF", 
-                                 transition: 'all 0.3s' 
-                               }}
-                               onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
-                               onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
-                             >
-                               <Heart size={20} fill={isLiked ? COLORS.rose : "none"} />
-                             </button>
-                           )}
-                        </motion.div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-
-            <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "24px 20px 80px" : "40px 60px 100px" }}>
-              
-              {/* TABBED NAVIGATION SYSTEM */}
-              <div style={{ display: "flex", gap: 24, borderBottom: `1px solid ${COLORS.border}`, marginBottom: 40, paddingBottom: 4, overflowX: "auto", scrollbarWidth: "none" }}>
-                {[
-                  { id: "episodes", label: "Chronicles", icon: BookOpen },
-                  { id: "map", label: "Quest Map", icon: Gamepad2 },
-                  { id: "reviews", label: "Reviews", icon: MessageSquare },
-                  { id: "gallery", label: "Vault Gallery", icon: Maximize2 },
-                ].map(tab => (
-                  <button 
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    style={{ 
-                      background: "none", border: "none", padding: "12px 0 20px", 
-                      color: activeTab === tab.id ? COLORS.purple : COLORS.textMuted, 
-                      fontSize: 14, fontWeight: 700, cursor: "pointer", position: "relative",
-                      display: "flex", alignItems: "center", gap: 8, transition: "color 0.3s",
-                      whiteSpace: "nowrap"
-                    }}
-                  >
-                    <tab.icon size={16} />
-                    {tab.label}
-                    {activeTab === tab.id && (
-                      <motion.div layoutId="activeTab" style={{ position: "absolute", bottom: -2, left: 0, right: 0, height: 4, background: COLORS.purple, borderRadius: 2 }} />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 320px", gap: 40, alignItems: "start" }}>
-                
-                {/* MAIN CONTENT AREA (DYNAMIC TABS) */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-                  
-                  <AnimatePresence mode="wait">
-                    {activeTab === "episodes" && (
-                      <motion.div key="episodes" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.4 }}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-                          <section>
-                            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                               <div style={{ width: 4, height: 20, background: COLORS.purple, borderRadius: 2 }} />
-                               <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: -0.5 }}>The Chronicles</h3>
-                            </div>
-                            <p style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.6, fontSize: 15, fontWeight: 400, letterSpacing: 0.2 }}>{story.description || "In a realm where light and shadow are at war, your choices determine the survival of entire civilizations. Will you be the savior, or the architect of ruin?"}</p>
-                          </section>
-
-                          <section>
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-                               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                                  <div style={{ width: 4, height: 20, background: COLORS.rose, borderRadius: 2 }} />
-                                  <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: -0.5 }}>Episodes</h3>
-                               </div>
-                               <Badge label={`${story.episodes?.length || 0} Chronicles`} color={COLORS.rose} icon={TrendingUp} />
-                            </div>
-                            
-                            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                              {(story.episodes || []).map((ep, idx) => (
-                                <motion.div 
-                                  key={ep._id} 
-                                  whileHover={{ x: 6, background: "rgba(255,255,255,0.04)", borderColor: "rgba(139, 92, 246, 0.3)" }} 
-                                  onClick={() => handleSelectEpisode(ep)} 
-                                  style={{ 
-                                    background: "rgba(255,255,255,0.02)", 
-                                    border: `1px solid ${COLORS.border}`, 
-                                    borderRadius: 20, 
-                                    padding: "16px", 
-                                    cursor: "pointer", 
-                                    display: "flex", 
-                                    alignItems: "center", 
-                                    gap: 16, 
-                                    transition: "all 0.3s ease" 
-                                  }}
-                                >
-                                  <div style={{ width: 80, height: 56, borderRadius: 12, overflow: "hidden", background: "rgba(255,255,255,0.05)", flexShrink: 0, position: "relative" }}>
-                                     <StoryImage src={ep.panels?.[0] || story.panels?.[0]} style={{ width: "100%", height: "100%" }} />
-                                     <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.4)", opacity: 0, transition: "opacity 0.3s" }} className="ep-hover">
-                                        <Maximize2 size={16} color="#FFF" />
-                                     </div>
-                                     <div style={{ position: "absolute", top: 6, left: 6, background: idx === 0 ? COLORS.purple : "rgba(0,0,0,0.7)", padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 800, color: "#FFF", border: "1px solid rgba(255,255,255,0.1)" }}>{ep.number}</div>
-                                  </div>
-                                  
-                                  <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: 700, fontSize: 16, color: "#FFF", marginBottom: 4 }}>{ep.title}</div>
-                                    <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, color: COLORS.textMuted, fontWeight: 500, flexWrap: "wrap" }}>
-                                       <div style={{ display: "flex", alignItems: "center", gap: 4 }}><Layers size={14} /> {ep.scenes?.length || 0} Scenes</div>
-                                       <div style={{ display: "flex", alignItems: "center", gap: 4 }}><Clock size={14} /> 8 min</div>
-                                       <div style={{ display: "flex", alignItems: "center", gap: 4 }}><ThumbsUp size={14} /> {(story.views / 10).toFixed(0)}</div>
-                                    </div>
-                                  </div>
-                                  
-                                  <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.04)", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s" }}>
-                                    <ChevronRight size={16} color={COLORS.textMuted} />
-                                  </div>
-                                </motion.div>
-                              ))}
-                            </div>
-
-                            {/* ─── READ NEXT EPISODE CTA ─── */}
-                            {story.episodes && story.episodes.length > 0 && (
-                              <div style={{ marginTop: 32 }}>
-                                {/* Latest Episode Banner */}
-                                <div style={{
-                                  background: `linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(244,63,142,0.08) 100%)`,
-                                  border: `1px solid rgba(139,92,246,0.25)`,
-                                  borderRadius: 24,
-                                  padding: "28px 28px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  gap: 20,
-                                  flexWrap: "wrap"
-                                }}>
-                                  <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                                    <div style={{
-                                      width: 52, height: 52, borderRadius: 16,
-                                      background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.rose})`,
-                                      display: "flex", alignItems: "center", justifyContent: "center",
-                                      boxShadow: `0 8px 20px rgba(139,92,246,0.35)`,
-                                      flexShrink: 0
-                                    }}>
-                                      <BookOpen size={22} color="#FFF" />
-                                    </div>
-                                    <div>
-                                      <div style={{ fontSize: 11, fontWeight: 800, color: COLORS.rose, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 4 }}>Latest Episode</div>
-                                      <div style={{ fontSize: 17, fontWeight: 800, color: "#FFF", letterSpacing: -0.3 }}>
-                                        {story.episodes[story.episodes.length - 1]?.title || `Episode ${story.episodes.length}`}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <motion.button
-                                    whileHover={{ scale: 1.04, y: -2 }}
-                                    whileTap={{ scale: 0.97 }}
-                                    onClick={() => navigate(`/manta/${id}?ep=${story.episodes[story.episodes.length - 1]?.number || story.episodes.length}`)}
-                                    style={{
-                                      background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.rose})`,
-                                      color: "#FFF",
-                                      border: "none",
-                                      borderRadius: 14,
-                                      padding: "14px 28px",
-                                      fontWeight: 800,
-                                      fontSize: 15,
-                                      cursor: "pointer",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: 10,
-                                      boxShadow: `0 8px 24px rgba(139,92,246,0.35)`,
-                                      whiteSpace: "nowrap",
-                                      flexShrink: 0
-                                    }}
-                                  >
-                                    <Sparkles size={16} />
-                                    Read Latest Episode
-                                  </motion.button>
-                                </div>
-
-                                {/* Episode 1 start link */}
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginTop: 16 }}>
-                                  <div style={{ height: 1, flex: 1, background: `rgba(255,255,255,0.06)` }} />
-                                  <span style={{ fontSize: 12, color: COLORS.textMuted, fontWeight: 600 }}>or</span>
-                                  <div style={{ height: 1, flex: 1, background: `rgba(255,255,255,0.06)` }} />
-                                </div>
-                                <motion.button
-                                  whileHover={{ scale: 1.02 }}
-                                  whileTap={{ scale: 0.98 }}
-                                  onClick={() => navigate(`/manta/${id}?ep=1`)}
-                                  style={{
-                                    width: "100%",
-                                    marginTop: 12,
-                                    padding: "14px",
-                                    background: "rgba(255,255,255,0.03)",
-                                    border: `1px solid ${COLORS.border}`,
-                                    borderRadius: 14,
-                                    color: "rgba(255,255,255,0.7)",
-                                    fontSize: 14,
-                                    fontWeight: 700,
-                                    cursor: "pointer",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    gap: 8
-                                  }}
-                                >
-                                  <BookOpen size={15} />
-                                  Start from Episode 1
-                                </motion.button>
-                              </div>
-                            )}
-                          </section>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === "map" && (
-                      <motion.div key="map" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
-                         <StoryMap 
-                            storyId={id}
-                            storyNodes={story.nodes || []}
-                            currentNodeId={activeScene?.id}
-                            userReadNodes={userData?.readNodes || []}
-                            isBookmarked={userData?.bookmarks?.includes(id)}
-                            userId={userData?._id}
-                            onSelectNode={(node) => {
-                              if (node.type === 'scene') {
-                                setActiveScene(node);
-                                setViewMode("reader");
-                              }
-                            }}
-                            onToggleBookmark={handleToggleBookmark}
-                            onToggleRead={handleToggleRead}
-                          />
-                      </motion.div>
-                    )}
-
-                    {activeTab === "reviews" && (
-                      <motion.div key="reviews" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
-                          <section>
-                            <h3 style={{ fontSize: 24, fontWeight: 900, marginBottom: 32, color: "#FFF" }}>Expert Analysis</h3>
-                            <RatingBreakdown />
-                          </section>
-                          <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${COLORS.border}`, borderRadius: 40, padding: "40px", boxShadow: "0 30px 60px rgba(0,0,0,0.3)" }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
-                              <h3 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: "#FFF" }}>The Void Speaks</h3>
-                              <Badge label={`${comments.length} Reviewers`} color={COLORS.purple} icon={MessageSquare} />
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-                              {comments.map(c => (
-                                <div key={c.id} style={{ display: "flex", gap: 24 }}>
-                                  <Avatar initials={c.avatar} size={50} color={COLORS.purple} />
-                                  <div style={{ flex: 1 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                                      <div style={{ fontSize: 16, fontWeight: 900, color: '#FFF' }}>{c.user}</div>
-                                      <div style={{ display: "flex", gap: 4 }}><Star size={14} color={COLORS.gold} fill={COLORS.gold} /><Star size={14} color={COLORS.gold} fill={COLORS.gold} /><Star size={14} color={COLORS.gold} fill={COLORS.gold} /><Star size={14} color={COLORS.gold} fill={COLORS.gold} /><Star size={14} color={COLORS.gold} fill={COLORS.gold} /></div>
-                                    </div>
-                                    <p style={{ fontSize: 16, color: "rgba(255,255,255,0.6)", margin: "0 0 16px", lineHeight: 1.7 }}>{c.text}</p>
-                                    <div style={{ display: "flex", gap: 24, fontSize: 13, fontWeight: 800, color: COLORS.textMuted }}><span style={{ display: "flex", alignItems: "center", gap: 8, cursor: 'pointer', transition: 'color 0.2s' }}><ThumbsUp size={16} /> {c.likes}</span><span style={{ cursor: 'pointer' }}>Reply</span></div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === "gallery" && (
-                      <motion.div key="gallery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 24 }}>
-                          {(story.panels || []).map((p, i) => (
-                            <motion.div key={i} whileHover={{ scale: 1.05, y: -10 }} style={{ borderRadius: 24, overflow: "hidden", border: `1px solid ${COLORS.border}`, aspectRatio: "1", boxShadow: "0 20px 40px rgba(0,0,0,0.3)" }}>
-                              <StoryImage src={p} style={{ width: "100%", height: "100%" }} />
-                            </motion.div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Recommendations Section */}
-                  {recommendations.length > 0 && (
-                    <section style={{ marginTop: 60 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-                         <div style={{ width: 4, height: 20, background: COLORS.emerald, borderRadius: 2 }} />
-                         <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: -0.5 }}>Seekers Also Read</h3>
-                      </div>
-                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16 }}>
-                        {recommendations.map(rec => {
-                          let cover = rec.coverIcon || "📖";
-                          if (rec.panels && rec.panels.length > 0) {
-                            cover = rec.panels[0];
-                          } else if (cover === "✨" || cover === "📖") {
-                            const genre = String(rec.genre || "").toLowerCase();
-                            if (genre.includes("romance")) cover = "/covers/romance_cover_1777743324375.png";
-                            else if (genre.includes("fantasy")) cover = "/covers/fantasy_cover_1777743338844.png";
-                            else if (genre.includes("action")) cover = "/covers/action_cover_1777743352958.png";
-                            else if (genre.includes("drama")) cover = "/covers/drama_cover_1777743372879.png";
-                            else if (genre.includes("horror")) cover = "/covers/horror_cover_1777743387658.png";
-                            else cover = DEFAULT_COVER;
-                          }
-
-                          return (
-                            <motion.div 
-                              key={rec._id} 
-                              whileHover={{ y: -12 }} 
-                              onClick={() => {
-                                navigate(`/story/${rec._id}`);
-                                window.scrollTo(0, 0);
-                              }}
-                              style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${COLORS.border}`, borderRadius: 32, padding: "20px", cursor: "pointer" }}
-                            >
-                               <div style={{ borderRadius: 20, overflow: "hidden", aspectRatio: "3/4", marginBottom: 20 }}>
-                                  <StoryImage src={cover} style={{ width: "100%", height: "100%" }} />
-                               </div>
-                               <div style={{ fontWeight: 800, fontSize: 18, color: "#FFF", marginBottom: 8 }}>{rec.title}</div>
-                               <div style={{ fontSize: 13, color: COLORS.textMuted, fontWeight: 700 }}>
-                                 {rec.genre ? (rec.genre.charAt(0).toUpperCase() + rec.genre.slice(1)) : "Manhwa"}
-                               </div>
-                            </motion.div>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  )}
-                </div>
-
-                {/* SIDEBAR AREA */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-                  
-                  {/* Story Stats Panel */}
-                  <div style={{ background: "rgba(255,255,255,0.03)", border: `1.5px solid ${COLORS.border}`, borderRadius: 20, padding: "24px", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
-                    <h4 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 800, color: "#FFF", display: "flex", alignItems: "center", gap: 8 }}><BarChart3 size={16} color={COLORS.purple} /> Story Analytics</h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                      {[
-                        { l: "Choice Complexity", v: "High", c: COLORS.rose },
-                        { l: "Branch Count", v: "32 Paths", c: COLORS.purple },
-                        { l: "Avg completion", v: "92%", c: COLORS.emerald },
-                        { l: "Reader Mood", v: "Intense", c: COLORS.gold },
-                      ].map(s => (
-                        <div key={s.l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: 13, fontWeight: 500, color: COLORS.textMuted }}>{s.l}</span>
-                          <span style={{ fontSize: 13, fontWeight: 700, color: s.c }}>{s.v}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Community Goals */}
-                  <div style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%)", border: `1.5px solid ${COLORS.border}`, borderRadius: 20, padding: "24px", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
-                    <h4 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 800, color: "#FFF", display: "flex", alignItems: "center", gap: 8 }}><Trophy size={16} color={COLORS.gold} /> Community Goals</h4>
-                    <CommunityMilestones />
-                  </div>
-
-                  <VaultPanel bookmarks={userData?.bookmarks || []} onNavigate={(sid) => navigate(`/story/${sid}`)} />
-                  
-                  {/* ENHANCED CREATOR SECTION */}
-                  <div style={{ 
-                    background: "linear-gradient(135deg, rgba(244,63,142,0.08) 0%, rgba(139, 92, 246, 0.04) 100%)", 
-                    border: `1.5px solid ${COLORS.border}`, 
-                    borderRadius: 24, 
-                    padding: "24px", 
-                    boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-                    position: "relative",
-                    overflow: "hidden"
-                  }}>
-                    <div style={{ position: "absolute", top: -20, right: -20, width: 80, height: 80, background: `${COLORS.rose}15`, filter: "blur(30px)", borderRadius: "50%" }} />
-                    
-                    <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-                      <div style={{ position: "relative" }}>
-                        <Avatar initials={story.authorName?.[0] || "A"} size={48} color={COLORS.rose} />
-                        <div style={{ position: "absolute", bottom: -2, right: -2, width: 18, height: 18, borderRadius: "50%", background: COLORS.emerald, border: `2px solid #0F0D1E`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <Check size={10} color="#FFF" />
-                        </div>
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 800, fontSize: 18, color: "#FFF", letterSpacing: -0.5 }}>{story.authorName}</div>
-                        <div style={{ fontSize: 12, color: COLORS.rose, fontWeight: 700, marginTop: 2, textTransform: "uppercase", letterSpacing: 1 }}>Master Architect</div>
-                      </div>
-                    </div>
-                    
-                    <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, lineHeight: 1.5, marginBottom: 24 }}>Creating immersive worlds where your decisions define the future. Join the community of seekers.</p>
-                    
-                    <div style={{ display: "flex", gap: 10, flexDirection: isMobile ? "column" : "row" }}>
-                      <button 
-                        onClick={handleToggleFollow} 
-                        style={{ flex: 1, padding: "12px 16px", borderRadius: 12, background: isFollowing ? "rgba(255,255,255,0.06)" : COLORS.purple, border: `1.5px solid ${isFollowing ? COLORS.border : COLORS.purple}`, color: "#FFF", fontWeight: 700, cursor: "pointer", fontSize: 14, transition: 'all 0.3s', boxShadow: isFollowing ? 'none' : `0 10px 20px ${COLORS.purple}30` }}
-                      >
-                        {isFollowing ? "Bonded (Following)" : `Follow ${story?.authorName || "Creator"}`}
-                      </button>
-                      <button style={{ width: isMobile ? "100%" : 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,0.06)", border: `1px solid ${COLORS.border}`, display: "flex", alignItems: "center", justifyContent: "center", color: "#FFF", cursor: "pointer" }}>
-                         <Share2 size={16} /> {isMobile && <span style={{ marginLeft: 8, fontSize: 14, fontWeight: 700 }}>Share</span>}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* MOBILE QUICK ACTION BAR */}
-            {isMobile && (
-              <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: 80, background: "rgba(8,7,16,0.9)", backdropFilter: "blur(30px)", borderTop: `1px solid ${COLORS.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 24px", zIndex: 1000 }}>
-                 <button 
-                   onClick={() => { setIsLiked(!isLiked); triggerToast(isLiked ? "Soul untethered" : "Soul bound!"); }}
-                   style={{ background: "none", border: "none", color: isLiked ? COLORS.rose : "#FFF", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}
-                 >
-                   <Heart size={24} fill={isLiked ? COLORS.rose : "none"} />
-                   <span style={{ fontSize: 10, fontWeight: 800 }}>LIKE</span>
-                 </button>
-                 
-                 <button 
-                   onClick={() => story.episodes?.length > 0 && handleSelectEpisode(story.episodes[0])}
-                   style={{ background: COLORS.purple, color: "#FFF", padding: "12px 32px", borderRadius: 16, border: "none", fontWeight: 900, fontSize: 14, boxShadow: `0 10px 20px ${COLORS.purple}40` }}
-                 >
-                   ENTER REALM
-                 </button>
-                 
-                 <button 
-                   onClick={handleToggleBookmark}
-                   style={{ background: "none", border: "none", color: userData?.bookmarks?.includes(id) ? COLORS.gold : "#FFF", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}
-                 >
-                   <Bookmark size={24} fill={userData?.bookmarks?.includes(id) ? COLORS.gold : "none"} />
-                   <span style={{ fontSize: 10, fontWeight: 800 }}>VAULT</span>
-                 </button>
-              </div>
-            )}
-            
-            <Footer />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        .desktop-only { display: inline-flex; }
-        @media (max-width: 899px) { .desktop-only { display: none; } }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: ${COLORS.border}; borderRadius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.1); }
-        .ep-hover { opacity: 0; }
-        div:hover > .ep-hover { opacity: 1; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { max-width: 100%; overflow-x: hidden; }
+
+        .glass-card {
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.95);
+          box-shadow: 0 15px 45px rgba(190, 140, 220, 0.22);
+        }
+
+        .ep-card {
+          transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+        }
+        .ep-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 30px rgba(168, 85, 247, 0.18);
+        }
+
+        @media (max-width: 990px) {
+          .story-grid-layout {
+            grid-template-columns: 1fr !important;
+          }
+          .hero-content-flex {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+          }
+          .hero-cover-img {
+            width: 180px !important;
+            height: 250px !important;
+          }
+        }
       `}</style>
+
+      {/* ═══ 1. TOP HEADER (NAVIGATION BAR) ═══ */}
+      <div style={{ maxWidth: 1340, margin: "0 auto", padding: "16px 20px 0" }}>
+        <nav className="glass-card" style={{
+          borderRadius: 40,
+          padding: "8px 24px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          boxShadow: "0 10px 30px rgba(220, 170, 230, 0.25)"
+        }}>
+          {/* Brand Logo */}
+          <div 
+            style={{ display: "flex", alignItems: "center", cursor: "pointer", flexShrink: 0 }} 
+            onClick={() => navigate("/")}
+          >
+            <img src="/toonvault_logo_full.png" alt="ToonVault" style={{ height: 44, width: "auto" }} />
+          </div>
+
+          {/* Center Links */}
+          <div style={{ display: "flex", alignItems: "center", gap: 24 }} className="desktop-only">
+            {[
+              { label: "Originals", path: "/browse" },
+              { label: "Rankings", path: "/browse" },
+              { label: "Canvas", path: "/browse" },
+              { label: "Browse", path: "/browse" },
+              { label: "Pricing", path: "/info/pricing" },
+            ].map(item => (
+              <button 
+                key={item.label} 
+                onClick={() => navigate(item.path)} 
+                style={{
+                  border: "none", background: "none",
+                  fontSize: 14, fontWeight: 800, color: "#1E1B4B", cursor: "pointer",
+                  whiteSpace: "nowrap", padding: 0
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Right Search & Auth */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 8,
+              background: "rgba(255, 255, 255, 0.95)",
+              border: "1px solid rgba(255, 255, 255, 0.95)",
+              borderRadius: 24, padding: "7px 16px", width: 190,
+              boxShadow: "0 2px 10px rgba(0,0,0,0.03)"
+            }} className="desktop-only">
+              <span style={{ fontSize: 13, color: "#94A3B8" }}>🔍</span>
+              <input 
+                type="text"
+                placeholder="Search webtoons, genres..."
+                value={searchVal}
+                onChange={e => setSearchVal(e.target.value)}
+                style={{ border: "none", background: "none", outline: "none", fontSize: 12, color: "#1E1B4B", width: "100%", fontWeight: 600 }}
+              />
+            </div>
+
+            <button 
+              onClick={() => navigate('/user')}
+              style={{
+                padding: "8px 20px", borderRadius: 24,
+                border: "1.5px solid rgba(244, 63, 142, 0.35)",
+                background: "rgba(255, 255, 255, 0.95)",
+                color: "#1E1B4B", fontSize: 13, fontWeight: 800, cursor: "pointer"
+              }}
+              className="desktop-only"
+            >Log in</button>
+
+            <button 
+              onClick={() => navigate('/user?mode=signup')}
+              style={{
+                padding: "8px 22px", borderRadius: 24, border: "none",
+                background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+                color: "white", fontSize: 13, fontWeight: 800, cursor: "pointer",
+                boxShadow: "0 4px 16px rgba(244, 63, 142, 0.4)"
+              }}
+              className="desktop-only"
+            >Sign up</button>
+          </div>
+        </nav>
+      </div>
+
+      {/* ═══ 2. HERO CONTAINER ═══ */}
+      <div style={{ maxWidth: 1340, margin: "20px auto 0", padding: "0 20px" }}>
+        <div style={{
+          borderRadius: 36,
+          padding: "36px 40px",
+          background: "url('/hero_bg.png') center / cover no-repeat, linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 242, 246, 0.4) 100%)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          border: "1px solid rgba(255, 255, 255, 0.95)",
+          boxShadow: "0 20px 60px rgba(190, 140, 220, 0.25)",
+          position: "relative", overflow: "hidden"
+        }}>
+          <div className="hero-content-flex" style={{ display: "flex", gap: 36, alignItems: "center" }}>
+            
+            {/* Story Cover Image */}
+            <div style={{ position: "relative", flexShrink: 0 }}>
+              <div 
+                className="hero-cover-img"
+                style={{
+                  width: 230, height: 320, borderRadius: 24, overflow: "hidden",
+                  boxShadow: "0 20px 45px rgba(180, 120, 210, 0.4)",
+                  border: "3px solid rgba(255, 255, 255, 0.95)",
+                  position: "relative"
+                }}
+              >
+                <img 
+                  src={story.cover || "/trust_the_stranger.png"} 
+                  alt={story.title} 
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                  onError={(e) => { e.target.src = "/trust_the_stranger.png"; }}
+                />
+
+                {/* ⭐ LIVE Tag */}
+                <div style={{
+                  position: "absolute", top: 12, left: 12,
+                  background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(8px)",
+                  padding: "4px 10px", borderRadius: 12, fontSize: 11, fontWeight: 900,
+                  color: "#1E1B4B", display: "flex", alignItems: "center", gap: 4,
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                }}>
+                  <span style={{ color: "#F43F8E" }}>⭐</span> LIVE
+                </div>
+              </div>
+            </div>
+
+            {/* Story Info */}
+            <div style={{ flex: 1 }}>
+              {/* Badges */}
+              <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+                <span style={{
+                  fontSize: 10, fontWeight: 900, textTransform: "uppercase",
+                  padding: "5px 12px", borderRadius: 14,
+                  background: "rgba(244, 63, 142, 0.12)", color: "#F43F8E",
+                  border: "1px solid rgba(244, 63, 142, 0.25)", letterSpacing: 0.8
+                }}>
+                  • INTERACTIVE AI
+                </span>
+                <span style={{
+                  fontSize: 10, fontWeight: 900, textTransform: "uppercase",
+                  padding: "5px 12px", borderRadius: 14,
+                  background: "rgba(168, 85, 247, 0.12)", color: "#A855F7",
+                  border: "1px solid rgba(168, 85, 247, 0.25)", letterSpacing: 0.8
+                }}>
+                  AI POWERED
+                </span>
+              </div>
+
+              {/* Title & Icon */}
+              <h1 style={{
+                fontSize: 42, fontWeight: 900, color: "#1E1B4B",
+                lineHeight: 1.1, letterSpacing: "-1px", margin: "0 0 12px",
+                display: "flex", alignItems: "center", gap: 12
+              }}>
+                {story.title || "Trust the Stranger"} 📖
+              </h1>
+
+              {/* Description */}
+              <p style={{
+                fontSize: 14, color: "#475569", lineHeight: 1.6,
+                margin: "0 0 20px", maxWidth: 640, fontWeight: 500
+              }}>
+                {story.description || "In a realm where light and shadow are at war, your choices determine the survival of entire civilizations. Will you be the savior, or the architect of ruin?"}
+              </p>
+
+              {/* Meta Info Stats */}
+              <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 24, color: "#1E1B4B", fontSize: 14, fontWeight: 800 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <Star size={18} fill="#F59E0B" color="#F59E0B" />
+                  <span>{story.rating || "4.9"}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <BookOpen size={18} color="#A855F7" />
+                  <span>{story.episodes?.length || 12} Chapters</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <Heart size={18} fill="#F43F8E" color="#F43F8E" />
+                  <span>{story.soulsCount || "10k"} Souls</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                <button
+                  onClick={handleStartJourney}
+                  style={{
+                    padding: "14px 32px", borderRadius: 30, border: "none",
+                    background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+                    color: "white", fontSize: 15, fontWeight: 900, cursor: "pointer",
+                    boxShadow: "0 10px 28px rgba(244, 63, 142, 0.4)",
+                    display: "flex", alignItems: "center", gap: 8, transition: "transform 0.2s"
+                  }}
+                >
+                  <Play size={18} fill="white" /> Start Journey
+                </button>
+
+                <button
+                  onClick={() => setIsLiked(!isLiked)}
+                  style={{
+                    width: 48, height: 48, borderRadius: "50%",
+                    background: "rgba(255, 255, 255, 0.95)",
+                    border: "1.5px solid rgba(244, 63, 142, 0.3)",
+                    color: isLiked ? "#F43F8E" : "#1E1B4B",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,0.04)"
+                  }}
+                >
+                  <Heart size={20} fill={isLiked ? "#F43F8E" : "none"} />
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ 3. FLOATING TAB SYSTEM BAR ═══ */}
+      <div style={{ maxWidth: 1340, margin: "20px auto 0", padding: "0 20px" }}>
+        <div className="glass-card" style={{
+          borderRadius: 30, padding: "8px 24px",
+          display: "flex", gap: 32, alignItems: "center",
+          boxShadow: "0 10px 30px rgba(220, 170, 230, 0.2)"
+        }}>
+          {[
+            { id: "chronicles", label: "Chronicles", icon: "💎" },
+            { id: "episodes", label: "Episodes", icon: "📑" },
+            { id: "map", label: "Quest Map", icon: "🗺️" },
+            { id: "reviews", label: "Reviews", icon: "💬" },
+            { id: "gallery", label: "Vault Gallery", icon: "🎨" },
+          ].map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  border: "none", background: "none",
+                  padding: "10px 4px", fontSize: 14, fontWeight: isActive ? 900 : 700,
+                  color: isActive ? "#F43F8E" : "#64748B",
+                  cursor: "pointer", position: "relative",
+                  display: "flex", alignItems: "center", gap: 8
+                }}
+              >
+                <span>{tab.icon}</span> {tab.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTabUnderline"
+                    style={{
+                      position: "absolute", bottom: -2, left: 0, right: 0,
+                      height: 3, background: "linear-gradient(90deg, #F43F8E, #A855F7)",
+                      borderRadius: 2
+                    }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ═══ 4. MAIN CONTENT AREA (2 COLUMNS) ═══ */}
+      <div style={{ maxWidth: 1340, margin: "24px auto 0", padding: "0 20px" }}>
+        <div className="story-grid-layout" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 28, alignItems: "start" }}>
+
+          {/* ─── LEFT COLUMN: EPISODES LIST ─── */}
+          <div>
+            {/* Header bar */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 900, color: "#1E1B4B", margin: 0 }}>All Episodes</h2>
+                <span style={{ fontSize: 13, fontWeight: 800, color: "#F43F8E", background: "rgba(244, 63, 142, 0.12)", padding: "2px 10px", borderRadius: 12 }}>
+                  {story.episodes?.length || 12}
+                </span>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 800, color: "#64748B", cursor: "pointer" }}>
+                <span>Sort by:</span>
+                <span style={{ color: "#1E1B4B" }}>Episode Order ∨</span>
+              </div>
+            </div>
+
+            {/* Episodes List (1 to 10) */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {(story.episodes || SAMPLE_EPISODES).map((ep, idx) => {
+                const epNum = ep.number || (idx + 1);
+                const isUnlocked = idx === 0 || ep.isUnlocked;
+
+                return (
+                  <div
+                    key={idx}
+                    className="glass-card ep-card"
+                    style={{
+                      borderRadius: 24, padding: "16px 20px",
+                      display: "flex", alignItems: "center", gap: 16,
+                      background: "rgba(255, 255, 255, 0.88)"
+                    }}
+                  >
+                    {/* Thumbnail */}
+                    <div style={{
+                      width: 100, height: 68, borderRadius: 16, overflow: "hidden",
+                      flexShrink: 0, position: "relative", boxShadow: "0 4px 14px rgba(0,0,0,0.08)"
+                    }}>
+                      <img 
+                        src={ep.thumbnail || ep.panels?.[0] || story.cover || "/hero_bg.png"} 
+                        alt={ep.title} 
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        onError={(e) => { e.target.src = "/hero_bg.png"; }}
+                      />
+                    </div>
+
+                    {/* Number Badge */}
+                    <div style={{
+                      width: 32, height: 32, borderRadius: "50%",
+                      background: "rgba(244, 63, 142, 0.1)", border: "1px solid rgba(244, 63, 142, 0.2)",
+                      color: "#F43F8E", fontWeight: 900, fontSize: 13,
+                      display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+                    }}>
+                      {epNum}
+                    </div>
+
+                    {/* Content Details */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                        <div style={{ fontSize: 15, fontWeight: 900, color: "#1E1B4B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {ep.title}
+                        </div>
+                        {(ep.isNew || idx === 0) && (
+                          <span style={{ fontSize: 9, fontWeight: 900, color: "#F43F8E", background: "rgba(244, 63, 142, 0.15)", padding: "2px 8px", borderRadius: 8, textTransform: "uppercase" }}>
+                            New
+                          </span>
+                        )}
+                      </div>
+
+                      <div style={{ fontSize: 11, color: "#64748B", fontWeight: 500, lineHeight: 1.4, marginBottom: 6, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        {ep.synopsis || ep.description || "A mysterious turning point in the story..."}
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 11, fontWeight: 800, color: "#64748B" }}>
+                        <span style={{ color: "#10B981" }}>★ {ep.score || "92%"}</span>
+                        <span>💖 {ep.likes || "1.2K"}</span>
+                      </div>
+                    </div>
+
+                    {/* Action Button */}
+                    <div>
+                      {isUnlocked ? (
+                        <button
+                          onClick={() => handlePlayEpisode(epNum)}
+                          style={{
+                            padding: "8px 20px", borderRadius: 20, border: "none",
+                            background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+                            color: "white", fontSize: 12, fontWeight: 900, cursor: "pointer",
+                            boxShadow: "0 4px 14px rgba(244, 63, 142, 0.35)",
+                            display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap"
+                          }}
+                        >
+                          <Play size={12} fill="white" /> Play
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handlePlayEpisode(epNum)}
+                          style={{
+                            padding: "8px 18px", borderRadius: 20,
+                            border: "1px solid rgba(0,0,0,0.08)", background: "rgba(255,255,255,0.7)",
+                            color: "#64748B", fontSize: 12, fontWeight: 800, cursor: "pointer",
+                            display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap"
+                          }}
+                        >
+                          <Lock size={12} /> Locked
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Bottom Pagination Controls */}
+            <div style={{ marginTop: 24, textAlign: "center" }}>
+              <button style={{
+                padding: "10px 24px", borderRadius: 20,
+                border: "1px solid rgba(244, 63, 142, 0.3)", background: "rgba(255, 255, 255, 0.9)",
+                color: "#1E1B4B", fontSize: 12, fontWeight: 800, cursor: "pointer",
+                marginBottom: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
+              }}>
+                Show More Episodes ∨
+              </button>
+
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontSize: 12, fontWeight: 800 }}>
+                <button style={{ border: "none", background: "none", color: "#94A3B8", cursor: "pointer", padding: "6px 10px" }}>‹ Previous</button>
+                <button style={{ width: 28, height: 28, borderRadius: 8, border: "none", background: "linear-gradient(135deg, #F43F8E, #A855F7)", color: "white", cursor: "pointer" }}>1</button>
+                <button style={{ width: 28, height: 28, borderRadius: 8, border: "none", background: "none", color: "#1E1B4B", cursor: "pointer" }}>2</button>
+                <button style={{ width: 28, height: 28, borderRadius: 8, border: "none", background: "none", color: "#1E1B4B", cursor: "pointer" }}>3</button>
+                <span style={{ color: "#94A3B8" }}>...</span>
+                <button style={{ width: 28, height: 28, borderRadius: 8, border: "none", background: "none", color: "#1E1B4B", cursor: "pointer" }}>12</button>
+                <button style={{ border: "none", background: "none", color: "#1E1B4B", cursor: "pointer", padding: "6px 10px" }}>Next ›</button>
+              </div>
+            </div>
+          </div>
+
+          {/* ─── RIGHT COLUMN: SIDEBAR ─── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+            {/* Card 1: Story Analytics */}
+            <div className="glass-card" style={{ borderRadius: 28, padding: "22px 24px" }}>
+              <div style={{ fontSize: 15, fontWeight: 900, color: "#1E1B4B", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                <span>📊</span> Story Analytics
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 12, fontWeight: 700 }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748B" }}>Choice Complexity</span>
+                  <span style={{ color: "#F43F8E", fontWeight: 900 }}>High</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748B" }}>Branch Count</span>
+                  <span style={{ color: "#A855F7", fontWeight: 900 }}>32 Paths</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748B" }}>Avg completion</span>
+                  <span style={{ color: "#10B981", fontWeight: 900 }}>92%</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748B" }}>Reader Mood</span>
+                  <span style={{ color: "#F59E0B", fontWeight: 900 }}>Intense</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2: Community Goals */}
+            <div className="glass-card" style={{ borderRadius: 28, padding: "22px 24px" }}>
+              <div style={{ fontSize: 15, fontWeight: 900, color: "#1E1B4B", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                <span>🏆</span> Community Goals
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 6 }}>
+                    <span>💖 10k Souls bound</span>
+                    <span style={{ color: "#F43F8E" }}>85%</span>
+                  </div>
+                  <div style={{ height: 6, borderRadius: 3, background: "rgba(0,0,0,0.06)", overflow: "hidden" }}>
+                    <div style={{ width: "85%", height: "100%", background: "linear-gradient(90deg, #F43F8E, #D946EF)", borderRadius: 3 }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 6 }}>
+                    <span>🚗 Quest Map: Chapter 12</span>
+                    <span style={{ color: "#A855F7" }}>62%</span>
+                  </div>
+                  <div style={{ height: 6, borderRadius: 3, background: "rgba(0,0,0,0.06)", overflow: "hidden" }}>
+                    <div style={{ width: "62%", height: "100%", background: "linear-gradient(90deg, #A855F7, #6366F1)", borderRadius: 3 }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 6 }}>
+                    <span>🌐 Global Reach</span>
+                    <span style={{ color: "#10B981" }}>68%</span>
+                  </div>
+                  <div style={{ height: 6, borderRadius: 3, background: "rgba(0,0,0,0.06)", overflow: "hidden" }}>
+                    <div style={{ width: "68%", height: "100%", background: "linear-gradient(90deg, #10B981, #059669)", borderRadius: 3 }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Personal Vault */}
+            <div className="glass-card" style={{ borderRadius: 28, padding: "22px 24px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <div style={{ fontSize: 15, fontWeight: 900, color: "#1E1B4B", display: "flex", alignItems: "center", gap: 8 }}>
+                  <span>🔖</span> Personal Vault
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 900, color: "#A855F7", background: "rgba(168, 85, 247, 0.12)", padding: "2px 8px", borderRadius: 10 }}>2</span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+                <img src="/trust_the_stranger.png" alt="" style={{ width: "100%", height: 110, borderRadius: 16, objectFit: "cover" }} />
+                <img src="/into_starfall.png" alt="" style={{ width: "100%", height: 110, borderRadius: 16, objectFit: "cover" }} />
+              </div>
+
+              <div style={{ fontSize: 11, color: "#64748B", fontWeight: 600, textAlign: "center", marginBottom: 14 }}>
+                2 stories saved.<br />Pick up your adventure anytime.
+              </div>
+
+              <button
+                onClick={() => navigate('/dashboard')}
+                style={{
+                  width: "100%", padding: "10px", borderRadius: 18,
+                  border: "1.5px solid rgba(244, 63, 142, 0.3)", background: "rgba(255,255,255,0.9)",
+                  color: "#1E1B4B", fontSize: 12, fontWeight: 800, cursor: "pointer",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
+                }}
+              >
+                Go to Vault
+              </button>
+            </div>
+
+            {/* Card 4: Creator Profile */}
+            <div className="glass-card" style={{ borderRadius: 28, padding: "22px 24px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+                <img src="/hero_bg.png" alt="LunaRead" style={{ width: 52, height: 52, borderRadius: "50%", objectFit: "cover", border: "2px solid #F43F8E" }} />
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: "#A855F7", textTransform: "uppercase" }}>Master Architect</div>
+                  <div style={{ fontSize: 16, fontWeight: 900, color: "#1E1B4B", display: "flex", alignItems: "center", gap: 4 }}>
+                    LunaRead <span style={{ color: "#3B82F6", fontSize: 12 }}>✓</span>
+                  </div>
+                </div>
+              </div>
+
+              <p style={{ fontSize: 12, color: "#475569", lineHeight: 1.5, fontWeight: 500, margin: "0 0 16px" }}>
+                Crafting immersive worlds where your decisions shape the future. Join the community of seekers.
+              </p>
+
+              <div style={{ display: "flex", gap: 10 }}>
+                <button
+                  onClick={() => setIsFollowing(!isFollowing)}
+                  style={{
+                    flex: 1, padding: "10px", borderRadius: 18,
+                    border: "1.5px solid rgba(244, 63, 142, 0.35)",
+                    background: isFollowing ? "#F43F8E" : "white",
+                    color: isFollowing ? "white" : "#1E1B4B",
+                    fontSize: 12, fontWeight: 800, cursor: "pointer"
+                  }}
+                >
+                  {isFollowing ? "Following" : "Follow Creator"}
+                </button>
+
+                <button style={{
+                  width: 40, height: 40, borderRadius: 18,
+                  border: "1.5px solid rgba(0,0,0,0.08)", background: "white",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", color: "#64748B"
+                }}>
+                  <Share2 size={16} />
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      {/* ═══ 5. FOOTER ═══ */}
+      <footer style={{ maxWidth: 1340, margin: "50px auto 0", padding: "0 20px" }}>
+        <div className="glass-card" style={{ borderRadius: 36, padding: "36px 40px" }}>
+          <div style={{
+            display: "grid", gridTemplateColumns: "1.5fr repeat(4, 1fr) 1.5fr",
+            gap: 24, marginBottom: 30
+          }}>
+            <div>
+              <img src="/toonvault_logo_full.png" alt="ToonVault" style={{ height: 36, marginBottom: 10 }} />
+              <div style={{ fontSize: 11, color: "#64748B" }}>Stories you choose. Worlds you unlock.</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>Explore</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#64748B" }}>
+                <span>Originals</span>
+                <span>Rankings</span>
+                <span>Browse</span>
+                <span>Canvas</span>
+                <span>Pricing</span>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>For Readers</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#64748B" }}>
+                <span>How It Works</span>
+                <span>Community</span>
+                <span>FAQ</span>
+                <span>Gift Cards</span>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>For Creators</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#64748B" }}>
+                <span>Create on ToonVault</span>
+                <span>Creator Resources</span>
+                <span>Blog</span>
+                <span>Success Stories</span>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>Company</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#64748B" }}>
+                <span>About Us</span>
+                <span>Careers</span>
+                <span>Contact</span>
+                <span>Press Kit</span>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>Stay connected</div>
+              <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
+                <span>👾</span> <span>📸</span> <span>🐦</span> <span>▶️</span> <span>🎵</span>
+              </div>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 6,
+                background: "rgba(255, 255, 255, 0.9)", border: "1px solid rgba(244, 63, 142, 0.3)",
+                borderRadius: 20, padding: "4px 6px 4px 12px"
+              }}>
+                <input type="email" placeholder="Enter your email" style={{ border: "none", background: "none", outline: "none", fontSize: 11, color: "#1E1B4B", width: "100%" }} />
+                <button style={{
+                  width: 26, height: 26, borderRadius: "50%", border: "none",
+                  background: "linear-gradient(135deg, #F43F8E, #A855F7)", color: "white",
+                  cursor: "pointer", fontSize: 11
+                }}>➔</button>
+              </div>
+            </div>
+          </div>
+
+          <div style={{
+            borderTop: "1px solid rgba(0,0,0,0.06)", paddingTop: 20,
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            fontSize: 11, color: "#94A3B8"
+          }}>
+            <div>© 2025 ToonVault. All rights reserved.</div>
+            <div style={{ display: "flex", gap: 16 }}>
+              <span>Terms of Service</span>
+              <span>Privacy Policy</span>
+              <span>Community Guidelines</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
