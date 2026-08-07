@@ -56,10 +56,10 @@ services:
       REDIS_URL: redis://redis:6379
       MONGO_URI: mongodb://mongo:27017/toonvault
       PORT: 5000
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
-      RUNWARE_API_KEY: ${RUNWARE_API_KEY}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-""}
+      RUNWARE_API_KEY: ${RUNWARE_API_KEY:-""}
       RUNWARE_MODEL: runware:100@1
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET: ${JWT_SECRET:-toonvault_secret_key_2026_safe}
     volumes:
       - uploads_data:/app/uploads
     depends_on:
@@ -73,6 +73,7 @@ services:
   frontend:
     build:
       context: ./frontend
+      target: production
     restart: always
     volumes:
       - uploads_data:/usr/share/nginx/html/uploads
