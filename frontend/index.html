@@ -16,19 +16,23 @@
   </head>
   <body>
     <div id="root">
-      <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:#0F0D1E;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;font-family:'Inter',sans-serif;">
-        <div style="position:relative;width:80px;height:80px;display:flex;align-items:center;justify-content:center;">
-          <div style="width:70px;height:70px;border-radius:50%;border:3px solid transparent;border-top-color:#8B5CF6;border-right-color:#F43F8E;border-bottom-color:#3B82F6;animation:tv-spin 1s linear infinite;box-shadow:0 0 25px rgba(139,92,246,0.4);"></div>
-          <div style="position:absolute;font-size:30px;filter:drop-shadow(0 0 10px rgba(139,92,246,0.8));">✨</div>
-        </div>
-        <h2 style="margin-top:20px;font-size:24px;font-weight:800;background:linear-gradient(135deg,#A78BFA 0%,#F43F5E 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;">ToonVault</h2>
-        <div style="width:140px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:16px;overflow:hidden;position:relative;">
-          <div style="height:100%;width:50%;background:linear-gradient(90deg,#8B5CF6 0%,#F43F8E 100%);border-radius:2px;animation:tv-bar-slide 1.2s ease-in-out infinite alternate;"></div>
+      <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:url('/cloud_bg.png') center/cover no-repeat fixed, linear-gradient(135deg, #FDE8E8 0%, #F5D0FE 50%, #E0E7FF 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;font-family:'Outfit','Inter',sans-serif;">
+        <div style="background:rgba(255,255,255,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.95);border-radius:36px;padding:42px 52px;text-align:center;box-shadow:0 20px 50px rgba(244,63,142,0.18), 0 8px 24px rgba(139,92,246,0.15);display:flex;flex-direction:column;align-items:center;">
+          <div style="width:68px;height:68px;border-radius:22px;background:linear-gradient(135deg, #F43F8E 0%, #8B5CF6 100%);display:flex;align-items:center;justify-content:center;font-size:34px;color:white;box-shadow:0 10px 30px rgba(244, 63, 142, 0.45);animation:tv-pulse 1.8s ease-in-out infinite alternate;">⚡</div>
+          <h2 style="margin-top:18px;font-size:26px;font-weight:900;color:#1E1B4B;letter-spacing:-0.5px;">
+            Toon<span style="color:#F43F8E;">Vault</span>
+          </h2>
+          <div style="font-size:13px;color:#64748B;font-weight:600;margin-top:4px;">
+            Unlocking interactive stories...
+          </div>
+          <div style="width:160px;height:6px;background:rgba(244,63,142,0.12);border-radius:10px;margin-top:22px;overflow:hidden;position:relative;">
+            <div style="height:100%;width:45%;background:linear-gradient(90deg, #F43F8E 0%, #8B5CF6 50%, #F43F8E 100%);border-radius:10px;animation:tv-bar-slide 1.3s ease-in-out infinite alternate;"></div>
+          </div>
         </div>
       </div>
       <style>
-        @keyframes tv-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes tv-bar-slide { 0% { transform: translateX(-50%); width: 30%; } 100% { transform: translateX(200%); width: 50%; } }
+        @keyframes tv-pulse { 0% { transform: scale(1); box-shadow: 0 10px 30px rgba(244,63,142,0.45); } 100% { transform: scale(1.08); box-shadow: 0 16px 45px rgba(139,92,246,0.65); } }
+        @keyframes tv-bar-slide { 0% { transform: translateX(-40%); width: 35%; } 100% { transform: translateX(200%); width: 55%; } }
       </style>
     </div>
     <script type="module" src="/src/main.jsx"></script>
