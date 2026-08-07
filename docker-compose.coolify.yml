@@ -1,0 +1,93 @@
+# Coolify-optimized docker-compose
+# This file is designed to be deployed directly via Coolify's GitHub integration.
+# Coolify handles the SSL, routing, and domain mapping to the 'frontend' service.
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-toonvault}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - toonvault_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-toonvault}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --appendonly yes --save 60 1
+    volumes:
+      - redis_data:/data
+    networks:
+      - toonvault_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo:6
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - toonvault_net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    restart: always
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-toonvault}
+      REDIS_URL: redis://redis:6379
+      MONGO_URI: mongodb://mongo:27017/toonvault
+      PORT: 5000
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      RUNWARE_API_KEY: ${RUNWARE_API_KEY}
+      RUNWARE_MODEL: runware:100@1
+      JWT_SECRET: ${JWT_SECRET}
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - toonvault_net
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: always
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads
+    depends_on:
+      - backend
+    networks:
+      - toonvault_net
+    # Coolify will expose this container natively on port 80
+
+networks:
+  toonvault_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  mongo_data:
+  uploads_data:

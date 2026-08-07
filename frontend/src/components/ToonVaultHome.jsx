@@ -3,55 +3,30 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import StoryImage from "./StoryImage";
 
-const COLORS = {
-  bg: "#07060E",
-  card: "#121020",
-  cardTint: "#1A172E",
-  ink: "#F8FAFC",
-  muted: "#94A3B8",
-  mutedLight: "#64748B",
-  plum: "#7C3AED",
-  plumLight: "rgba(124, 58, 237, 0.2)",
-  plumDark: "#5B21B6",
-  rose: "#F43F5E",
-  roseLight: "rgba(244, 63, 94, 0.2)",
-  cyan: "#06B6D4",
-  cyanLight: "rgba(6, 182, 212, 0.2)",
-  emerald: "#10B981",
-  emeraldLight: "rgba(16, 185, 129, 0.2)",
-  amber: "#F59E0B",
-  amberLight: "rgba(245, 158, 11, 0.2)",
-  gold: "#F59E0B",
-  goldLight: "rgba(245, 158, 11, 0.2)",
-  border: "rgba(255, 255, 255, 0.08)",
-  success: "#10B981",
-};
-
 const GENRES = [
-  { id: "all",         label: "All",           emoji: "✨", color: "#7C3AED", bg: "linear-gradient(135deg, #7C3AED, #4C1D95)" },
-  { id: "romance",     label: "Romance",        emoji: "💕", color: "#F43F5E", bg: "linear-gradient(135deg, #F43F5E, #BE123C)" },
-  { id: "fantasy",     label: "Fantasy",        emoji: "🏰", color: "#8B5CF6", bg: "linear-gradient(135deg, #8B5CF6, #6D28D9)" },
+  { id: "all",         label: "All",           emoji: "✨", color: "#F43F8E", bg: "linear-gradient(135deg, #F43F8E, #A855F7)" },
+  { id: "romance",     label: "Romance",        emoji: "💖", color: "#F43F5E", bg: "linear-gradient(135deg, #F43F5E, #BE123C)" },
+  { id: "fantasy",     label: "Fantasy",        emoji: "🔮", color: "#8B5CF6", bg: "linear-gradient(135deg, #8B5CF6, #6D28D9)" },
   { id: "drama",       label: "Drama",          emoji: "🎭", color: "#EC4899", bg: "linear-gradient(135deg, #EC4899, #BE185D)" },
   { id: "action",      label: "Action",         emoji: "⚔️", color: "#06B6D4", bg: "linear-gradient(135deg, #06B6D4, #0E7490)" },
-  { id: "comedy",      label: "Comedy",         emoji: "😂", color: "#F59E0B", bg: "linear-gradient(135deg, #F59E0B, #B45309)" },
+  { id: "comedy",      label: "Comedy",         emoji: "😄", color: "#F59E0B", bg: "linear-gradient(135deg, #F59E0B, #B45309)" },
   { id: "sliceoflife", label: "Slice of Life",  emoji: "🌸", color: "#10B981", bg: "linear-gradient(135deg, #10B981, #047857)" },
   { id: "scifi",       label: "Sci-Fi",         emoji: "🚀", color: "#3B82F6", bg: "linear-gradient(135deg, #3B82F6, #1D4ED8)" },
   { id: "supernatural",label: "Supernatural",   emoji: "👻", color: "#A855F7", bg: "linear-gradient(135deg, #A855F7, #7E22CE)" },
   { id: "mystery",     label: "Mystery",        emoji: "🔍", color: "#6366F1", bg: "linear-gradient(135deg, #6366F1, #4338CA)" },
-  { id: "thriller",    label: "Thriller",       emoji: "😱", color: "#E11D48", bg: "linear-gradient(135deg, #E11D48, #9F1239)" },
-  { id: "bl",          label: "BL",             emoji: "💙", color: "#2563EB", bg: "linear-gradient(135deg, #2563EB, #1E40AF)" },
-  { id: "gl",          label: "GL",             emoji: "💜", color: "#9333EA", bg: "linear-gradient(135deg, #9333EA, #6B21A8)" },
-  { id: "historical",  label: "Historical",     emoji: "📜", color: "#D97706", bg: "linear-gradient(135deg, #D97706, #92400E)" },
-  { id: "horror",      label: "Horror",         emoji: "🩸", color: "#DC2626", bg: "linear-gradient(135deg, #DC2626, #991B1B)" },
-  { id: "sports",      label: "Sports",         emoji: "🏆", color: "#EA580C", bg: "linear-gradient(135deg, #EA580C, #9A3412)" },
-  { id: "superhero",   label: "Superhero",      emoji: "⚡", color: "#0284C7", bg: "linear-gradient(135deg, #0284C7, #075985)" },
-  { id: "heartwarming",label: "Heartwarming",   emoji: "🤍", color: "#F43F5E", bg: "linear-gradient(135deg, #F43F5E, #9F1239)" },
-  { id: "informative", label: "Informative",    emoji: "📚", color: "#4F46E5", bg: "linear-gradient(135deg, #4F46E5, #3730A3)" },
-  { id: "graphic",     label: "Graphic Novel",  emoji: "🎨", color: "#8B5CF6", bg: "linear-gradient(135deg, #8B5CF6, #5B21B6)" },
-  { id: "mature",      label: "Mature 18+",     emoji: "🔥", color: "#F43F5E", bg: "linear-gradient(135deg, #F43F5E, #881337)" },
+  { id: "thriller",    label: "Thriller",       emoji: "🔥", color: "#E11D48", bg: "linear-gradient(135deg, #E11D48, #9F1239)" },
 ];
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Completed"];
+const DEFAULT_COVER = "/trust_the_stranger.png";
+
+const TRENDING_MOCK = [
+  { id: "t1", title: "Seraphina's Crown", genre: "Fantasy, Romance", rating: "4.9", cover: "/seraphina_crown.png", isNew: true },
+  { id: "t2", title: "Into the Starfall", genre: "Sci-Fi, Adventure", rating: "4.8", cover: "/into_starfall.png", isNew: true },
+  { id: "t3", title: "The Villain's Heart", genre: "Romance, Drama", rating: "4.9", cover: "/villains_heart.png", isNew: true },
+  { id: "t4", title: "Eternal Bloom", genre: "Slice of Life, Fantasy", rating: "4.7", cover: "/eternal_bloom.png", isNew: true },
+  { id: "t5", title: "Code: Rebirth", genre: "Action, Sci-Fi", rating: "4.8", cover: "/code_rebirth.png", isNew: true },
+  { id: "t6", title: "Whispers in Rain", genre: "Drama, Romance", rating: "4.8", cover: "/whispers_in_rain.png", isNew: true },
+];
 
 const formatRating = (val) => {
   if (!val) return "4.8";
@@ -59,297 +34,138 @@ const formatRating = (val) => {
   return isNaN(num) ? "4.8" : num.toFixed(1);
 };
 
-const STORIES = [
-  { title: "ToonVault Originals", subtitle: "Experience stories crafted by advanced AI.", genre: "AI Powered", badge: "NEW", bg: "linear-gradient(135deg, #3D1A5C 0%, #E8336D 100%)", cover: "✨" }
-];
-
-const TRENDING_COLLECTIONS = [
-  { label: "MLs Locked In Love 💘", desc: "Zero doubts. Just pure love.", emoji: "💕" },
-  { label: "Beyond Human, Beyond Hot 🚩", desc: "These non-humans are next level", emoji: "🔥" },
-  { label: "Superpower Unleashed 🌟", desc: "Heroines with special powers", emoji: "⚡" },
-  { label: "Rise of the Demon Lords 😈", desc: "Rulers of darkness", emoji: "👿" },
-];
-
-const FEATURED = [
-  { title: "ToonVault Originals", subtitle: "Experience stories crafted by advanced AI.", genre: "AI Powered", badge: "NEW", bg: "linear-gradient(135deg, #3D1A5C 0%, #E8336D 100%)", cover: "✨" }
-];
-
-const DEFAULT_COVER = "/covers/fantasy_cover_1777743338844.png";
-
-function StoryCard({ story, size = "normal" }) {
-  const [liked, setLiked] = useState(false);
+function StoryCard({ story }) {
   const [bookmarked, setBookmarked] = useState(false);
   const navigate = useNavigate();
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 900;
-  
-  const cardWidth = isMobile 
-    ? (size === "large" ? 155 : size === "small" ? 115 : 135)
-    : (size === "large" ? 190 : size === "small" ? 135 : 165);
-
-  const matchedGenre = GENRES.find(g => g.label.toLowerCase() === String(story.genre || "").toLowerCase()) || GENRES[0];
 
   return (
     <div style={{
-      background: COLORS.card,
-      borderRadius: 18,
-      border: `1px solid ${COLORS.border}`,
+      background: "rgba(255, 255, 255, 0.9)",
+      backdropFilter: "blur(14px)",
+      WebkitBackdropFilter: "blur(14px)",
+      borderRadius: 20,
+      border: "1px solid rgba(255, 255, 255, 0.95)",
       overflow: "hidden",
       cursor: "pointer",
-      transition: "all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+      transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
       flexShrink: 0,
-      width: cardWidth,
-      boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
+      width: 190,
+      boxShadow: "0 10px 25px rgba(220, 170, 230, 0.18)"
     }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = "translateY(-6px)";
-        e.currentTarget.style.boxShadow = `0 12px 28px ${matchedGenre.color || COLORS.plum}30`;
-        e.currentTarget.style.borderColor = `${matchedGenre.color || COLORS.plum}50`;
+        e.currentTarget.style.boxShadow = "0 18px 36px rgba(244, 63, 142, 0.3)";
+        e.currentTarget.style.borderColor = "#F43F8E";
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)";
-        e.currentTarget.style.borderColor = COLORS.border;
+        e.currentTarget.style.boxShadow = "0 10px 25px rgba(220, 170, 230, 0.18)";
+        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.95)";
       }}
       onClick={() => navigate(`/story/${story.id}`)}
     >
       <div style={{
-        height: isMobile ? (size === "large" ? 190 : size === "small" ? 130 : 160) : (size === "large" ? 225 : size === "small" ? 150 : 190),
-        background: story.bg || COLORS.plumLight,
+        height: 210,
+        background: "#F1F5F9",
         overflow: "hidden",
         position: "relative",
       }}>
         <StoryImage 
-          src={story.cover} 
+          src={story.cover || DEFAULT_COVER} 
           alt={story.title}
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
-        {story.updated && (
-          <span style={{
-            position: "absolute", top: 8, left: 8,
-            background: "linear-gradient(135deg, #f43f5e, #be123c)", color: "white",
-            fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 8, letterSpacing: 0.5,
-            boxShadow: "0 2px 8px rgba(244,63,94,0.4)"
-          }}>NEW</span>
-        )}
-        {story.isPopular && (
-          <span style={{
-            position: "absolute", top: 8, left: story.updated ? 46 : 8,
-            background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "white",
-            fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 8,
-            boxShadow: "0 2px 8px rgba(245,158,11,0.4)"
-          }}>🔥 TOP</span>
-        )}
-        {story.isAgeRestricted && (
-          <span style={{
-            position: "absolute", top: story.isPopular || story.updated ? 36 : 8, left: 8,
-            background: COLORS.ink, color: "white",
-            fontSize: 9, fontWeight: 800, padding: "3px 7px", borderRadius: 6,
-            border: "1px solid rgba(255,255,255,0.2)"
-          }}>18+</span>
-        )}
-        {story.type === "novel" && (
-          <span style={{
-            position: "absolute", top: 8, right: 8,
-            background: COLORS.gold, color: "white",
-            fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 6,
-          }}>NOVEL</span>
-        )}
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: 60,
-          background: "linear-gradient(to top, rgba(15,23,42,0.7), transparent)",
-        }} />
-        <div style={{
-          position: "absolute", bottom: 8, right: 8, display: "flex", gap: 6,
-        }}>
-          <button onClick={e => { e.stopPropagation(); setBookmarked(!bookmarked); }} style={{
-            background: bookmarked ? (matchedGenre.color || COLORS.plum) : "rgba(255,255,255,0.9)",
-            border: "none", borderRadius: 8, width: 28, height: 28,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", fontSize: 12, color: bookmarked ? "white" : COLORS.ink, transition: "all 0.2s",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.15)"
-          }}>{bookmarked ? "🔖" : "🔖"}</button>
-        </div>
+        <span style={{
+          position: "absolute", top: 10, left: 10,
+          background: "linear-gradient(135deg, #F43F8E, #BE123C)", color: "white",
+          fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 6, letterSpacing: 0.5,
+          boxShadow: "0 2px 8px rgba(244,63,142,0.4)"
+        }}>NEW</span>
+
+        <button onClick={e => { e.stopPropagation(); setBookmarked(!bookmarked); }} style={{
+          position: "absolute", bottom: 8, right: 8,
+          background: bookmarked ? "#F43F8E" : "rgba(255,255,255,0.9)",
+          border: "none", borderRadius: 8, width: 26, height: 26,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          cursor: "pointer", fontSize: 11, color: bookmarked ? "white" : "#1E1B4B", transition: "all 0.2s",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.15)"
+        }}>🔖</button>
       </div>
-      <div style={{ padding: "11px 12px 12px" }}>
-        <div style={{ fontSize: 10, color: matchedGenre.color || COLORS.rose, fontWeight: 800, marginBottom: 3, letterSpacing: 0.5, textTransform: "uppercase" }}>{story.genre}</div>
-        <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.ink, marginBottom: 6, lineHeight: 1.3, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{story.title}</div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontSize: 11, color: COLORS.muted, fontWeight: 500 }}>👁 {story.views}</span>
-          <span style={{ fontSize: 11, color: COLORS.gold, fontWeight: 700 }}>⭐ {formatRating(story.rating)}</span>
+
+      <div style={{ padding: "12px 14px 14px" }}>
+        <div style={{ fontSize: 13, fontWeight: 800, color: "#1E1B4B", marginBottom: 4, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          {story.title}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
+          <div style={{ fontSize: 10, color: "#64748B", fontWeight: 600 }}>{story.genre || "Fantasy, Romance"}</div>
+          <div style={{ fontSize: 11, color: "#F59E0B", fontWeight: 800, display: "flex", alignItems: "center", gap: 3 }}>
+            <span>⭐</span> {formatRating(story.rating)}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function HorizontalScroll({ children, gap = 14 }) {
-  const ref = useRef();
-  const scroll = dir => {
-    ref.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
-  };
-  return (
-    <div style={{ position: "relative" }}>
-      <button onClick={() => scroll(-1)} style={{
-        position: "absolute", left: -14, top: "40%", zIndex: 10,
-        background: COLORS.card, border: `1px solid ${COLORS.border}`,
-        borderRadius: "50%", width: 34, height: 34, cursor: "pointer",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 14, color: COLORS.ink, boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      }}>‹</button>
-      <div ref={ref} style={{
-        display: "flex", gap, overflowX: "auto", paddingBottom: 8,
-        scrollbarWidth: "none", msOverflowStyle: "none",
-      }}>
-        {children}
-      </div>
-      <button onClick={() => scroll(1)} style={{
-        position: "absolute", right: -14, top: "40%", zIndex: 10,
-        background: COLORS.card, border: `1px solid ${COLORS.border}`,
-        borderRadius: "50%", width: 34, height: 34, cursor: "pointer",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 14, color: COLORS.ink, boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      }}>›</button>
-    </div>
-  );
-}
-
-function SectionHeader({ title, viewAll, sub, target }) {
+function SectionHeader({ title, sub, viewAll }) {
   const navigate = useNavigate();
-  const handleViewAll = () => {
-    navigate('/browse');
-  };
-
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16, gap: 10 }}>
-      <div style={{ flex: 1 }}>
-        <h2 className="section-title" style={{ fontSize: 20, fontWeight: 700, color: COLORS.ink, margin: 0, lineHeight: 1.2 }}>{title}</h2>
-        {sub && <p style={{ fontSize: 13, color: COLORS.muted, margin: "4px 0 0", lineHeight: 1.4 }}>{sub}</p>}
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+      <div>
+        <h2 style={{ fontSize: 22, fontWeight: 900, color: "#1E1B4B", margin: 0, lineHeight: 1.2 }}>{title}</h2>
+        {sub && <p style={{ fontSize: 13, color: "#64748B", margin: "4px 0 0", fontWeight: 500 }}>{sub}</p>}
       </div>
       {viewAll && (
-        <button 
-          onClick={handleViewAll}
-          style={{ fontSize: 13, color: COLORS.plum, fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: "4px 10px", borderRadius: 8, transition: "background 0.2s", whiteSpace: "nowrap", flexShrink: 0 }}
-          onMouseEnter={e => e.currentTarget.style.background = COLORS.plumLight}
-          onMouseLeave={e => e.currentTarget.style.background = "none"}
-        >View all →</button>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button 
+            onClick={() => navigate('/browse')}
+            style={{ fontSize: 13, color: "#7E22CE", fontWeight: 700, background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}
+          >View all ›</button>
+          <button style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,255,255,0.9)", cursor: "pointer", fontSize: 14, fontWeight: 800 }}>‹</button>
+          <button style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,255,255,0.9)", cursor: "pointer", fontSize: 14, fontWeight: 800 }}>›</button>
+        </div>
       )}
     </div>
   );
 }
 
-function ToonVaultHome() {
+export default function ToonVaultHome() {
   const navigate = useNavigate();
-  const [themeMode, setThemeMode] = useState(() => localStorage.getItem("theme_mode") || "light");
-  const [activeDay, setActiveDay] = useState("Mon");
   const [activeGenre, setActiveGenre] = useState("all");
-  const [activeCategoryTab, setActiveCategoryTab] = useState("All");
-  const [activeTrendingTab, setActiveTrendingTab] = useState("Trending");
-  const [heroIndex, setHeroIndex] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  const [searchOpen, setSearchOpen] = useState(false);
   const [searchVal, setSearchVal] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [liveStories, setLiveStories] = useState([]);
-  const featuredStories = liveStories.length > 0 ? liveStories.slice(0, 5) : STORIES;
-  const [showPopup, setShowPopup] = useState(false);
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [showAIModal, setShowAIModal] = useState(false);
-  const [showConsentModal, setShowConsentModal] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [heroIndex, setHeroIndex] = useState(0);
   const [aiPrompt, setAiPrompt] = useState("");
-  const [settings, setSettings] = useState({
-    site_name: "ToonVault",
-    maintenance_mode: "false",
-    free_episode_interval_hrs: "3",
-    show_creator_popup: "true"
-  });
+  const [selectedPoll, setSelectedPoll] = useState("A");
+  const [pollVotes, setPollVotes] = useState({ A: 62, B: 25, C: 13 });
+  const [pollVoted, setPollVoted] = useState(false);
+  const [billingCycle, setBillingCycle] = useState("yearly");
+
   const searchRef = useRef(null);
-
-  const toggleTheme = () => {
-    const nextMode = themeMode === "dark" ? "light" : "dark";
-    setThemeMode(nextMode);
-    localStorage.setItem("theme_mode", nextMode);
-  };
-
-  const isDark = themeMode === "dark";
-
-  const COLORS = isDark ? {
-    bg: "#07060E",
-    card: "#121020",
-    cardTint: "#1A172E",
-    ink: "#F8FAFC",
-    muted: "#94A3B8",
-    mutedLight: "#64748B",
-    plum: "#7C3AED",
-    plumLight: "rgba(124, 58, 237, 0.2)",
-    plumDark: "#5B21B6",
-    rose: "#F43F5E",
-    roseLight: "rgba(244, 63, 94, 0.2)",
-    cyan: "#06B6D4",
-    cyanLight: "rgba(6, 182, 212, 0.2)",
-    emerald: "#10B981",
-    emeraldLight: "rgba(16, 185, 129, 0.2)",
-    amber: "#F59E0B",
-    amberLight: "rgba(245, 158, 11, 0.2)",
-    gold: "#F59E0B",
-    goldLight: "rgba(245, 158, 11, 0.2)",
-    border: "rgba(255, 255, 255, 0.08)",
-    success: "#10B981",
-  } : {
-    bg: "#FAF8F5",
-    card: "#FFFFFF",
-    cardTint: "#F4EFE6",
-    ink: "#0F172A",
-    muted: "#64748B",
-    mutedLight: "#94A3B8",
-    plum: "#7C3AED",
-    plumLight: "#F3E8FF",
-    plumDark: "#5B21B6",
-    rose: "#F43F5E",
-    roseLight: "#FFE4E6",
-    cyan: "#06B6D4",
-    cyanLight: "#CFFAFE",
-    emerald: "#10B981",
-    emeraldLight: "#D1FAE5",
-    amber: "#F59E0B",
-    amberLight: "#FEF3C7",
-    gold: "#F59E0B",
-    goldLight: "#FEF3C7",
-    border: "#E2E8F0",
-    success: "#10B981",
-  };
-  const genreScrollRef = useRef();
+  const genreScrollRef = useRef(null);
 
   const scrollGenres = (dir) => {
-    genreScrollRef.current?.scrollBy({ left: dir * 250, behavior: "smooth" });
+    genreScrollRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
   };
 
   useEffect(() => {
     axios.get('/api/stories')
       .then(res => {
-        if (Array.isArray(res.data)) {
+        if (Array.isArray(res.data) && res.data.length > 0) {
           const mapped = res.data.map(s => {
-            let cover = s.coverImage || s.cover || s.image || (s.panels && s.panels.length > 0 && typeof s.panels[0] === 'string' && s.panels[0].startsWith('http') ? s.panels[0] : null);
-            if (!cover) {
-              const title = s.title || "Webtoon Story";
-              const genre = s.genre || "Manhwa";
-              let seed = 0;
-              for (let i = 0; i < title.length; i++) seed = (seed << 5) - seed + title.charCodeAt(i);
-              seed = Math.abs(seed % 1000000);
-              const prompt = `masterpiece Korean manhwa anime webtoon poster cover art, ${title}, ${genre} theme, dynamic cinematic lighting, vivid colors, 8k`;
-              cover = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=768&nologo=true&seed=${seed}`;
+            let cover = s.coverImage || s.cover || s.image;
+            if (!cover || (!cover.startsWith('http') && !cover.startsWith('/'))) {
+              cover = DEFAULT_COVER;
             }
-
             return {
               ...s,
-              id: s._id,
+              id: s._id || s.id,
               cover: cover,
-              bg: "linear-gradient(135deg, #121315 0%, #1A1B1E 100%)",
-              mood: s.genre ? [s.genre.toLowerCase()] : ["fantasy"],
-              day: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][Math.floor(Math.random() * 7)],
-              updated: true,
-              rating: formatRating(s.rating),
-              views: s.views > 1000 ? (s.views / 1000).toFixed(1) + "K" : s.views
+              genre: s.genre || "Romance",
+              rating: formatRating(s.rating)
             };
           });
           setLiveStories(mapped);
@@ -359,1504 +175,1123 @@ function ToonVaultHome() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('intent') === 'write' && !!localStorage.getItem("token")) {
-       setShowAIModal(true);
-       const pending = localStorage.getItem('pending_prompt');
-       if (pending) {
-         setAiPrompt(pending);
-         localStorage.removeItem('pending_prompt');
-       }
-       window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    // If user is logged in, never show the welcome/promo popup
-    if (!!localStorage.getItem("token")) return;
-
-    const lastShown = localStorage.getItem('last_popup_time');
-    const now = Date.now();
-    // 12 hours in milliseconds = 12 * 60 * 60 * 1000 = 43200000
-    const TWELVE_HOURS = 43200000;
-
-    if (!lastShown || (now - parseInt(lastShown, 10)) > TWELVE_HOURS) {
-      axios.get('/api/settings/public')
-        .then(r => {
-          setSettings(prev => ({ ...prev, ...r.data }));
-          if (r.data.show_creator_popup === 'true') {
-             setTimeout(() => {
-               setShowPopup(true);
-               localStorage.setItem('last_popup_time', Date.now().toString());
-             }, 2500);
-          }
-        })
-        .catch(() => {
-           // Fallback behavior if API fails or not set
-           setTimeout(() => {
-             setShowPopup(true);
-             localStorage.setItem('last_popup_time', Date.now().toString());
-           }, 6000);
-        });
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setSearchOpen(false);
-        setSearchVal("");
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    if (searchVal.trim()) {
+    if (searchVal.trim() && liveStories.length > 0) {
       const filtered = liveStories.filter(s => 
         s.title.toLowerCase().includes(searchVal.toLowerCase()) ||
         s.genre?.toLowerCase().includes(searchVal.toLowerCase())
       );
-      setSearchResults(filtered.slice(0, 6));
+      setSearchResults(filtered.slice(0, 5));
     } else {
       setSearchResults([]);
     }
   }, [searchVal, liveStories]);
 
   useEffect(() => {
-    const t = setInterval(() => setHeroIndex(i => (i + 1) % (featuredStories.length || 1)), 6000);
-    return () => clearInterval(t);
-  }, [featuredStories.length]);
-
-  const categoryTabs = ["All", "Romance", "Fantasy", "Drama", "Action", "Comedy", "Thriller", "Sci-Fi", "Mystery", "Slice of Life"];
-  
-  useEffect(() => {
-    if (activeGenre !== "all") {
-      const genreLabel = GENRES.find(g => g.id === activeGenre)?.label;
-      if (genreLabel) {
-        setActiveCategoryTab(genreLabel);
-        document.querySelector("#categories")?.scrollIntoView({ behavior: 'smooth' });
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchOpen(false);
       }
-    }
-  }, [activeGenre]);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  const handleWriteStoryClick = () => {
-    if (aiPrompt.trim()) {
-      localStorage.setItem('pending_prompt', aiPrompt);
-    }
-    if (localStorage.getItem('age_consent') === 'true') {
-      if (isLoggedIn) {
-        setShowAIModal(true);
-      } else {
-        navigate('/user?intent=write');
-      }
-    } else {
-      setShowConsentModal(true);
-    }
+  const featured = liveStories.length > 0 ? liveStories[heroIndex % liveStories.length] : {
+    id: "featured-1",
+    title: "Trust the Stranger",
+    subtitle: "Episode 12 • Romance, Mystery",
+    genre: "Romance, Mystery",
+    rating: "4.8",
+    cover: DEFAULT_COVER
   };
 
-  const handleConsentAccept = () => {
-    localStorage.setItem('age_consent', 'true');
-    setShowConsentModal(false);
+  const handleVote = (optionKey) => {
+    if (pollVoted) return;
+    setSelectedPoll(optionKey);
+    setPollVotes(prev => ({
+      ...prev,
+      [optionKey]: prev[optionKey] + 1
+    }));
+    setPollVoted(true);
+  };
+
+  const handlePromptSubmit = () => {
+    if (!aiPrompt.trim()) return;
     if (isLoggedIn) {
-      setShowAIModal(true);
+      navigate(`/browse?prompt=${encodeURIComponent(aiPrompt)}`);
     } else {
+      localStorage.setItem('pending_prompt', aiPrompt);
       navigate('/user?intent=write');
     }
   };
 
-  const handleNav = (item) => {
-    if (item.path) {
-      navigate(item.path);
-    } else if (item.target) {
-      if (item.target.startsWith('/')) {
-        navigate(item.target);
-      } else {
-        const el = document.querySelector(item.target);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    }
-  };
-
-  const dailyStories = liveStories.filter(s => s.day === activeDay);
-  const featured = featuredStories[heroIndex] || (featuredStories.length > 0 ? featuredStories[0] : (STORIES[0] || { 
-    title: "ToonVault Originals", 
-    subtitle: "Experience stories crafted by advanced AI.", 
-    genre: "AI Powered", 
-    badge: "NEW", 
-    bg: "linear-gradient(135deg, #3D1A5C 0%, #E8336D 100%)", 
-    cover: "✨" 
-  }));
+  const trendingList = liveStories.length > 0 
+    ? liveStories.slice(0, 6)
+    : TRENDING_MOCK;
 
   return (
-    <div style={{ fontFamily: "'Inter', -apple-system, sans-serif", background: COLORS.bg, minHeight: "100vh", color: COLORS.ink }}>
-
+    <div style={{ 
+      fontFamily: "'Outfit', 'Inter', -apple-system, sans-serif", 
+      background: "url('/cloud_bg.png') center/cover no-repeat fixed, linear-gradient(180deg, #FDE8E8 0%, #F5D0FE 50%, #E0E7FF 100%)", 
+      minHeight: "100vh", 
+      color: "#1E1B4B",
+      paddingBottom: 60
+    }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
 
         * { box-sizing: border-box; }
 
-        /* ── HERO RESPONSIVE ── */
-        .hero-container {
-          border-radius: 20px;
-          background: linear-gradient(135deg, #09080f 0%, #12102a 50%, #1c1035 100%);
-          min-height: 380px;
-          display: flex;
-          align-items: stretch;
-          overflow: hidden;
-          position: relative;
-          box-shadow: 0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.06);
+        .glass-card {
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.95);
+          box-shadow: 0 15px 45px rgba(190, 140, 220, 0.22);
         }
-        .hero-left {
-          flex: 1 1 520px;
-          padding: 36px 40px;
-          z-index: 2;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          min-width: 0;
-        }
-        .hero-right {
-          flex: 1 1 540px;
-          padding: 24px 32px 24px 24px;
-          display: flex;
-          gap: 16px;
-          z-index: 2;
-          position: relative;
-          min-width: 0;
+
+        .hero-layout {
+          display: grid;
+          grid-template-columns: 1.15fr 270px 1fr;
+          gap: 28px;
           align-items: center;
         }
-        .hero-divider {
-          width: 1px;
-          background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.08) 70%, transparent);
-          flex-shrink: 0;
-        }
-        .hero-title {
-          font-size: 42px;
-          font-weight: 900;
-          color: white;
-          margin: 0 0 12px;
-          line-height: 1.08;
-          letter-spacing: -1.5px;
-        }
-        .hero-subtitle {
-          font-size: 14px;
-          color: rgba(255,255,255,0.65);
-          margin: 0 0 20px;
-          line-height: 1.6;
-          max-width: 480px;
-        }
-        .hero-cover {
-          width: 135px;
-          height: 290px;
-          flex-shrink: 0;
-          border-radius: 14px;
-          box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.07);
-          overflow: hidden;
-          align-self: center;
-          background-size: cover;
-          background-position: top center;
-        }
-        .hero-choices {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          min-width: 0;
-        }
-        .hero-cta-row {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 14px;
-          flex-wrap: nowrap;
-          margin-bottom: 16px;
-        }
-        .hero-btn-primary {
-          padding: 12px 24px;
-          background: linear-gradient(135deg, #7c3aed, #6d28d9);
-          color: white; border: none; border-radius: 10px;
-          font-size: 14px; font-weight: 700; cursor: pointer;
-          box-shadow: 0 6px 20px rgba(109,74,232,0.45);
-          transition: all 0.2s;
-          display: flex; align-items: center; gap: 6px;
-          font-family: inherit;
-          white-space: nowrap;
-        }
-        .hero-btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 24px rgba(109,74,232,0.55);
-        }
-        .hero-btn-secondary {
-          padding: 12px 20px;
-          background: rgba(255,255,255,0.06);
-          color: white;
-          border: 1px solid rgba(255,255,255,0.2);
-          border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
-          backdrop-filter: blur(10px);
-          transition: all 0.2s;
-          font-family: inherit;
-          white-space: nowrap;
-        }
-        .hero-btn-secondary:hover {
-          background: rgba(255,255,255,0.12);
-          border-color: rgba(255,255,255,0.35);
-        }
-        .hero-features {
-          display: flex;
-          gap: 14px;
-          flex-wrap: wrap;
-          padding-top: 16px;
-          border-top: 1px solid rgba(255,255,255,0.07);
-        }
-        .hero-choice-card {
-          padding: 10px 12px;
-          border-radius: 12px;
-          background: rgba(255,255,255,0.035);
-          display: flex; gap: 10px; align-items: flex-start;
-          cursor: pointer;
-          transition: all 0.2s;
-          position: relative; overflow: hidden;
-        }
-        .hero-prompt-input {
-          flex: 1; padding: 8px 12px;
-          background: rgba(255,255,255,0.07);
-          border: 1px solid rgba(109,74,232,0.4);
-          border-radius: 8px; font-size: 12px;
-          color: white; outline: none;
-          transition: all 0.2s;
-          font-family: inherit;
-        }
-        .hero-prompt-input::placeholder { color: rgba(255,255,255,0.3); }
-        .hero-prompt-input:focus {
-          border-color: #7c3aed;
-          background: rgba(255,255,255,0.1);
-          box-shadow: 0 0 0 3px rgba(109,74,232,0.2);
+
+        @media (max-width: 1100px) {
+          .hero-layout {
+            grid-template-columns: 1fr 1fr;
+          }
+          .hero-center-col {
+            display: none;
+          }
         }
 
-        @keyframes heroPulse {
-          0%, 100% { opacity: 1; box-shadow: 0 0 6px #a78bfa; }
-          50% { opacity: 0.6; box-shadow: 0 0 14px #a78bfa; }
-        }
-        @keyframes slideInRight {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
-        }
-
-        /* ── TABLET (900px) ── */
-        @media (max-width: 900px) {
-          .desktop-only { display: none !important; }
-          .search-container { width: 100% !important; max-width: 140px !important; }
-          .hero-container { flex-direction: column !important; min-height: auto !important; border-radius: 16px !important; }
-          .hero-left { flex: none !important; padding: 32px 24px 20px !important; align-items: center !important; text-align: center !important; }
-          .hero-right { flex: none !important; padding: 0 20px 24px !important; flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
-          .hero-divider { display: none !important; }
-          .hero-title { font-size: 32px !important; letter-spacing: -1px !important; margin-bottom: 12px !important; }
-          .hero-subtitle { font-size: 13px !important; margin-bottom: 20px !important; text-align: center !important; max-width: 100% !important; }
-          .hero-cover { width: 160px !important; height: 240px !important; border-radius: 12px !important; background-position: center top !important; margin: 0 auto 12px !important; }
-          .hero-cta-row { justify-content: center !important; }
-          .hero-features { justify-content: center !important; gap: 10px !important; }
-          .hero-choices { gap: 6px !important; }
-          .hero-btn-primary { font-size: 13px !important; padding: 12px 24px !important; }
-          .hero-btn-secondary { font-size: 13px !important; padding: 12px 20px !important; }
-          .collections-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-          .schedule-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
-          .day-selector { flex-wrap: nowrap !important; overflow-x: auto !important; padding-bottom: 10px !important; -webkit-overflow-scrolling: touch !important; }
-          .day-button { flex-shrink: 0 !important; font-size: 12px !important; padding: 6px 14px !important; }
-          .banner-container { justify-content: center !important; padding: 0 10px !important; }
-          .banner-item { font-size: 12px !important; padding: 8px 14px !important; }
-          .section-title { font-size: 18px !important; }
-          .fab-button { width: 44px !important; height: 44px !important; bottom: 20px !important; right: 20px !important; font-size: 20px !important; }
-        }
-
-        /* ── MOBILE (480px) ── */
-        @media (max-width: 480px) {
-          .hero-left { padding: 24px 16px 16px !important; }
-          .hero-right { padding: 0 16px 20px !important; }
-          .hero-title { font-size: 26px !important; }
-          .hero-subtitle { font-size: 12px !important; }
-          .hero-cover { width: 140px !important; height: 200px !important; margin: 0 auto 16px !important; }
-          .hero-btn-primary, .hero-btn-secondary { width: 100% !important; justify-content: center !important; }
-          .hero-cta-row { flex-direction: column !important; gap: 8px !important; width: 100% !important; }
-          .hero-features { display: none !important; } /* Hide feature pills on mobile to save space */
-        }
-
-        @media (min-width: 901px) {
-          .mobile-only { display: none !important; }
+        @media (max-width: 768px) {
+          .hero-layout {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+          .desktop-only {
+            display: none !important;
+          }
         }
       `}</style>
 
-      {/* ═══ TOP NAV ═══ */}
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 200,
-        background: COLORS.bg, // Solid background
-        borderBottom: `1px solid ${COLORS.border}`,
-      }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 32, flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => navigate("/")}>
-              <img src="/logo.svg" style={{ width: 34, height: 34, filter: "drop-shadow(0 4px 12px rgba(139,92,246,0.4))" }} alt="ToonVault Logo" />
-              <span style={{ fontSize: 20, fontWeight: 900, color: COLORS.ink, letterSpacing: -0.5 }}>
-                Toon<span style={{ color: "#F43F5E" }}>Vault</span>
-              </span>
+      {/* ═══ 1. TOP FLOATING PILL NAV ═══ */}
+      <div style={{ maxWidth: 1340, margin: "0 auto", padding: "16px 20px 0" }}>
+        <nav className="glass-card" style={{
+          borderRadius: 40,
+          padding: "10px 24px",
+          display: "flex",
+          alignItems: "center",
+          justify: "space-between",
+          boxShadow: "0 10px 30px rgba(220, 170, 230, 0.25)"
+        }}>
+          {/* Logo & Tagline */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => navigate("/")}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 14,
+              background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 20, boxShadow: "0 4px 14px rgba(244, 63, 142, 0.4)", color: "white"
+            }}>📖</div>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: "#1E1B4B", letterSpacing: "-0.5px", lineHeight: 1.1 }}>
+                Toon<span style={{ color: "#F43F8E" }}>Vault</span>
+              </div>
+              <div style={{ fontSize: 11, color: "#64748B", fontWeight: 500, marginTop: 1 }}>
+                Stories you choose. Worlds you unlock.
+              </div>
             </div>
           </div>
 
-          <div className="desktop-only" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          {/* Nav Links */}
+          <div className="desktop-only" style={{ display: "flex", alignItems: "center", gap: 24 }}>
             {[
-              { label: "Originals", target: "#daily-schedule" },
-              { label: "Rankings", target: "#rankings" },
-              { label: "Canvas", target: "#collections" },
-              { label: "Browse", target: "/browse" },
-              { label: "Pricing", target: "#pricing" },
+              { label: "Originals", path: "/browse" },
+              { label: "Rankings", path: "/browse" },
+              { label: "Canvas", path: "/browse" },
+              { label: "Browse", path: "/browse" },
+              { label: "Pricing", path: "/info/pricing" },
             ].map(item => (
-              <button key={item.label} onClick={() => handleNav(item)} style={{
-                padding: "8px 13px", border: "none", background: "none",
-                fontSize: 14, fontWeight: 600, color: COLORS.ink, cursor: "pointer",
-                borderRadius: 8, transition: "all 0.2s",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.background = COLORS.plumLight; e.currentTarget.style.color = COLORS.plum; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = COLORS.ink; }}
-              >{item.label}</button>
+              <button 
+                key={item.label} 
+                onClick={() => navigate(item.path)} 
+                style={{
+                  border: "none", background: "none",
+                  fontSize: 14, fontWeight: 700, color: "#334155", cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = "#F43F8E"}
+                onMouseLeave={e => e.currentTarget.style.color = "#334155"}
+              >
+                {item.label}
+              </button>
             ))}
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 1, justifyContent: "flex-end", minWidth: 0 }}>
-            <div ref={searchRef} style={{ position: "relative", minWidth: 0 }}>
-              {searchOpen ? (
-                <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                  <input
-                    autoFocus
-                    value={searchVal}
-                    onChange={e => {
-                      setSearchVal(e.target.value);
-                      if (!searchOpen) setSearchOpen(true);
-                    }}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' && searchResults.length > 0) {
-                        navigate(`/story/${searchResults[0].id}`);
-                        setSearchOpen(false);
-                      }
-                    }}
-                    placeholder="Search..."
-                    className="search-container"
-                    style={{
-                      padding: "8px 60px 8px 12px", borderRadius: 20, border: `2px solid ${COLORS.plum}`,
-                      background: COLORS.card, fontSize: 13, color: COLORS.ink, outline: "none", width: 220,
-                      boxShadow: "0 4px 12px rgba(109,74,232,0.15)", transition: "all 0.3s",
-                    }}
-                  />
-                  <button 
-                    onClick={() => {
-                      if (searchResults.length > 0) navigate(`/story/${searchResults[0].id}`);
-                    }}
-                    style={{ 
-                      position: "absolute", right: 4, top: "50%", transform: "translateY(-50%)", 
-                      fontSize: 10, background: COLORS.plum, color: "white", border: "none", 
-                      borderRadius: 16, padding: "5px 10px", fontWeight: 700, cursor: "pointer"
-                    }}
-                  ><span className="desktop-only">Search</span><span className="mobile-only">🔍</span></button>
-                  
-                  {/* LIVE SEARCH DROPDOWN */}
-                  {searchVal && (
-                    <div style={{
-                      position: "absolute", top: "110%", right: 0,
-                      background: "white", borderRadius: 16, border: `1px solid ${COLORS.border}`,
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.12)", zIndex: 1000, overflow: "hidden",
-                      width: 280, maxHeight: 400, overflowY: "auto"
-                    }}>
-                      {searchResults.length > 0 ? (
-                        searchResults.map(s => (
-                          <div key={s.id} 
-                            onClick={() => { navigate(`/story/${s.id}`); setSearchOpen(false); setSearchVal(""); }}
-                            style={{ 
-                              display: "flex", alignItems: "center", gap: 12, padding: "10px 16px", 
-                              cursor: "pointer", borderBottom: `1px solid ${COLORS.border}`,
-                              transition: "background 0.2s"
-                            }}
-                            onMouseEnter={e => e.currentTarget.style.background = COLORS.plumLight}
-                            onMouseLeave={e => e.currentTarget.style.background = "white"}
-                          >
-                            <div style={{ width: 40, height: 40, borderRadius: 6, background: "#f0f0f0", overflow: "hidden" }}>
-                              {(String(s.cover || "").trim().includes("http") || String(s.cover || "").trim().startsWith("/")) ? (
-                                <img src={String(s.cover).includes("/src/assets/") ? String(s.cover).replace("/src/assets/", "/covers/") : s.cover} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                              ) : (
-                                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>{s.cover || '📖'}</div>
-                              )}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.ink }}>{s.title}</div>
-                              <div style={{ fontSize: 11, color: COLORS.muted }}>{s.genre}</div>
-                            </div>
-                            <div style={{ fontSize: 12, color: COLORS.gold }}>⭐ {formatRating(s.rating)}</div>
-                          </div>
-                        ))
-                      ) : (
-                        <div style={{ padding: "20px", textAlign: "center", color: COLORS.muted, fontSize: 13 }}>
-                          No stories found 🔍
-                        </div>
-                      )}
+          {/* Search, Dark mode, Login */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div ref={searchRef} style={{ position: "relative" }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 8,
+                background: "rgba(255, 255, 255, 0.85)",
+                border: "1px solid rgba(255, 255, 255, 0.95)",
+                borderRadius: 24, padding: "7px 14px", width: 210,
+                boxShadow: "0 2px 10px rgba(0,0,0,0.04)"
+              }}>
+                <span style={{ fontSize: 13, color: "#94A3B8" }}>🔍</span>
+                <input 
+                  type="text"
+                  placeholder="Search webtoons, genres..."
+                  value={searchVal}
+                  onChange={e => { setSearchVal(e.target.value); setSearchOpen(true); }}
+                  onFocus={() => setSearchOpen(true)}
+                  style={{
+                    border: "none", background: "none", outline: "none",
+                    fontSize: 12, color: "#1E1B4B", width: "100%", fontWeight: 500
+                  }}
+                />
+              </div>
+
+              {/* Live Search Dropdown */}
+              {searchOpen && searchResults.length > 0 && (
+                <div style={{
+                  position: "absolute", top: "115%", right: 0, width: 260,
+                  background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(16px)",
+                  borderRadius: 18, border: "1px solid rgba(255, 255, 255, 0.9)",
+                  boxShadow: "0 12px 30px rgba(0,0,0,0.15)", zIndex: 100, overflow: "hidden", padding: 6
+                }}>
+                  {searchResults.map(s => (
+                    <div 
+                      key={s.id}
+                      onClick={() => { navigate(`/story/${s.id}`); setSearchOpen(false); }}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 10, padding: "8px 10px",
+                        borderRadius: 12, cursor: "pointer", transition: "background 0.2s"
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = "rgba(244, 63, 142, 0.1)"}
+                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                    >
+                      <img src={s.cover || DEFAULT_COVER} alt="" style={{ width: 34, height: 44, borderRadius: 6, objectFit: "cover" }} />
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#1E1B4B" }}>{s.title}</div>
+                        <div style={{ fontSize: 10, color: "#F43F8E", fontWeight: 600 }}>{s.genre}</div>
+                      </div>
                     </div>
-                  )}
+                  ))}
                 </div>
-              ) : (
-                <button onClick={() => setSearchOpen(true)} style={{
-                  padding: "8px 14px", border: `1px solid ${COLORS.border}`, background: COLORS.card,
-                  borderRadius: 20, fontSize: 13, color: COLORS.muted, cursor: "pointer",
-                  display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s",
-                }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = COLORS.plum}
-                >
-                  🔍 <span className="desktop-only" style={{ fontWeight: 500 }}>Search...</span>
-                </button>
               )}
             </div>
 
-            <button
-              onClick={toggleTheme}
-              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            {/* Dark Mode Toggle */}
+            <button 
+              title="Toggle theme"
               style={{
-                padding: "7px 14px",
-                borderRadius: 20,
-                border: `1px solid ${COLORS.border}`,
-                background: isDark ? "rgba(255,255,255,0.06)" : "#FFFFFF",
-                color: COLORS.ink,
-                fontSize: 12,
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                boxShadow: isDark ? "none" : "0 2px 8px rgba(0,0,0,0.08)",
-                transition: "all 0.2s"
+                width: 38, height: 38, borderRadius: "50%",
+                border: "1px solid rgba(255, 255, 255, 0.95)",
+                background: "rgba(255, 255, 255, 0.85)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", fontSize: 15, boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
               }}
             >
-              <span>{isDark ? "☀️ Light" : "🌙 Dark"}</span>
+              🌙
             </button>
 
-            <button className="desktop-only" onClick={() => navigate(isLoggedIn ? '/dashboard' : '/user')} style={{
-              padding: "9px 18px", border: `1.5px solid ${COLORS.plum}`,
-              background: isLoggedIn ? COLORS.plum : "transparent", borderRadius: 22, fontSize: 13,
-              fontWeight: 600, color: isLoggedIn ? "white" : COLORS.plum, cursor: "pointer", whiteSpace: "nowrap"
-            }}>{isLoggedIn ? "Dashboard" : "Log in"}</button>
-
-            <div className="mobile-only">
-              <button onClick={() => setMobileMenuOpen(true)} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: COLORS.ink }}>☰</button>
+            {/* Login & Sign Up Buttons */}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button 
+                onClick={() => navigate('/user')}
+                style={{
+                  padding: "8px 18px", borderRadius: 24, border: "1px solid rgba(244, 63, 142, 0.3)",
+                  background: "rgba(255, 255, 255, 0.85)", color: "#1E1B4B", fontSize: 13, fontWeight: 700, cursor: "pointer"
+                }}
+              >Log in</button>
+              <button 
+                onClick={() => navigate('/user?mode=signup')}
+                style={{
+                  padding: "8px 20px", borderRadius: 24, border: "none",
+                  background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+                  color: "white", fontSize: 13, fontWeight: 800, cursor: "pointer",
+                  boxShadow: "0 4px 16px rgba(244, 63, 142, 0.4)"
+                }}
+              >Sign up</button>
             </div>
           </div>
-        </div>
+        </nav>
+      </div>
 
-        {/* MOBILE DRAWER */}
-        {mobileMenuOpen && (
-          <div style={{
-            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-            background: "rgba(0,0,0,0.5)", zIndex: 1000,
-            display: "flex", justifyContent: "flex-end"
-          }} onClick={() => setMobileMenuOpen(false)}>
-            <div style={{
-              width: 280, height: "100%", background: "white", padding: "24px",
-              display: "flex", flexDirection: "column", gap: 12,
-              animation: "slideInRight 0.3s ease both"
-            }} onClick={e => e.stopPropagation()}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                <span style={{ fontWeight: 800, fontSize: 18, color: COLORS.plum }}>Menu</span>
-                <button onClick={() => setMobileMenuOpen(false)} style={{ background: "none", border: "none", fontSize: 24, cursor: "pointer" }}>×</button>
-              </div>
-              {[
-                { label: "Originals", target: "#daily-schedule" },
-                { label: "Rankings", target: "#rankings" },
-                { label: "Canvas", target: "#collections" },
-                { label: "Browse", target: "/browse" },
-                { label: "Pricing", target: "#pricing" },
-              ].map(item => (
-                <div key={item.label} onClick={() => { handleNav(item); setMobileMenuOpen(false); }} style={{
-                  padding: "12px 16px", borderRadius: 12, fontSize: 16, fontWeight: 500, color: COLORS.ink,
-                  cursor: "pointer", borderBottom: `1px solid ${COLORS.border}`
-                }}>{item.label}</div>
-              ))}
-              <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
-                <button onClick={() => { navigate(isLoggedIn ? '/dashboard' : '/user'); setMobileMenuOpen(false); }} style={{
-                  padding: "14px", border: `1.5px solid ${COLORS.plum}`,
-                  background: isLoggedIn ? COLORS.plum : "transparent", borderRadius: 12, fontSize: 14,
-                  fontWeight: 600, color: isLoggedIn ? "white" : COLORS.plum, cursor: "pointer",
-                }}>{isLoggedIn ? "Dashboard" : "Log in"}</button>
-              </div>
-            </div>
-          </div>
-        )}
+      {/* ═══ GENRE PILLS BAR ═══ */}
+      <div style={{ maxWidth: 1340, margin: "16px auto 0", padding: "0 20px" }}>
+        <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+          <button 
+            onClick={() => scrollGenres(-1)}
+            style={{
+              position: "absolute", left: -4, zIndex: 10,
+              width: 34, height: 34, borderRadius: "50%",
+              background: "rgba(255, 255, 255, 0.95)", border: "1px solid rgba(255,255,255,0.95)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 14, color: "#1E1B4B", fontWeight: 800
+            }}
+          >‹</button>
 
-        <div style={{ borderTop: `1px solid ${COLORS.border}`, position: "relative", display: "flex", alignItems: "center", maxWidth: 1280, margin: "0 auto", width: "100%" }}>
-          <button onClick={() => scrollGenres(-1)} style={{ position: "absolute", left: 4, zIndex: 10, width: 32, height: 32, border: "none", borderRadius: "50%", background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, boxShadow: "0 4px 8px rgba(109,74,232,0.3)", cursor: "pointer", fontSize: 20, color: "white", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s" }}>{"<"}</button>
-          <div ref={genreScrollRef} style={{ display: "flex", gap: 8, padding: "10px 42px", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", width: "100%" }}>
+          <div 
+            ref={genreScrollRef}
+            style={{
+              display: "flex", gap: 10, padding: "6px 36px",
+              overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none",
+              width: "100%"
+            }}
+          >
             {GENRES.map(g => {
               const isActive = activeGenre === g.id;
               return (
                 <button
                   key={g.id}
-                  onClick={() => navigate(`/browse?genre=${g.id === 'all' ? 'all' : g.label}`)}
+                  onClick={() => {
+                    setActiveGenre(g.id);
+                    navigate(`/browse?genre=${g.id === 'all' ? 'all' : g.label}`);
+                  }}
                   style={{
-                    padding: "6px 16px",
-                    borderRadius: 20,
-                    background: isActive ? (g.bg || COLORS.plum) : COLORS.card,
-                    color: isActive ? "white" : COLORS.ink,
-                    fontSize: 12,
-                    fontWeight: isActive ? 700 : 600,
+                    padding: "8px 18px",
+                    borderRadius: 24,
+                    background: isActive ? "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)" : "rgba(255, 255, 255, 0.8)",
+                    color: isActive ? "white" : "#1E1B4B",
+                    fontSize: 13,
+                    fontWeight: isActive ? 800 : 700,
                     cursor: "pointer",
                     whiteSpace: "nowrap",
+                    border: isActive ? "none" : "1px solid rgba(255, 255, 255, 0.95)",
+                    boxShadow: isActive ? "0 4px 16px rgba(244, 63, 142, 0.4)" : "0 2px 8px rgba(0,0,0,0.04)",
                     transition: "all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)",
                     flexShrink: 0,
-                    border: isActive ? "none" : `1px solid ${COLORS.border}`,
-                    boxShadow: isActive ? `0 4px 14px ${g.color || COLORS.plum}45` : "0 1px 3px rgba(0,0,0,0.04)",
-                    transform: isActive ? "scale(1.04)" : "scale(1)"
-                  }}
-                  onMouseEnter={e => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = g.color || COLORS.plum;
-                      e.currentTarget.style.color = g.color || COLORS.plum;
-                      e.currentTarget.style.transform = "translateY(-1px)";
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = COLORS.border;
-                      e.currentTarget.style.color = COLORS.ink;
-                      e.currentTarget.style.transform = "none";
-                    }
+                    display: "flex", alignItems: "center", gap: 6
                   }}
                 >
-                  {g.emoji} {g.label}
+                  <span>{g.emoji}</span> {g.label}
                 </button>
               );
             })}
           </div>
-          <button onClick={() => scrollGenres(1)} style={{ position: "absolute", right: 4, zIndex: 10, width: 32, height: 32, border: "none", borderRadius: "50%", background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, boxShadow: "0 4px 8px rgba(109,74,232,0.3)", cursor: "pointer", fontSize: 20, color: "white", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s" }}>{">"}</button>
+
+          <button 
+            onClick={() => scrollGenres(1)}
+            style={{
+              position: "absolute", right: -4, zIndex: 10,
+              width: 34, height: 34, borderRadius: "50%",
+              background: "rgba(255, 255, 255, 0.95)", border: "1px solid rgba(255,255,255,0.95)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.1)", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 14, color: "#1E1B4B", fontWeight: 800
+            }}
+          >›</button>
         </div>
-      </nav>
+      </div>
 
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 24px" }}>
+      {/* ═══ 2. MAIN HERO CONTAINER ("AI INTERACTIVE WEBTOON STUDIO") ═══ */}
+      <div style={{ maxWidth: 1340, margin: "20px auto 0", padding: "0 20px" }}>
+        <div style={{
+          borderRadius: 32,
+          padding: "36px 40px",
+          background: "url('/hero_bg.png') center / cover no-repeat, linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 242, 246, 0.3) 100%)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid rgba(255, 255, 255, 0.95)",
+          boxShadow: "0 20px 60px rgba(190, 140, 220, 0.25)",
+          position: "relative",
+          overflow: "hidden"
+        }}>
+          <div className="hero-layout">
 
-        {/* ═══ HERO REDESIGN ═══ */}
-        <div style={{ padding: "24px 0 36px" }}>
-          <div className="hero-container" style={{
-            borderRadius: 24,
-            background: "linear-gradient(135deg, #0d0b18 0%, #17112e 50%, #24123c 100%)",
-            border: "1px solid rgba(167, 139, 250, 0.22)",
-            boxShadow: "0 25px 70px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1)",
-            position: "relative",
-            overflow: "hidden"
-          }}>
-
-            {/* Ambient background glows */}
-            <div style={{ position: "absolute", left: -100, top: -100, width: 550, height: 550, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.28) 0%, transparent 65%)", zIndex: 0, pointerEvents: "none" }} />
-            <div style={{ position: "absolute", right: 80, bottom: -120, width: 480, height: 480, borderRadius: "50%", background: "radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 65%)", zIndex: 0, pointerEvents: "none" }} />
-            <div style={{ position: "absolute", right: -50, top: -50, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)", zIndex: 0, pointerEvents: "none" }} />
-
-            {/* LEFT PANEL */}
-            <div className="hero-left">
-
-              {/* Eyebrow badge */}
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(124,58,237,0.18)", border: "1px solid rgba(167,139,250,0.4)", borderRadius: 100, padding: "6px 16px", marginBottom: 20, width: "fit-content", boxShadow: "0 4px 14px rgba(124,58,237,0.2)" }}>
-                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#a78bfa", animation: "heroPulse 2s ease-in-out infinite" }} />
-                <span style={{ fontSize: 11, fontWeight: 800, color: "#e9d5ff", letterSpacing: 1.5, textTransform: "uppercase" }}>✨ AI Interactive Webtoon Studio</span>
+            {/* LEFT COLUMN: HERO TEXT & CTAs */}
+            <div>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                background: "rgba(255, 255, 255, 0.9)",
+                border: "1px solid rgba(244, 63, 142, 0.35)",
+                padding: "6px 14px", borderRadius: 20, marginBottom: 18,
+                boxShadow: "0 2px 10px rgba(244, 63, 142, 0.15)"
+              }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#7E22CE", letterSpacing: 0.8, textTransform: "uppercase" }}>
+                  ✨ AI INTERACTIVE WEBTOON STUDIO
+                </span>
               </div>
 
-              {/* Headline */}
-              <h1 className="hero-title">
-                Unlock what<br />
-                happens{" "}
-                <span style={{
-                  backgroundImage: "linear-gradient(135deg, #c084fc 0%, #f43f5e 50%, #fbbf24 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
+              <h1 style={{
+                fontSize: 50, fontWeight: 900, color: "#1E1B4B",
+                lineHeight: 1.05, letterSpacing: "-1.5px", margin: "0 0 16px"
+              }}>
+                Your choices.<br />
+                Their <span style={{
                   fontStyle: "italic",
-                }}>next.</span>
+                  background: "linear-gradient(135deg, #F43F8E 0%, #D946EF 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent"
+                }}>destiny.</span>
               </h1>
 
-              {/* Subtitle */}
-              <p className="hero-subtitle">
-                Read immersive visual webtoons shaped by{" "}
-                <strong style={{ color: "#ffffff", fontWeight: 700 }}>your choices</strong>.
-                {" "}Vote on branching scenes, shape community plotlines, or prompt your own chapter.
+              <p style={{
+                fontSize: 15, color: "#475569", lineHeight: 1.6,
+                margin: "0 0 24px", maxWidth: 440, fontWeight: 500
+              }}>
+                Read interactive webtoons shaped by your decisions. Your votes branch the story, unlock new paths, and reveal unforgettable endings.
               </p>
 
-              {/* CTA buttons */}
-              <div className="hero-cta-row">
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24, flexWrap: "wrap" }}>
                 <button
-                  id="hero-start-reading"
-                  className="hero-btn-primary"
                   onClick={() => navigate('/browse')}
                   style={{
-                    padding: "13px 26px",
-                    background: "linear-gradient(135deg, #8b5cf6, #6d28d9)",
-                    boxShadow: "0 8px 24px rgba(139,92,246,0.45)",
+                    padding: "13px 28px", borderRadius: 30, border: "none",
+                    background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+                    color: "white", fontSize: 14, fontWeight: 800, cursor: "pointer",
+                    boxShadow: "0 8px 24px rgba(244, 63, 142, 0.4)", display: "flex", alignItems: "center", gap: 8,
                   }}
                 >
                   <span>▶</span> Start Reading
                 </button>
+
                 <button
-                  className="hero-btn-secondary" 
-                  onClick={handleWriteStoryClick}
+                  onClick={handlePromptSubmit}
                   style={{
-                    padding: "13px 22px",
-                    background: "rgba(255,255,255,0.08)",
-                    borderColor: "rgba(255,255,255,0.25)",
+                    padding: "13px 24px", borderRadius: 30,
+                    background: "rgba(255, 255, 255, 0.9)",
+                    border: "1px solid rgba(244, 63, 142, 0.35)",
+                    color: "#475569", fontSize: 14, fontWeight: 700, cursor: "pointer",
+                    boxShadow: "0 4px 14px rgba(0,0,0,0.04)", display: "flex", alignItems: "center", gap: 8,
                   }}
                 >
-                  ✨ Prompt a Story
+                  <span>✨</span> Prompt a Story
                 </button>
               </div>
 
-              {/* Stat Counters Row */}
-              <div style={{ display: "flex", gap: 20, margin: "18px 0 20px", flexWrap: "wrap" }}>
+              {/* Stats Bar */}
+              <div style={{
+                background: "rgba(255, 255, 255, 0.65)",
+                borderRadius: 20, border: "1px solid rgba(255, 255, 255, 0.95)",
+                padding: "14px 20px", display: "flex", justifyContent: "space-between", gap: 24, marginBottom: 14, flexWrap: "wrap",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.03)"
+              }}>
                 {[
                   { num: "10K+", label: "Active Readers" },
                   { num: "500+", label: "Original Webtoons" },
                   { num: "50+", label: "Creators" },
                   { num: "100+", label: "Genres" },
-                ].map((st, i) => (
-                  <div key={i}>
-                    <div style={{ fontSize: 16, fontWeight: 900, color: "#C084FC", letterSpacing: -0.5 }}>{st.num}</div>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>{st.label}</div>
+                ].map((s, i) => (
+                  <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: "#F43F8E" }}>{s.num}</div>
+                    <div style={{ fontSize: 10, color: "#64748B", fontWeight: 600, marginTop: 2 }}>{s.label}</div>
                   </div>
                 ))}
               </div>
 
-              {/* Money micro-note */}
-              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", margin: "0 0 20px", display: "flex", alignItems: "center", gap: 5 }}>
-                <span>💡</span> <span>Create stories readers love & earn ToonCoins & rewards.</span>
-              </p>
+              <div style={{ fontSize: 11, color: "#F43F8E", fontWeight: 700, marginBottom: 20, display: "flex", alignItems: "center", gap: 6 }}>
+                <span>💖</span> Create stories readers love & earn ToonCoins & rewards.
+              </div>
 
-              {/* Feature pills */}
-              <div className="hero-features">
+              {/* Feature icons */}
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {[
-                  { icon: "📖", label: "Choose", sub: "next scene" },
-                  { icon: "📈", label: "Follow", sub: "storylines" },
-                  { icon: "⚡", label: "Instant AI", sub: "panel art" },
-                  { icon: "🧰", label: "Vault", sub: "bookmarks" },
+                  { icon: "📖", title: "Choose", sub: "next scene", isBgCircle: false },
+                  { icon: "📝", title: "Follow", sub: "storylines", isBgCircle: false },
+                  { icon: "⚡", title: "Instant AI", sub: "panel art", isBgCircle: true },
+                  { icon: "📦", title: "Vault", sub: "bookmarks", isBgCircle: false },
                 ].map((f, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 9, background: "rgba(255,255,255,0.04)", padding: "6px 12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(139,92,246,0.25)", color: "#c4b5fd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{f.icon}</div>
+                  <div key={i} style={{
+                    background: "rgba(255, 255, 255, 0.85)",
+                    borderRadius: 16, padding: "8px 14px", border: "1px solid rgba(255, 255, 255, 0.95)",
+                    display: "flex", alignItems: "center", gap: 10,
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.03)"
+                  }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: f.isBgCircle ? "50%" : 10,
+                      background: f.isBgCircle ? "linear-gradient(135deg, #3B82F6, #60A5FA)" : "rgba(244, 63, 142, 0.1)",
+                      color: f.isBgCircle ? "white" : "#F43F8E",
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16
+                    }}>{f.icon}</div>
                     <div>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.9)", lineHeight: 1.2 }}>{f.label}</div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>{f.sub}</div>
+                      <div style={{ fontSize: 12, fontWeight: 900, color: "#1E1B4B", lineHeight: 1.1 }}>{f.title}</div>
+                      <div style={{ fontSize: 10, color: "#64748B", fontWeight: 500 }}>{f.sub}</div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Vertical divider (desktop only) */}
-            <div className="hero-divider" />
-
-            {/* RIGHT PANEL */}
-            <div className="hero-right">
-
-              {/* Story cover image card */}
-              <div
-                className="hero-cover"
+            {/* CENTER COLUMN: FEATURED STORY COVER */}
+            <div className="hero-center-col" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div 
+                onClick={() => navigate(`/story/${featured.id}`)}
                 style={{
-                  width: 150,
-                  height: 300,
-                  borderRadius: 18,
-                  position: "relative",
-                  overflow: "hidden",
-                  boxShadow: "0 20px 45px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.15)",
-                  cursor: "pointer",
-                  flexShrink: 0
+                  width: 250, height: 360, borderRadius: 24, overflow: "hidden",
+                  position: "relative", cursor: "pointer",
+                  boxShadow: "0 16px 40px rgba(180, 120, 210, 0.35)",
+                  border: "2px solid rgba(255, 255, 255, 0.95)",
+                  transition: "transform 0.3s"
                 }}
-                onClick={() => navigate(featured._id ? `/story/${featured._id}` : '/browse')}
               >
-                <StoryImage
-                  src={featured.cover || featured.coverImage || featured.image || (featured.panels && featured.panels[0])}
-                  alt={featured.title || "Webtoon Story"}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
+                <img src={DEFAULT_COVER} alt="Trust the Stranger" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
 
                 <div style={{
-                  position: "absolute", top: 10, left: 10,
-                  background: "rgba(15, 13, 30, 0.85)", backdropFilter: "blur(6px)",
-                  color: "#F59E0B", fontSize: 11, fontWeight: 800, padding: "4px 10px", borderRadius: 10,
-                  border: "1px solid rgba(245,158,11,0.35)",
-                  display: "flex", alignItems: "center", gap: 4,
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.5)"
-                }}>⭐ {formatRating(featured.rating)}</div>
-                
-                <div style={{
-                  position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 10px 10px",
-                  background: "linear-gradient(to top, rgba(13,11,24,0.95) 20%, rgba(13,11,24,0.5) 60%, transparent)",
+                  position: "absolute", top: 12, left: 12,
+                  background: "rgba(255, 255, 255, 0.9)", backdropFilter: "blur(8px)",
+                  padding: "4px 10px", borderRadius: 12, fontSize: 11, fontWeight: 900,
+                  color: "#1E1B4B", display: "flex", alignItems: "center", gap: 4
                 }}>
-                  <div style={{ fontSize: 10, color: "#c4b5fd", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>{featured.genre || "Featured"}</div>
-                  <div style={{ fontSize: 11, fontWeight: 800, color: "white", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 2 }}>{featured.title || "Original Story"}</div>
+                  <span style={{ color: "#F59E0B" }}>⭐</span> 4.8
+                </div>
+
+                <div style={{
+                  position: "absolute", bottom: 0, left: 0, right: 0,
+                  padding: "16px 14px 14px",
+                  background: "linear-gradient(to top, rgba(30, 27, 75, 0.9) 20%, transparent)",
+                  color: "white"
+                }}>
+                  <span style={{
+                    background: "linear-gradient(135deg, #A855F7, #F43F8E)",
+                    fontSize: 9, fontWeight: 800, padding: "2px 8px", borderRadius: 6,
+                    letterSpacing: 0.5, textTransform: "uppercase", display: "inline-block", marginBottom: 4
+                  }}>AI POWERED</span>
+                  <div style={{ fontSize: 15, fontWeight: 900, lineHeight: 1.2 }}>Trust the Stranger</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.85)", marginTop: 2 }}>Episode 12 • Romance, Mystery</div>
                 </div>
               </div>
 
-              {/* Choice cards column */}
-              <div className="hero-choices">
-
-                {/* Column header */}
-                <div style={{ marginBottom: 6 }}>
-                  <div style={{ fontSize: 10, fontWeight: 800, color: "#a78bfa", letterSpacing: 1.5, textTransform: "uppercase" }}>🔥 WHERE WILL YOU TAKE THE STORY?</div>
-                  <div style={{ fontSize: 13, fontWeight: 800, color: "white", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {featured.title || "ToonVault Originals"}
-                  </div>
-                </div>
-
-                {/* A/B/C choices */}
-                {[
-                  { id: "A", title: "Follow the Whisper", desc: "Uncover the hidden truth before it's too late.", tags: ["Romance", "Mystery"], color: "#8b5cf6", votes: 62, popular: true },
-                  { id: "B", title: "Trust the Stranger", desc: "Take the risk and step into the unknown.", tags: ["Drama", "Suspense"], color: "#ec4899", votes: 45 },
-                  { id: "C", title: "Leave It Behind", desc: "Walk away — before it changes everything.", tags: ["Adventure", "Fantasy"], color: "#10b981", votes: 33 },
-                ].map(c => (
-                  <div
-                    key={c.id}
-                    id={`hero-choice-${c.id.toLowerCase()}`}
-                    className="hero-choice-card"
+              <div style={{ display: "flex", gap: 6, marginTop: 14 }}>
+                {[0, 1, 2, 3, 4].map(idx => (
+                  <div 
+                    key={idx} 
+                    onClick={() => setHeroIndex(idx)}
                     style={{
-                      border: `1px solid ${c.color}40`,
-                      background: "rgba(255,255,255,0.04)",
-                      padding: "11px 13px",
-                      borderRadius: 14,
-                    }}
-                    onClick={() => navigate('/browse')}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = `${c.color}20`;
-                      e.currentTarget.style.borderColor = `${c.color}80`;
-                      e.currentTarget.style.transform = "translateX(5px)";
-                      e.currentTarget.style.boxShadow = `0 4px 16px ${c.color}35`;
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-                      e.currentTarget.style.borderColor = `${c.color}40`;
-                      e.currentTarget.style.transform = "none";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
-                  >
-                    {c.popular && (
-                      <div style={{ position: "absolute", top: 0, right: 0, background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "white", fontSize: 8, fontWeight: 900, padding: "3px 9px", borderBottomLeftRadius: 10, letterSpacing: 0.8, boxShadow: "0 2px 8px rgba(245,158,11,0.3)" }}>TOP CHOICE</div>
-                    )}
-                    <div style={{ width: 28, height: 28, borderRadius: 9, background: c.color, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, flexShrink: 0, boxShadow: `0 4px 12px ${c.color}60` }}>{c.id}</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-                        <div style={{ fontSize: 12, fontWeight: 800, color: "white", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title}</div>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: c.color, marginLeft: 6 }}>{c.votes}%</div>
-                      </div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 6, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
-                      {/* Vote progress bar */}
-                      <div style={{ height: 4, borderRadius: 4, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
-                        <div style={{ width: `${c.votes}%`, height: "100%", borderRadius: 4, background: `linear-gradient(90deg, ${c.color}, #ffffff)` }} />
-                      </div>
-                    </div>
-                    <div style={{ fontSize: 15, color: "rgba(255,255,255,0.4)", alignSelf: "center", flexShrink: 0, marginLeft: 4 }}>›</div>
-                  </div>
+                      width: idx === (heroIndex % 5) ? 20 : 6, height: 6, borderRadius: 3,
+                      background: idx === (heroIndex % 5) ? "linear-gradient(135deg, #F43F8E, #A855F7)" : "rgba(255, 255, 255, 0.8)",
+                      cursor: "pointer", transition: "all 0.3s"
+                    }} 
+                  />
                 ))}
-
-                {/* D — Write Your Own Twist Box */}
-                <div
-                  id="hero-write-own"
-                  style={{
-                    padding: "12px 14px",
-                    borderRadius: 16,
-                    background: "linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.08))",
-                    border: "1px dashed rgba(167,139,250,0.5)",
-                    boxShadow: "0 4px 16px rgba(124,58,237,0.15)"
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 9, background: "linear-gradient(135deg, #a78bfa, #ec4899)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, flexShrink: 0 }}>D</div>
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 800, color: "#e9d5ff" }}>Write Your Own Twist</div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Prompt any plot twist & AI generates the next scene.</div>
-                    </div>
-                  </div>
-
-                  {/* Quick suggestion chips */}
-                  <div style={{ display: "flex", gap: 5, marginBottom: 8, flexWrap: "wrap" }}>
-                    {[
-                      { emoji: "⚡", label: "Time Travel Twist" },
-                      { emoji: "💕", label: "Secret Confession" },
-                      { emoji: "🔥", label: "Power Awakening" },
-                    ].map(chip => (
-                      <button
-                        key={chip.label}
-                        onClick={() => setAiPrompt(`${chip.label} in the next episode`)}
-                        style={{
-                          fontSize: 10, fontWeight: 600, color: "#ddd6fe",
-                          background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
-                          padding: "3px 8px", borderRadius: 8, cursor: "pointer", transition: "all 0.2s"
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.background = "rgba(139,92,246,0.3)"}
-                        onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
-                      >{chip.emoji} {chip.label}</button>
-                    ))}
-                  </div>
-
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <input
-                      id="hero-prompt-input"
-                      type="text"
-                      value={aiPrompt}
-                      onChange={e => setAiPrompt(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter') handleWriteStoryClick(); }}
-                      placeholder="e.g. The protagonist reveals a hidden superpower..."
-                      className="hero-prompt-input"
-                      style={{
-                        padding: "10px 14px",
-                        borderRadius: 10,
-                        background: "rgba(0,0,0,0.35)",
-                        border: "1px solid rgba(167,139,250,0.5)",
-                        fontSize: 12,
-                      }}
-                    />
-                    <button
-                      id="hero-prompt-submit"
-                      onClick={handleWriteStoryClick}
-                      style={{
-                        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-                        background: "linear-gradient(135deg, #8b5cf6, #ec4899)",
-                        border: "none", color: "white", cursor: "pointer",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 16, transition: "transform 0.2s, box-shadow 0.2s",
-                        boxShadow: "0 6px 18px rgba(139,92,246,0.5)",
-                        fontFamily: "inherit",
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.boxShadow = "0 8px 22px rgba(236,72,153,0.6)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 6px 18px rgba(139,92,246,0.5)"; }}
-                    >✨</button>
-                  </div>
-                </div>
               </div>
             </div>
+
+            {/* RIGHT COLUMN: COMMUNITY CHOICES POLL */}
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 800, color: "#7E22CE", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 2 }}>
+                WHERE WILL YOU TAKE THE STORY?
+              </div>
+              <h3 style={{ fontSize: 20, fontWeight: 900, color: "#1E1B4B", margin: "0 0 14px", display: "flex", alignItems: "center", gap: 6 }}>
+                <span>✨</span> Community Choices
+              </h3>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 12 }}>
+                {[
+                  { key: "A", title: "Follow the Whisper", desc: "Uncover the hidden truth before it's too late.", color: "#A855F7", isTop: true },
+                  { key: "B", title: "Trust the Stranger", desc: "Take the risk and step into the unknown.", color: "#F43F8E" },
+                  { key: "C", title: "Leave It Behind", desc: "Walk away — before it changes everything.", color: "#10B981" },
+                ].map(opt => {
+                  const votesPercent = pollVotes[opt.key] || 0;
+                  const isSelected = selectedPoll === opt.key;
+
+                  return (
+                    <div
+                      key={opt.key}
+                      onClick={() => handleVote(opt.key)}
+                      style={{
+                        background: isSelected ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.8)",
+                        borderRadius: 16, padding: "12px 14px",
+                        border: isSelected ? `2px solid ${opt.color}` : "1px solid rgba(255, 255, 255, 0.95)",
+                        cursor: "pointer", position: "relative", overflow: "hidden",
+                        boxShadow: isSelected ? `0 4px 14px ${opt.color}35` : "0 2px 8px rgba(0,0,0,0.03)",
+                      }}
+                    >
+                      {opt.isTop && (
+                        <span style={{
+                          position: "absolute", top: 8, right: 10,
+                          background: "#FBBF24", color: "#78350F",
+                          fontSize: 9, fontWeight: 900, padding: "2px 8px", borderRadius: 6
+                        }}>TOP CHOICE</span>
+                      )}
+
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                        <div style={{
+                          width: 28, height: 28, borderRadius: 8, background: opt.color,
+                          color: "white", fontWeight: 900, fontSize: 13,
+                          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+                        }}>{opt.key}</div>
+                        <div style={{ flex: 1, paddingRight: opt.isTop ? 60 : 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 800, color: "#1E1B4B" }}>{opt.title}</div>
+                          <div style={{ fontSize: 11, color: "#64748B", margin: "2px 0 6px", fontWeight: 500 }}>{opt.desc}</div>
+                          
+                          <div style={{ height: 5, borderRadius: 3, background: "rgba(0,0,0,0.06)", overflow: "hidden" }}>
+                            <div style={{ width: `${votesPercent}%`, height: "100%", background: opt.color, borderRadius: 3 }} />
+                          </div>
+                        </div>
+                        <span style={{ fontSize: 11, fontWeight: 800, color: opt.color, alignSelf: "flex-end" }}>{votesPercent}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Option D */}
+              <div style={{
+                background: "rgba(255, 255, 255, 0.9)",
+                borderRadius: 18, padding: "12px 14px",
+                border: "1.5px dashed #A855F7",
+                boxShadow: "0 4px 14px rgba(168, 85, 247, 0.15)"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: 8, background: "#A855F7",
+                    color: "white", fontWeight: 900, fontSize: 13,
+                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+                  }}>D</div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: "#1E1B4B" }}>Write Your Own Twist</div>
+                    <div style={{ fontSize: 10, color: "#64748B", fontWeight: 500 }}>Prompt any plot twist & AI generates the next scene.</div>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
+                  {[
+                    { label: "⏳ Time Travel Twist" },
+                    { label: "💌 Secret Confession" },
+                    { label: "🔥 Power Awakening" },
+                  ].map(tag => (
+                    <button
+                      key={tag.label}
+                      onClick={() => setAiPrompt(tag.label)}
+                      style={{
+                        fontSize: 10, fontWeight: 700, color: "#7E22CE",
+                        background: "rgba(168, 85, 247, 0.1)", border: "1px solid rgba(168, 85, 247, 0.2)",
+                        padding: "3px 8px", borderRadius: 8, cursor: "pointer"
+                      }}
+                    >
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    type="text"
+                    placeholder="e.g. The protagonist reveals a hidden power..."
+                    value={aiPrompt}
+                    onChange={e => setAiPrompt(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') handlePromptSubmit(); }}
+                    style={{
+                      flex: 1, padding: "8px 12px", borderRadius: 12,
+                      border: "1px solid rgba(168, 85, 247, 0.3)",
+                      background: "white", fontSize: 11, color: "#1E1B4B", outline: "none", fontWeight: 500
+                    }}
+                  />
+                  <button
+                    onClick={handlePromptSubmit}
+                    style={{
+                      width: 34, height: 34, borderRadius: 10, border: "none",
+                      background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+                      color: "white", cursor: "pointer", fontSize: 14,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      boxShadow: "0 4px 12px rgba(244, 63, 142, 0.35)"
+                    }}
+                  >✨</button>
+                </div>
+              </div>
+
+            </div>
+
           </div>
         </div>
+      </div>
 
-
-        {/* ═══ ANNOUNCEMENT BANNERS ═══ */}
-        <div className="banner-container" style={{ display: "flex", gap: 12, marginBottom: 36, overflowX: "auto", scrollbarWidth: "none" }}>
+      {/* ═══ 3. THREE MIDDLE PROMO BANNERS ═══ */}
+      <div style={{ maxWidth: 1340, margin: "24px auto 0", padding: "0 20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
           {[
-            { text: "22 comics · 2,300+ episodes 📚 Dive all the way in!", color: COLORS.plumLight, accent: COLORS.plum },
-            { text: "Check in daily & catch 100 free episodes!", color: "#FEF3DC", accent: COLORS.gold },
-            { text: "Mature versions available 🔥 Spicier cuts on website!", color: COLORS.roseLight, accent: COLORS.rose },
-          ].map((b, i) => (
-            <div key={i} className="banner-item" style={{
-              flexShrink: 0, background: b.color, border: `1px solid ${b.accent}30`,
-              borderRadius: 12, padding: "10px 18px",
-              fontSize: 13, fontWeight: 500, color: b.accent, cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 8,
-              whiteSpace: "nowrap",
-            }}>
-              <span style={{ fontSize: 16 }}>📣</span> {b.text}
+            { icon: "🏆", line1: "22 comics • 2,300+ episodes", line2: "Dive all the way in!", color: "#6B21A8" },
+            { icon: "🎁", line1: "Check in daily &", line2: "catch 100 free episodes!", color: "#C2410C" },
+            { icon: "🔥", line1: "Mature versions available", line2: "Spicier cuts on website!", color: "#991B1B" },
+          ].map((card, i) => (
+            <div
+              key={i}
+              onClick={() => navigate('/browse')}
+              style={{
+                background: "rgba(255, 255, 255, 0.85)",
+                backdropFilter: "blur(20px)",
+                borderRadius: 24, padding: "18px 24px",
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                cursor: "pointer", border: "1px solid rgba(255, 255, 255, 0.95)",
+                boxShadow: "0 10px 30px rgba(220, 170, 230, 0.2)"
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: 16,
+                  background: "rgba(255, 255, 255, 0.95)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 24, boxShadow: "0 4px 12px rgba(0,0,0,0.06)"
+                }}>{card.icon}</div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: card.color }}>{card.line1}</div>
+                  <div style={{ fontSize: 15, fontWeight: 900, color: "#1E1B4B", marginTop: 2 }}>{card.line2}</div>
+                </div>
+              </div>
+              <div style={{ fontSize: 18, color: card.color, fontWeight: 900 }}>›</div>
             </div>
           ))}
         </div>
-
-        {/* ═══ FEATURED THIS WEEK & NEWSLETTER ═══ */}
-        <section style={{ marginBottom: 44 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 800, color: "white", display: "flex", alignItems: "center", gap: 8 }}>
-              🔥 Featured This Week
-            </h2>
-            <button onClick={() => navigate('/browse')} style={{ fontSize: 12, fontWeight: 700, color: "#A78BFA", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", padding: "6px 14px", borderRadius: 20, cursor: "pointer" }}>
-              View All
-            </button>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 20 }}>
-            {/* Grid of 6 Webtoon Poster Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 14 }}>
-              {liveStories.slice(0, 6).map((s, i) => {
-                const mockChapters = [24, 18, 32, 15, 27, 10];
-                const chapterNum = mockChapters[i % mockChapters.length];
-                return (
-                  <div
-                    key={s.id}
-                    onClick={() => navigate(`/story/${s.id}`)}
-                    style={{
-                      borderRadius: 16,
-                      overflow: "hidden",
-                      background: "rgba(255,255,255,0.03)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      cursor: "pointer",
-                      position: "relative",
-                      transition: "transform 0.25s, box-shadow 0.25s"
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.transform = "translateY(-4px)";
-                      e.currentTarget.style.boxShadow = "0 12px 30px rgba(124,58,237,0.3)";
-                      e.currentTarget.style.borderColor = "rgba(167,139,250,0.4)";
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.transform = "none";
-                      e.currentTarget.style.boxShadow = "none";
-                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-                    }}
-                  >
-                    <div style={{ width: "100%", height: 210, position: "relative", overflow: "hidden" }}>
-                      <StoryImage
-                        src={s.cover}
-                        alt={s.title}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      />
-                      <div style={{
-                        position: "absolute", top: 8, left: 8,
-                        background: "rgba(15, 13, 30, 0.8)", backdropFilter: "blur(6px)",
-                        color: "#E9D5FF", fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 8,
-                        border: "1px solid rgba(255,255,255,0.15)", textTransform: "capitalize"
-                      }}>
-                        {s.genre || "Webtoon"}
-                      </div>
-                    </div>
-
-                    <div style={{ padding: "10px 12px 12px" }}>
-                      <div style={{ fontSize: 12, fontWeight: 800, color: "white", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: 6 }}>
-                        {s.title}
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 11, color: "rgba(255,255,255,0.5)" }}>
-                        <span>Chapter {chapterNum}</span>
-                        <span style={{ color: "#F59E0B", fontWeight: 700 }}>⭐ {formatRating(s.rating)}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Newsletter Card ("Stay in the loop") */}
-            <div style={{
-              background: "linear-gradient(135deg, rgba(13,11,24,0.95), rgba(26,17,46,0.95))",
-              borderRadius: 20,
-              border: "1px solid rgba(167,139,250,0.25)",
-              padding: "24px 20px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between"
-            }}>
-              <div>
-                <h3 style={{ fontSize: 18, fontWeight: 800, color: "white", marginBottom: 6 }}>Stay in the loop</h3>
-                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5, marginBottom: 18 }}>
-                  Get updates on new releases, events, and exclusive content.
-                </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    style={{
-                      width: "100%", padding: "11px 14px", borderRadius: 10,
-                      background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.12)",
-                      color: "white", fontSize: 12, outline: "none"
-                    }}
-                  />
-                  <button style={{
-                    width: "100%", padding: "11px", borderRadius: 10, border: "none",
-                    background: "linear-gradient(135deg, #7C3AED, #F43F5E)",
-                    color: "white", fontWeight: 800, fontSize: 12, cursor: "pointer",
-                    boxShadow: "0 6px 18px rgba(244,63,94,0.35)"
-                  }}>Subscribe</button>
-                </div>
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>Join 5,000+ readers</div>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  {["👤", "🧑", "👩"].map((av, i) => (
-                    <div key={i} style={{ width: 22, height: 22, borderRadius: "50%", background: "#7C3AED", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, border: "2px solid #0D0B18", marginLeft: i > 0 ? -6 : 0 }}>{av}</div>
-                  ))}
-                  <div style={{ fontSize: 9, fontWeight: 800, background: "rgba(255,255,255,0.12)", color: "white", padding: "2px 5px", borderRadius: 8, marginLeft: 5 }}>+5K</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ POPULAR BY CATEGORY ═══ */}
-        <section id="categories" style={{ marginBottom: 44, scrollMarginTop: 80 }}>
-          <SectionHeader title="📚 Popular by Category" viewAll />
-          <div className="day-selector" style={{ display: "flex", gap: 8, marginBottom: 20, overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none" }}>
-            {categoryTabs.map(tab => (
-              <button key={tab} className="day-button" onClick={() => setActiveCategoryTab(tab)} style={{
-                padding: "7px 18px", borderRadius: 20,
-                background: activeCategoryTab === tab ? COLORS.plum : COLORS.card,
-                color: activeCategoryTab === tab ? "white" : COLORS.muted,
-                fontSize: 13, fontWeight: 500, cursor: "pointer", whiteSpace: "nowrap",
-                border: activeCategoryTab === tab ? "none" : `1px solid ${COLORS.border}`,
-                transition: "all 0.18s",
-              }}>{tab}</button>
-            ))}
-          </div>
-          <HorizontalScroll>
-            {liveStories.filter(s => {
-              if (activeCategoryTab === "All") return true;
-              const genreStr = Array.isArray(s.genre) ? s.genre.join(' ') : (s.genre || "");
-              return genreStr.toLowerCase().includes(activeCategoryTab.toLowerCase());
-            }).map(s => <StoryCard key={s.id} story={s} />)}
-          </HorizontalScroll>
-        </section>
-
-        {/* ═══ THEMATIC COLLECTIONS ═══ */}
-        <section id="collections" style={{ marginBottom: 44, scrollMarginTop: 80 }}>
-          <SectionHeader title="💫 Collections for You" sub="Handpicked themes our readers love" viewAll />
-          <div className="collections-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
-            {TRENDING_COLLECTIONS.map((c, i) => (
-              <div key={i} style={{
-                background: i % 2 === 0 ? COLORS.plumLight : COLORS.roseLight,
-                borderRadius: 16, padding: "18px 20px", cursor: "pointer",
-                border: `1px solid ${i % 2 === 0 ? "#D4C8FA" : "#F5C8D8"}`,
-                transition: "transform 0.2s, box-shadow 0.2s",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(109,74,232,0.1)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
-              >
-                <div style={{ fontSize: 28, marginBottom: 8 }}>{c.emoji}</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.ink, marginBottom: 4 }}>{c.label}</div>
-                <div style={{ fontSize: 12, color: COLORS.muted }}>{c.desc}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ TOP RANKING ═══ */}
-        <section id="ranking" style={{ marginBottom: 44, scrollMarginTop: 80 }}>
-          <SectionHeader title="🏆 Top Ranking" sub="The most read stories this week" viewAll />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20 }}>
-            {liveStories.slice(0, 3).map((s, i) => (
-              <div key={s.id} onClick={() => navigate(`/story/${s.id}`)} style={{
-                display: "flex", gap: 16, background: COLORS.card, borderRadius: 16, 
-                padding: "12px", border: `1px solid ${COLORS.border}`, cursor: "pointer",
-                transition: "all 0.2s"
-              }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = COLORS.plum}
-              onMouseLeave={e => e.currentTarget.style.borderColor = COLORS.border}
-              >
-                <div style={{ position: "relative", width: 80, height: 110, borderRadius: 10, overflow: "hidden", background: s.bg, flexShrink: 0 }}>
-                   <div style={{ 
-                     position: "absolute", top: 0, left: 0, padding: "2px 8px", 
-                     background: i === 0 ? COLORS.gold : i === 1 ? "#A1A1AA" : "#CD7F32",
-                     color: "white", fontSize: 16, fontWeight: 900, borderBottomRightRadius: 10,
-                     zIndex: 1
-                   }}>{i + 1}</div>
-                   <StoryImage 
-                     src={s.cover} 
-                     alt={s.title}
-                     style={{ width: "100%", height: "100%" }}
-                   />
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                  <div style={{ fontSize: 11, color: COLORS.rose, fontWeight: 700, textTransform: "uppercase", marginBottom: 4 }}>{s.genre}</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: COLORS.ink, marginBottom: 6 }}>{s.title}</div>
-                  <div style={{ fontSize: 12, color: COLORS.muted, marginBottom: 8, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{s.description}</div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: COLORS.mutedLight }}>
-                    <span>👁 {s.views}</span>
-                    <span>⭐ {formatRating(s.rating)}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ NEWLY RELEASED ═══ */}
-        <section style={{ marginBottom: 44 }}>
-          <SectionHeader title="✨ Newly Released" sub="Fresh stories just went live" viewAll />
-          <HorizontalScroll>
-            {liveStories.slice(8).map(s => <StoryCard key={s.id} story={s} size="normal" />)}
-          </HorizontalScroll>
-        </section>
-
-        {/* ═══ DAILY SCHEDULE ═══ */}
-        <section id="daily-schedule" style={{ marginBottom: 44, scrollMarginTop: 80 }}>
-          <SectionHeader title="📅 Daily Schedule" viewAll />
-          <div className="day-selector" style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap", scrollbarWidth: "none", msOverflowStyle: "none" }}>
-            {DAYS.map(day => (
-              <button key={day} className="day-button" onClick={() => setActiveDay(day)} style={{
-                padding: "7px 16px", borderRadius: 20,
-                background: activeDay === day ? COLORS.plum : COLORS.card,
-                color: activeDay === day ? "white" : COLORS.muted,
-                fontSize: 13, fontWeight: 500, cursor: "pointer",
-                border: activeDay === day ? "none" : `1px solid ${COLORS.border}`,
-                transition: "all 0.18s",
-                whiteSpace: "nowrap"
-              }}>{day}</button>
-            ))}
-          </div>
-          {dailyStories.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "40px 0", color: COLORS.muted, fontSize: 14 }}>
-              No updates scheduled for this day — check back soon! 🌙
-            </div>
-          ) : (
-            <div className="schedule-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(155px, 1fr))", gap: 14 }}>
-              {dailyStories.map(s => <StoryCard key={s.id} story={s} size="small" />)}
-            </div>
-          )}
-        </section>
-
-        {/* ═══ RANKINGS ═══ */}
-        <section id="rankings" style={{ marginBottom: 44, scrollMarginTop: 80 }}>
-          <SectionHeader title="🏆 Rankings" sub="Most read this week" viewAll />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 10 }}>
-            {liveStories.slice(0, 8).map((s, i) => (
-              <div key={s.id} style={{
-                display: "flex", alignItems: "center", gap: 14,
-                background: COLORS.card, borderRadius: 14, padding: "12px 14px",
-                border: `1px solid ${COLORS.border}`, cursor: "pointer", transition: "all 0.2s",
-              }}
-                onClick={() => navigate(`/story/${s.id}`)}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = COLORS.plum + "60"; e.currentTarget.style.background = COLORS.plumLight + "50"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.background = COLORS.card; }}
-              >
-                <div style={{
-                  width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                  background: i < 3 ? `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})` : COLORS.border,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: i < 3 ? 15 : 13, fontWeight: 800,
-                  color: i < 3 ? "white" : COLORS.muted,
-                }}>
-                  {i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1}
-                </div>
-                <div style={{
-                  width: 42, height: 54, borderRadius: 8, flexShrink: 0,
-                  background: s.bg, overflow: "hidden"
-                }}>
-                  <StoryImage 
-                    src={s.cover} 
-                    alt={s.title}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.ink, marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.title}</div>
-                  <div style={{ fontSize: 11, color: COLORS.muted }}>{s.genre}</div>
-                </div>
-                <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: COLORS.plum }}>{s.views}</div>
-                  <div style={{ fontSize: 10, color: COLORS.mutedLight }}>views</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ FREE TO READ SECTION ═══ */}
-        <section style={{ marginBottom: 44 }}>
-          <div style={{
-            background: `linear-gradient(135deg, ${COLORS.plumLight} 0%, ${COLORS.roseLight} 100%)`,
-            borderRadius: 20, padding: "28px 32px",
-            border: `1px solid ${COLORS.border}`,
-            display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 20,
-          }}>
-            <div>
-              <div style={{ fontSize: 24, marginBottom: 6 }}>⏰</div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: COLORS.ink, margin: "0 0 6px" }}>Free every {settings.free_episode_interval_hrs} hours!</h3>
-              <p style={{ fontSize: 14, color: COLORS.muted, margin: 0, maxWidth: 380 }}>New episodes unlock automatically. Follow your favorites and never miss an update — no coins needed.</p>
-            </div>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <button 
-                onClick={() => navigate('/browse')}
-                style={{
-                padding: "12px 26px", background: COLORS.plum, color: "white",
-                border: "none", borderRadius: 24, fontSize: 14, fontWeight: 600, cursor: "pointer",
-              }}>Browse free stories</button>
-              <button style={{
-                padding: "12px 26px", background: "white", color: COLORS.plum,
-                border: `1.5px solid ${COLORS.plum}`, borderRadius: 24, fontSize: 14, fontWeight: 600, cursor: "pointer",
-              }}>Get the app</button>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ PREMIUM MEMBERSHIP PLANS ═══ */}
-        <section id="pricing" style={{ marginBottom: 80, scrollMarginTop: 80 }}>
-          <div style={{ textAlign: "center", marginBottom: 40 }}>
-            <h2 style={{ fontSize: 32, fontWeight: 900, color: COLORS.ink, marginBottom: 12 }}>Choose Your Journey</h2>
-            <p style={{ fontSize: 16, color: COLORS.muted, maxWidth: 500, margin: "0 auto" }}>Unlock unlimited storytelling and support your favorite creators.</p>
-          </div>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-            {[
-              { name: "Free", price: "0", accent: COLORS.muted, bg: COLORS.card, features: ["Read 10 stories/mo", "5 AI Generations", "Community access", "Standard reading"] },
-              { name: "Bronze", price: settings.price_bronze || "4.99", accent: COLORS.plum, bg: COLORS.plumLight+"10", features: ["Read 50 stories/mo", "20 AI Generations", "Advanced AI tools", "No ads", "Offline reading"] },
-              { name: "Silver", price: settings.price_silver || "9.99", accent: COLORS.rose, bg: COLORS.roseLight+"10", popular: true, features: ["Read 100 stories/mo", "50 AI Generations", "Priority AI gen", "Early access", "Custom themes"] },
-              { name: "Gold", price: settings.price_gold || "19.99", accent: COLORS.gold, bg: COLORS.goldLight+"10", features: ["Unlimited reading", "Unlimited AI Generations", "Pro AI studio", "Direct support", "Exclusive content"] }
-            ].map((plan, i) => (
-              <div key={i} style={{
-                background: plan.bg, borderRadius: 24, padding: "36px 30px",
-                border: `2px solid ${plan.popular ? plan.accent : COLORS.border}`,
-                position: "relative", textAlign: "left", transition: "transform 0.3s",
-                boxShadow: plan.popular ? "0 15px 30px rgba(109,74,232,0.1)" : "none",
-              }}
-              onMouseEnter={e => e.currentTarget.style.transform = "translateY(-8px)"}
-              onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
-              >
-                {plan.popular && (
-                  <div style={{
-                    position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
-                    background: plan.accent, color: "white", padding: "4px 16px", borderRadius: 20,
-                    fontSize: 10, fontWeight: 800, textTransform: "uppercase"
-                  }}>Most Popular</div>
-                )}
-                <div style={{ fontSize: 22, fontWeight: 800, color: plan.accent, marginBottom: 8 }}>{plan.name}</div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 24 }}>
-                  <span style={{ fontSize: 32, fontWeight: 900 }}>${plan.price}</span>
-                  <span style={{ fontSize: 14, color: COLORS.muted }}>/mo</span>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
-                  {plan.features.map((f, fi) => (
-                    <div key={fi} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: COLORS.ink, fontWeight: 500 }}>
-                      <span style={{ color: plan.accent }}>✓</span> {f}
-                    </div>
-                  ))}
-                </div>
-                <button 
-                  onClick={() => navigate(`/user?plan=${plan.name}`)}
-                  style={{
-                    width: "100%", padding: "14px", borderRadius: 14,
-                    background: plan.popular ? plan.accent : "white",
-                    color: plan.popular ? "white" : plan.accent,
-                    border: `1.5px solid ${plan.accent}`,
-                    fontSize: 14, fontWeight: 700, cursor: "pointer"
-                  }}
-                >
-                  {plan.price === "0" ? "Start Free" : "Upgrade Now"}
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-        {/* ═══ ABOUT SECTION ═══ */}
-        <section id="about" style={{ marginBottom: 80, scrollMarginTop: 80, padding: "60px 0", borderTop: `1px solid ${COLORS.border}` }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 40, alignItems: "center" }}>
-            <div>
-              <h2 style={{ fontSize: 32, fontWeight: 900, color: COLORS.ink, marginBottom: 20 }}>Every Choice Matters.</h2>
-              <p style={{ fontSize: 16, color: COLORS.muted, lineHeight: 1.8, marginBottom: 24 }}>
-                ToonVault is the world's first AI-powered interactive storytelling platform. We bridge the gap between creators and readers by providing state-of-the-art AI tools to build worlds that react to reader choices.
-              </p>
-              <div style={{ display: "flex", gap: 20 }}>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: COLORS.plum }}>50k+</div>
-                  <div style={{ fontSize: 12, color: COLORS.muted }}>Stories</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: COLORS.rose }}>1M+</div>
-                  <div style={{ fontSize: 12, color: COLORS.muted }}>Readers</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: COLORS.gold }}>10k+</div>
-                  <div style={{ fontSize: 12, color: COLORS.muted }}>Story</div>
-                </div>
-              </div>
-            </div>
-            <div style={{ background: COLORS.plumLight, borderRadius: 32, height: 340, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 120 }}>
-              🎭
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ COMMUNITY & HELP ═══ */}
-        <section id="community" style={{ marginBottom: 80, scrollMarginTop: 80 }}>
-           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
-              <div id="help" style={{ background: "white", padding: 32, borderRadius: 24, border: `1px solid ${COLORS.border}` }}>
-                <div style={{ fontSize: 32, marginBottom: 16 }}>🤝</div>
-                <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 10 }}>Help Center</h3>
-                <p style={{ fontSize: 14, color: COLORS.muted, lineHeight: 1.6, marginBottom: 20 }}>Got questions? Our support team and documentation are here to help you get started.</p>
-                <button style={{ background: "none", border: "none", color: COLORS.plum, fontWeight: 700, fontSize: 14, cursor: "pointer", padding: 0 }}>Visit Help Center →</button>
-              </div>
-              <div style={{ background: "white", padding: 32, borderRadius: 24, border: `1px solid ${COLORS.border}` }}>
-                <div style={{ fontSize: 32, marginBottom: 16 }}>🌐</div>
-                <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 10 }}>Community</h3>
-                <p style={{ fontSize: 14, color: COLORS.muted, lineHeight: 1.6, marginBottom: 20 }}>Join thousands of creators and readers on our Discord and social platforms.</p>
-                <button style={{ background: "none", border: "none", color: COLORS.rose, fontWeight: 700, fontSize: 14, cursor: "pointer", padding: 0 }}>Join Discord →</button>
-              </div>
-           </div>
-        </section>
-
       </div>
 
-      {/* ── MAINTENANCE OVERLAY ── */}
-      {settings.maintenance_mode === 'true' && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          background: COLORS.ink, color: "white", zIndex: 10000,
-          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 20
-        }}>
-          <div style={{ fontSize: 60, marginBottom: 20 }}>🏗️</div>
-          <h1 style={{ fontSize: 32, fontWeight: 900, marginBottom: 12 }}>Under Maintenance</h1>
-          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.6)", maxWidth: 500 }}>
-            {settings.site_name} is currently undergoing scheduled maintenance. We'll be back shortly with even better stories!
-          </p>
-        </div>
-      )}
+      {/* ═══ 4. TRENDING RIGHT NOW SECTION ═══ */}
+      <div style={{ maxWidth: 1340, margin: "36px auto 0", padding: "0 20px" }}>
+        <div className="glass-card" style={{ borderRadius: 28, padding: "24px 28px" }}>
+          <SectionHeader 
+            title="Trending Right Now" 
+            sub="Top picks loved by the community" 
+            viewAll={true} 
+          />
 
-      {/* ═══ FOOTER ═══ */}
-      <footer style={{
-        background: COLORS.ink, color: "rgba(255,255,255,0.45)",
-        marginTop: 0, padding: "80px 24px 40px",
-        borderTop: "1px solid rgba(255,255,255,0.05)"
-      }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 48, marginBottom: 60 }}>
-            <div style={{ gridColumn: "span 1.5" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, cursor: "pointer" }} onClick={() => navigate("/")}>
-                <div style={{ width: 36, height: 36, borderRadius: 12, background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, boxShadow: "0 4px 15px rgba(109,74,232,0.3)" }}>📖</div>
-                <span style={{ fontSize: 22, fontWeight: 900, color: "white", letterSpacing: -0.8 }}>{settings.site_name}</span>
-              </div>
-              <p style={{ fontSize: 14, lineHeight: 1.8, maxWidth: 300, color: "rgba(255,255,255,0.5)" }}>
-                An AI-powered interactive storytelling platform where choices shape every story. Create, share, and monetize your imagination.
-              </p>
-            </div>
-            {[
-              { 
-                title: "Discover", 
-                links: [
-                  { l: "Browse", t: "/browse" },
-                  { l: "Originals", t: "#daily-schedule" },
-                  { l: "Categories", t: "#categories" },
-                  { l: "Rankings", t: "#rankings" },
-                  { l: "New releases", t: "#daily-schedule" },
-                  { l: "Canvas", t: "#collections" },
-                  { l: "Pricing", t: "#pricing" }
-                ] 
-              },
-              { 
-                title: "Company", 
-                links: [
-                  { l: "About", t: "/about" },
-                  { l: "Help center", t: "/help" },
-                  { l: "Community", t: "/community" },
-                  { l: "Terms", t: "/terms" },
-                  { l: "Privacy", t: "/privacy" }
-                ] 
-              },
-            ].map(col => (
-              <div key={col.title}>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "white", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 24 }}>{col.title}</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  {col.links.map(link => (
-                    <div key={link.l} 
-                      onClick={() => handleNav({ target: link.t })}
-                      style={{ fontSize: 14, cursor: "pointer", transition: "all 0.2s" }}
-                      onMouseEnter={e => e.currentTarget.style.color = COLORS.plumLight}
-                      onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
-                    >{link.l}</div>
-                  ))}
-                </div>
-              </div>
+          <div style={{
+            display: "flex", gap: 16, overflowX: "auto",
+            paddingBottom: 8, scrollbarWidth: "none"
+          }}>
+            {trendingList.map(story => (
+              <StoryCard key={story.id} story={story} />
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* ═══ 5. TWO-COLUMN FEATURE BLOCK ("How ToonVault Works" + "Create Your Own Story") ═══ */}
+      <div style={{ maxWidth: 1340, margin: "36px auto 0", padding: "0 20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.35fr", gap: 24 }}>
           
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 32, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
-            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>© 2026 ToonVault. All rights reserved.</div>
-            <div style={{ display: "flex", gap: 24 }}>
-              {["Discord", "Instagram", "Twitter", "YouTube"].map(s => (
-                <span key={s} style={{ fontSize: 14, cursor: "pointer", transition: "all 0.2s" }}
-                  onMouseEnter={e => e.currentTarget.style.color = "white"}
-                  onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
-                >{s}</span>
+          {/* Left Block: How ToonVault Works */}
+          <div className="glass-card" style={{ borderRadius: 28, padding: "28px 30px" }}>
+            <h2 style={{ fontSize: 22, fontWeight: 900, color: "#1E1B4B", margin: "0 0 20px" }}>
+              How <span style={{ color: "#F43F8E" }}>ToonVault</span> Works
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              {[
+                { step: "1. Choose", desc: "Pick what happens next.", icon: "📖" },
+                { step: "2. Follow", desc: "Explore different story branches.", icon: "🔀" },
+                { step: "3. Instant AI", desc: "Watch stunning panel art unfold.", icon: "⚡" },
+                { step: "4. Vault", desc: "Save your favorites and never lose track.", icon: "📦" },
+              ].map((item, i) => (
+                <div key={i} style={{
+                  background: "rgba(255, 255, 255, 0.75)",
+                  border: "1px solid rgba(255, 255, 255, 0.95)",
+                  borderRadius: 20, padding: "18px 16px", textCenter: "center",
+                  boxShadow: "0 4px 14px rgba(0,0,0,0.03)"
+                }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 14, margin: "0 auto 10px",
+                    background: "rgba(244, 63, 142, 0.1)", color: "#F43F8E",
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22
+                  }}>{item.icon}</div>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: "#1E1B4B", marginBottom: 4 }}>{item.step}</div>
+                  <div style={{ fontSize: 11, color: "#64748B", fontWeight: 500, lineHeight: 1.4 }}>{item.desc}</div>
+                </div>
               ))}
             </div>
           </div>
+
+          {/* Right Block: Create Your Own Story (With Anime Girl Artist Image) */}
+          <div className="glass-card" style={{
+            borderRadius: 28, padding: "28px 32px",
+            background: "linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,240,245,0.85) 100%)",
+            position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "space-between"
+          }}>
+            <img src="/creator_anime_girl.png" alt="" style={{
+              position: "absolute", right: 0, bottom: 0, height: "100%", width: "auto", objectFit: "cover", pointerEvents: "none"
+            }} />
+            <div>
+              <h2 style={{ fontSize: 24, fontWeight: 900, color: "#1E1B4B", margin: "0 0 4px" }}>Create Your Own Story</h2>
+              <p style={{ fontSize: 13, color: "#64748B", margin: "0 0 20px", fontWeight: 600 }}>Built for creators. Loved by fans.</p>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, maxWidth: 420 }}>
+                {[
+                  { title: "AI Story Studio", sub: "Generate plot ideas & scenes", icon: "⚡" },
+                  { title: "Branching Engine", sub: "Create choices & multiple endings", icon: "🔀" },
+                  { title: "Creator Analytics", sub: "Track readers, choices & drops", icon: "📊" },
+                  { title: "Global Audience", sub: "Reach readers around the world", icon: "🌐" },
+                ].map((p, i) => (
+                  <div key={i} style={{
+                    background: "rgba(255, 255, 255, 0.85)", borderRadius: 14, padding: "10px 12px",
+                    border: "1px solid rgba(255, 255, 255, 0.95)", display: "flex", alignItems: "center", gap: 8
+                  }}>
+                    <span style={{ fontSize: 16 }}>{p.icon}</span>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 800, color: "#1E1B4B" }}>{p.title}</div>
+                      <div style={{ fontSize: 9, color: "#64748B" }}>{p.sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginTop: 24 }}>
+              <button 
+                onClick={() => navigate('/user?intent=create')}
+                style={{
+                  padding: "12px 28px", borderRadius: 30, border: "none",
+                  background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+                  color: "white", fontSize: 13, fontWeight: 800, cursor: "pointer",
+                  boxShadow: "0 6px 20px rgba(244, 63, 142, 0.35)"
+                }}
+              >Start Creating Now</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ═══ 6. SIMPLE PRICING SECTION ("Simple Pricing. Unlimited Stories.") ═══ */}
+      <div style={{ maxWidth: 1340, margin: "36px auto 0", padding: "0 20px" }}>
+        <div className="glass-card" style={{ borderRadius: 32, padding: "36px 40px", position: "relative", overflow: "hidden" }}>
+          
+          {/* Header & Toggle */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 30, flexWrap: "wrap", gap: 16 }}>
+            <h2 style={{ fontSize: 26, fontWeight: 900, color: "#1E1B4B", margin: 0 }}>
+              Simple Pricing. Unlimited Stories.
+            </h2>
+
+            {/* Toggle */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: 8,
+              background: "rgba(255, 255, 255, 0.8)", border: "1px solid rgba(255, 255, 255, 0.95)",
+              padding: "4px", borderRadius: 24
+            }}>
+              <button 
+                onClick={() => setBillingCycle("monthly")}
+                style={{
+                  padding: "6px 16px", borderRadius: 20, border: "none",
+                  background: billingCycle === "monthly" ? "linear-gradient(135deg, #F43F8E, #A855F7)" : "transparent",
+                  color: billingCycle === "monthly" ? "white" : "#64748B",
+                  fontSize: 12, fontWeight: 800, cursor: "pointer"
+                }}
+              >Monthly</button>
+              <button 
+                onClick={() => setBillingCycle("yearly")}
+                style={{
+                  padding: "6px 16px", borderRadius: 20, border: "none",
+                  background: billingCycle === "yearly" ? "linear-gradient(135deg, #F43F8E, #A855F7)" : "transparent",
+                  color: billingCycle === "yearly" ? "white" : "#64748B",
+                  fontSize: 12, fontWeight: 800, cursor: "pointer"
+                }}
+              >Yearly (Save 20%)</button>
+            </div>
+          </div>
+
+          {/* Pricing Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1.2fr", gap: 20, alignItems: "stretch" }}>
+            
+            {/* Reader / Free */}
+            <div style={{
+              background: "rgba(255, 255, 255, 0.8)", borderRadius: 24, padding: "24px 20px",
+              border: "1px solid rgba(255, 255, 255, 0.95)", display: "flex", flexDirection: "column", justifyContent: "space-between"
+            }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#64748B" }}>Reader</div>
+                <div style={{ fontSize: 28, fontWeight: 900, color: "#1E1B4B", margin: "6px 0 2px" }}>Free</div>
+                <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 18 }}>$0 / month</div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 12, color: "#475569" }}>
+                  <div>✓ Read thousands of episodes</div>
+                  <div>✓ Daily free episodes</div>
+                  <div>✓ Vote in community choices</div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => navigate('/browse')}
+                style={{
+                  width: "100%", padding: "10px", borderRadius: 16, border: "1px solid rgba(244, 63, 142, 0.4)",
+                  background: "white", color: "#F43F8E", fontSize: 13, fontWeight: 800, cursor: "pointer", marginTop: 24
+                }}
+              >Get Started</button>
+            </div>
+
+            {/* Fan (Most Popular) */}
+            <div style={{
+              background: "rgba(255, 255, 255, 0.95)", borderRadius: 24, padding: "24px 20px",
+              border: "2px solid #F43F8E", display: "flex", flexDirection: "column", justifyContent: "space-between",
+              position: "relative", boxShadow: "0 12px 30px rgba(244, 63, 142, 0.2)"
+            }}>
+              <span style={{
+                position: "absolute", top: -12, right: 20,
+                background: "linear-gradient(135deg, #F43F8E, #A855F7)", color: "white",
+                fontSize: 9, fontWeight: 900, padding: "4px 12px", borderRadius: 10
+              }}>Most Popular</span>
+
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#F43F8E" }}>Fan</div>
+                <div style={{ fontSize: 28, fontWeight: 900, color: "#1E1B4B", margin: "6px 0 2px" }}>$4.99 <span style={{ fontSize: 13, color: "#64748B" }}>/ month</span></div>
+                <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 18 }}>Billed yearly</div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 12, color: "#475569" }}>
+                  <div>✓ Early access to new episodes</div>
+                  <div>✓ Ad-free reading</div>
+                  <div>✓ Premium badges & profile</div>
+                  <div>✓ 100 Vault bookmarks</div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => navigate('/info/pricing')}
+                style={{
+                  width: "100%", padding: "11px", borderRadius: 16, border: "none",
+                  background: "linear-gradient(135deg, #F43F8E, #A855F7)", color: "white", fontSize: 13, fontWeight: 800, cursor: "pointer", marginTop: 24,
+                  boxShadow: "0 4px 14px rgba(244, 63, 142, 0.4)"
+                }}
+              >Start Free Trial</button>
+            </div>
+
+            {/* Creator */}
+            <div style={{
+              background: "rgba(255, 255, 255, 0.8)", borderRadius: 24, padding: "24px 20px",
+              border: "1px solid rgba(255, 255, 255, 0.95)", display: "flex", flexDirection: "column", justifyContent: "space-between"
+            }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#7E22CE" }}>Creator</div>
+                <div style={{ fontSize: 28, fontWeight: 900, color: "#1E1B4B", margin: "6px 0 2px" }}>$9.99 <span style={{ fontSize: 13, color: "#64748B" }}>/ month</span></div>
+                <div style={{ fontSize: 11, color: "#94A3B8", marginBottom: 18 }}>Billed yearly</div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 12, color: "#475569" }}>
+                  <div>✓ AI panel generation credits</div>
+                  <div>✓ Advanced analytics</div>
+                  <div>✓ Custom story branding</div>
+                  <div>✓ Priority support</div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => navigate('/info/pricing')}
+                style={{
+                  width: "100%", padding: "10px", borderRadius: 16, border: "1px solid rgba(168, 85, 247, 0.4)",
+                  background: "white", color: "#7E22CE", fontSize: 13, fontWeight: 800, cursor: "pointer", marginTop: 24
+                }}
+              >Start Free Trial</button>
+            </div>
+
+            {/* Compare Plans Table + Chibi Mascot */}
+            <div style={{
+              background: "rgba(255, 255, 255, 0.75)", borderRadius: 24, padding: "20px",
+              border: "1px solid rgba(255, 255, 255, 0.95)", position: "relative"
+            }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#1E1B4B", marginBottom: 14 }}>Compare plans</div>
+              
+              <div style={{ fontSize: 11, color: "#475569", display: "flex", flexDirection: "column", gap: 8 }}>
+                {[
+                  { feature: "Read Episodes", free: "✓", fan: "✓", creator: "✓" },
+                  { feature: "Daily Free Episodes", free: "✓", fan: "✓", creator: "✓" },
+                  { feature: "Ad-Free Experience", free: "✓", fan: "✓", creator: "✓" },
+                  { feature: "Vault Bookmarks", free: "✕", fan: "✓", creator: "✓" },
+                  { feature: "AI Panel Generation", free: "✕", fan: "✓", creator: "✓" },
+                  { feature: "Creator Analytics", free: "✕", fan: "✓", creator: "✓" },
+                  { feature: "Priority Support", free: "✕", fan: "✕", creator: "✓" },
+                ].map((row, idx) => (
+                  <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span>{row.feature}</span>
+                    <div style={{ display: "flex", gap: 14, fontWeight: 800 }}>
+                      <span style={{ color: row.free === "✓" ? "#10B981" : "#EF4444" }}>{row.free}</span>
+                      <span style={{ color: row.fan === "✓" ? "#10B981" : "#EF4444" }}>{row.fan}</span>
+                      <span style={{ color: row.creator === "✓" ? "#10B981" : "#EF4444" }}>{row.creator}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chibi Mascot Image */}
+              <img src="/chibi_princess.png" alt="Mascot" style={{
+                position: "absolute", bottom: 6, right: 6, height: 110, width: "auto", objectFit: "contain", pointerEvents: "none"
+              }} />
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      {/* ═══ 7. TESTIMONIALS SECTION ("Loved by Readers & Creators") ═══ */}
+      <div style={{ maxWidth: 1340, margin: "36px auto 0", padding: "0 20px" }}>
+        <SectionHeader title="Loved by Readers & Creators" viewAll={true} />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+          {[
+            { name: "LunaReads", role: "Verified Reader", quote: "Every choice feels meaningful. The art is stunning and the stories keep me coming back!", avatar: "👩‍🦰" },
+            { name: "StoryWeaver", role: "Creator", quote: "ToonVault's tools make creating branching stories so fun and easy. My readers love it!", avatar: "👨‍🎨" },
+            { name: "MysticMira", role: "Verified Reader", quote: "The community vibes are amazing. I love seeing how different choices change everything!", avatar: "👩‍🎤" },
+            { name: "InkDreamer", role: "Creator", quote: "Analytics + AI panel art = game changer for creators. Highly recommend!", avatar: "👨‍💻" },
+          ].map((t, i) => (
+            <div key={i} className="glass-card" style={{ borderRadius: 22, padding: "20px 22px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(244, 63, 142, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>{t.avatar}</div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 900, color: "#1E1B4B" }}>{t.name}</div>
+                  <div style={{ fontSize: 10, color: "#64748B", fontWeight: 600 }}>{t.role}</div>
+                </div>
+                <div style={{ marginLeft: "auto", color: "#F59E0B", fontSize: 11 }}>⭐⭐⭐⭐⭐</div>
+              </div>
+              <p style={{ fontSize: 12, color: "#475569", lineHeight: 1.5, margin: 0, fontStyle: "italic" }}>
+                "{t.quote}"
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══ 8. BOTTOM HERO CTA BANNER ═══ */}
+      <div style={{ maxWidth: 1340, margin: "36px auto 0", padding: "0 20px" }}>
+        <div style={{
+          borderRadius: 32, padding: "40px 48px",
+          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 240, 245, 0.85) 100%)",
+          border: "1px solid rgba(255, 255, 255, 0.95)",
+          boxShadow: "0 20px 50px rgba(190, 140, 220, 0.22)",
+          position: "relative", overflow: "hidden",
+          display: "flex", alignItems: "center", justifyContent: "space-between"
+        }}>
+          <img src="/bottom_romance_couple.png" alt="" style={{
+            position: "absolute", right: 0, bottom: 0, height: "100%", width: "auto", objectFit: "cover", pointerEvents: "none"
+          }} />
+          <div>
+            <h2 style={{ fontSize: 32, fontWeight: 900, color: "#1E1B4B", margin: "0 0 8px", lineHeight: 1.1 }}>
+              Your story adventure awaits.
+            </h2>
+            <p style={{ fontSize: 14, color: "#64748B", margin: "0 0 24px", fontWeight: 500 }}>
+              Read, choose, create, and unlock endless worlds.
+            </p>
+
+            <div style={{ display: "flex", gap: 14 }}>
+              <button 
+                onClick={() => navigate('/browse')}
+                style={{
+                  padding: "13px 28px", borderRadius: 30, border: "none",
+                  background: "linear-gradient(135deg, #F43F8E 0%, #A855F7 100%)",
+                  color: "white", fontSize: 14, fontWeight: 800, cursor: "pointer",
+                  boxShadow: "0 8px 24px rgba(244, 63, 142, 0.4)"
+                }}
+              >Start Reading Now</button>
+              <button 
+                onClick={() => navigate('/user?intent=create')}
+                style={{
+                  padding: "13px 24px", borderRadius: 30,
+                  background: "rgba(255, 255, 255, 0.9)",
+                  border: "1px solid rgba(244, 63, 142, 0.35)",
+                  color: "#475569", fontSize: 14, fontWeight: 700, cursor: "pointer"
+                }}
+              >Join as Creator</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ 9. COMPLETE MODERN FOOTER ═══ */}
+      <footer style={{ maxWidth: 1340, margin: "40px auto 0", padding: "0 20px" }}>
+        <div className="glass-card" style={{ borderRadius: 32, padding: "40px 48px" }}>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr 1fr 1.5fr", gap: 24, marginBottom: 36 }}>
+            
+            {/* Col 1: Logo & Slogan */}
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 12,
+                  background: "linear-gradient(135deg, #F43F8E, #A855F7)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 18, color: "white"
+                }}>📖</div>
+                <span style={{ fontSize: 20, fontWeight: 900, color: "#1E1B4B" }}>Toon<span style={{ color: "#F43F8E" }}>Vault</span></span>
+              </div>
+              <p style={{ fontSize: 12, color: "#64748B", lineHeight: 1.5, margin: 0 }}>
+                Stories you choose.<br />Worlds you unlock.
+              </p>
+            </div>
+
+            {/* Col 2: Explore */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>Explore</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#64748B" }}>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/browse')}>Originals</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/browse')}>Rankings</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/browse')}>Browse</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/browse')}>Canvas</span>
+              </div>
+            </div>
+
+            {/* Col 3: For Readers */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>For Readers</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#64748B" }}>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/browse')}>How It Works</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/browse')}>Community</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/browse')}>FAQ</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/browse')}>Gift Cards</span>
+              </div>
+            </div>
+
+            {/* Col 4: For Creators */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>For Creators</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#64748B" }}>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/user')}>Create on ToonVault</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/user')}>Creator Resources</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/user')}>Blog</span>
+                <span style={{ cursor: "pointer" }} onClick={() => navigate('/user')}>Success Stories</span>
+              </div>
+            </div>
+
+            {/* Col 5: Company */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>Company</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: "#64748B" }}>
+                <span style={{ cursor: "pointer" }}>About Us</span>
+                <span style={{ cursor: "pointer" }}>Careers</span>
+                <span style={{ cursor: "pointer" }}>Contact</span>
+                <span style={{ cursor: "pointer" }}>Press Kit</span>
+              </div>
+            </div>
+
+            {/* Col 6: Stay Connected & Newsletter */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: "#1E1B4B", marginBottom: 12 }}>Stay connected</div>
+              <div style={{ display: "flex", gap: 10, marginBottom: 14, fontSize: 16 }}>
+                <span>👾</span> <span>📸</span> <span>🐦</span> <span>▶️</span> <span>🎵</span>
+              </div>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 6,
+                background: "rgba(255, 255, 255, 0.9)", border: "1px solid rgba(244, 63, 142, 0.3)",
+                borderRadius: 20, padding: "4px 6px 4px 12px"
+              }}>
+                <input 
+                  type="email" placeholder="Enter your email" 
+                  style={{ border: "none", background: "none", outline: "none", fontSize: 11, color: "#1E1B4B", width: "100%" }} 
+                />
+                <button style={{
+                  width: 28, height: 28, borderRadius: "50%", border: "none",
+                  background: "linear-gradient(135deg, #F43F8E, #A855F7)", color: "white",
+                  cursor: "pointer", fontSize: 12
+                }}>➔</button>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom copyright bar */}
+          <div style={{
+            borderTop: "1px solid rgba(0,0,0,0.06)", paddingTop: 20,
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            fontSize: 11, color: "#94A3B8"
+          }}>
+            <div>© 2025 ToonVault. All rights reserved.</div>
+            <div style={{ display: "flex", gap: 16 }}>
+              <span style={{ cursor: "pointer" }}>Terms of Service</span>
+              <span style={{ cursor: "pointer" }}>Privacy Policy</span>
+              <span style={{ cursor: "pointer" }}>Community Guidelines</span>
+            </div>
+          </div>
+
         </div>
       </footer>
 
-      {/* AI INSTRUCTION MODAL */}
-      {showAIModal && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 3000, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(12px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "white", borderRadius: 32, width: "100%", maxWidth: 600, overflow: "hidden", position: "relative", boxShadow: "0 30px 60px rgba(0,0,0,0.4)" }}>
-            <div style={{ height: 160, background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "white" }}>
-              <div style={{ fontSize: 44, marginBottom: 10 }}>🎀</div>
-              <h2 style={{ fontSize: 24, fontWeight: 900, margin: 0 }}>Manta AI Story Creator</h2>
-              <p style={{ fontSize: 14, opacity: 0.8 }}>Turn your ideas into professional webtoons</p>
-            </div>
-            <div style={{ padding: 40 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 15, color: COLORS.ink }}>What's your story about?</h3>
-              <textarea 
-                value={aiPrompt}
-                onChange={e => setAiPrompt(e.target.value)}
-                placeholder="e.g. A princess who discovers she can talk to dragons in a kingdom of ice..."
-                style={{ width: "100%", height: 120, borderRadius: 16, border: `2px solid ${COLORS.border}`, padding: 20, fontSize: 15, outline: "none", fontFamily: "inherit", resize: "none", transition: "all 0.3s" }}
-                onFocus={e => e.currentTarget.style.borderColor = COLORS.plum}
-                onBlur={e => e.currentTarget.style.borderColor = COLORS.border}
-              />
-              <div style={{ marginTop: 25, display: "flex", gap: 12 }}>
-                <button onClick={() => setShowAIModal(false)} style={{ flex: 1, padding: "16px", borderRadius: 16, border: `2px solid ${COLORS.border}`, background: "none", color: COLORS.muted, fontWeight: 700, cursor: "pointer" }}>Cancel</button>
-                <button 
-                  onClick={handleWriteStoryClick}
-                  style={{ flex: 2, padding: "16px", borderRadius: 16, background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.plumDark})`, color: "white", border: "none", fontWeight: 700, cursor: "pointer", boxShadow: `0 8px 20px ${COLORS.plum}44` }}
-                >
-                  ✨ Start AI Generation
-                </button>
-              </div>
-              <div style={{ marginTop: 24, padding: "16px", background: "rgba(109,74,232,0.05)", borderRadius: 12, border: "1px solid rgba(109,74,232,0.15)" }}>
-                <div style={{ color: COLORS.plum, fontSize: 13, fontWeight: 700, marginBottom: 4 }}>💡 Write a story readers love</div>
-                <div style={{ color: COLORS.muted, fontSize: 12, lineHeight: 1.5 }}>
-                  If your story becomes popular and sells well with our readers, you might be able to earn money from it in the future!
-                </div>
-              </div>
-            </div>
-            <p style={{ fontSize: 12, color: COLORS.muted, textAlign: "center", marginBottom: 20 }}>Using <strong>Runware Flux AI</strong> · High Fidelity Manta Style</p>
-            <button onClick={() => setShowAIModal(false)} style={{ position: "absolute", top: 15, right: 15, width: 32, height: 32, borderRadius: "50%", background: "rgba(0,0,0,0.2)", border: "none", color: "white", cursor: "pointer", fontSize: 18 }}>×</button>
-          </div>
-        </div>
-      )}
-
-      {/* CONSENT MODAL */}
-      {showConsentModal && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 99999, background: "rgba(0,0,0,0.85)", backdropFilter: "blur(4px)",
-          display: "flex", alignItems: "center", justifyContent: "center", padding: 20
-        }}>
-          <div style={{
-            background: "#121315", width: "100%", maxWidth: 440, borderRadius: 24, padding: "32px 28px",
-            border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
-            textAlign: "center"
-          }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🔞</div>
-            <h2 style={{ color: "white", fontSize: 22, margin: "0 0 12px", fontWeight: 800 }}>Content Warning</h2>
-            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 14, margin: "0 0 24px", lineHeight: 1.6 }}>
-              ToonVault contains stories and panels that may not be suitable for all ages. By continuing, you confirm that you are at least 18 years old and consent to viewing and writing mature content.
-            </p>
-            <div style={{ display: "flex", gap: 12, flexDirection: "column" }}>
-              <button 
-                onClick={handleConsentAccept}
-                style={{
-                  width: "100%", padding: 14, borderRadius: 12, border: "none",
-                  background: "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "white",
-                  fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: "0 6px 20px rgba(109,74,232,0.4)"
-                }}>
-                I Agree — Continue
-              </button>
-              <button 
-                onClick={() => setShowConsentModal(false)}
-                style={{
-                  width: "100%", padding: 14, borderRadius: 12, border: "1px solid rgba(255,255,255,0.2)",
-                  background: "transparent", color: "rgba(255,255,255,0.7)",
-                  fontSize: 15, fontWeight: 600, cursor: "pointer"
-                }}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══ FLOATING AI BUTTON ═══ */}
-      <button 
-        className="fab-button"
-        onClick={handleWriteStoryClick} style={{
-        position: "fixed", bottom: 30, right: 30, width: 70, height: 70,
-        borderRadius: "50%", background: `linear-gradient(135deg, ${COLORS.plum}, ${COLORS.rose})`,
-        border: "none", color: "white", fontSize: 28, cursor: "pointer",
-        boxShadow: "0 10px 30px rgba(109,74,232,0.4)", zIndex: 1000,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        transition: "all 0.3s",
-      }}
-      onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1) rotate(10deg)"}
-      onMouseLeave={e => e.currentTarget.style.transform = "scale(1) rotate(0deg)"}
-      >
-        ✨
-      </button>
     </div>
   );
 }
-
-export default ToonVaultHome;

@@ -6,13 +6,13 @@ const backendHost = process.env.BACKEND_HOST || "localhost"
 const backendUrl = `http://${backendHost}:5000`
 
 // Docker dev me HMR_PORT set hoga (3000), production me 443
-const hmrClientPort = parseInt(process.env.HMR_CLIENT_PORT || "443")
+const hmrClientPort = parseInt(process.env.HMR_CLIENT_PORT || "3000")
 
 export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    host: "0.0.0.0",
+    host: "localhost",
     allowedHosts: ["toonvault.com"],
     // Allowed hosts should be at the server root in newer Vite, 
     // but in older versions it might need to be handled via proxy or ignored.
@@ -24,14 +24,25 @@ export default defineConfig({
       clientPort: hmrClientPort,
       overlay: true,
     },
-    proxy: {
-      '/api': {
-        target: backendUrl,
-        changeOrigin: true,
-      },
-      '/socket.io': {
-        target: backendUrl,
-        ws: true,
+    // proxy: {
+    //   '/api': {
+    //     target: backendUrl,
+    //     changeOrigin: true,
+    //   },
+    //   '/socket.io': {
+    //     target: backendUrl,
+    //     ws: true,
+    //   }
+    // }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['framer-motion', 'lucide-react'],
+          charts: ['chart.js']
+        }
       }
     }
   }

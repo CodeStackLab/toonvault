@@ -1,11 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import ToonVaultHome from './components/ToonVaultHome';
-import Reader from './components/Reader';
-import StoryPage from './components/StoryPage';
-import MantaReader from './components/MantaReader';
-import ReelPlayer from './components/ReelPlayer';
+import { Suspense, lazy } from 'react';
+const ToonVaultHome = lazy(() => import('./components/ToonVaultHome'));
+const Reader = lazy(() => import('./components/Reader'));
+const StoryPage = lazy(() => import('./components/StoryPage'));
+const MantaReader = lazy(() => import('./components/MantaReader'));
+const ReelPlayer = lazy(() => import('./components/ReelPlayer'));
 
 // Mock data for StoryPage (can be replaced by API fetch inside StoryPage)
 const STORIES = [
@@ -13,12 +14,12 @@ const STORIES = [
   { id: 2, title: "Shadow of the Realm", image: "/src/assets/shadow_realm.png", tags: ['thriller'] },
 ];
 
-import AdminDashboard from './pages/admin/AdminDashboard';
-import Login from './components/Login';
-import ToonVaultUserDashboard from './components/ToonVaultUserDashboard';
-import Browse from './components/Browse';
-import BecomeCreator from './components/BecomeCreator';
-import InfoPage from './components/InfoPage';
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const Login = lazy(() => import('./components/Login'));
+const ToonVaultUserDashboard = lazy(() => import('./components/ToonVaultUserDashboard'));
+const Browse = lazy(() => import('./components/Browse'));
+const BecomeCreator = lazy(() => import('./components/BecomeCreator'));
+const InfoPage = lazy(() => import('./components/InfoPage'));
 import axios from 'axios';
 import './App.css';
 
@@ -133,39 +134,45 @@ function App() {
   return (
     <HelmetProvider>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Routes>
-          {/* Maintenance wrap except for direct admin login or if already in admin mode */}
-          <Route path="/" element={isMaintenance ? <MaintenancePage /> : <ToonVaultHome />} />
-          <Route path="/browse" element={isMaintenance ? <MaintenancePage /> : <Browse />} />
-          <Route path="/creators" element={isMaintenance ? <MaintenancePage /> : <BecomeCreator />} />
-          <Route path="/info/:slug" element={isMaintenance ? <MaintenancePage /> : <InfoPage />} />
-          
-          <Route path="/about" element={<Navigate to="/info/about" replace />} />
-          <Route path="/help" element={<Navigate to="/info/help" replace />} />
-          <Route path="/terms" element={<Navigate to="/info/terms" replace />} />
-          <Route path="/privacy" element={<Navigate to="/info/privacy" replace />} />
-          <Route path="/community" element={<Navigate to="/info/community" replace />} />
-          
-          {/* Public Reader */}
-          <Route path="/story/:id" element={isMaintenance ? <MaintenancePage /> : <StoryPage stories={STORIES} />} />
-          <Route path="/manta/:storyId" element={isMaintenance ? <MaintenancePage /> : <MantaReader />} />
-          <Route path="/reel/:storyId" element={isMaintenance ? <MaintenancePage /> : <ReelPlayer />} />
-          
-          {/* Auth - Allow admin portal even in maintenance for emergency fixes */}
-          <Route path="/user" element={isMaintenance ? <MaintenancePage /> : <Login type="user" />} />
-          <Route path="/login" element={<Navigate to="/user" replace />} />
-          <Route path="/admin" element={<Login type="admin" />} />
-          
-          {/* Combined Dashboard - Hub handles role check */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <DashboardHub settings={settings} isMaintenance={isMaintenance} />
-            </ProtectedRoute>
-          } />
+        <Suspense fallback={
+          <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#0F0D1E", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div className="tv-loader-spinner"></div>
+          </div>
+        }>
+          <Routes>
+            {/* Maintenance wrap except for direct admin login or if already in admin mode */}
+            <Route path="/" element={isMaintenance ? <MaintenancePage /> : <ToonVaultHome />} />
+            <Route path="/browse" element={isMaintenance ? <MaintenancePage /> : <Browse />} />
+            <Route path="/creators" element={isMaintenance ? <MaintenancePage /> : <BecomeCreator />} />
+            <Route path="/info/:slug" element={isMaintenance ? <MaintenancePage /> : <InfoPage />} />
+            
+            <Route path="/about" element={<Navigate to="/info/about" replace />} />
+            <Route path="/help" element={<Navigate to="/info/help" replace />} />
+            <Route path="/terms" element={<Navigate to="/info/terms" replace />} />
+            <Route path="/privacy" element={<Navigate to="/info/privacy" replace />} />
+            <Route path="/community" element={<Navigate to="/info/community" replace />} />
+            
+            {/* Public Reader */}
+            <Route path="/story/:id" element={isMaintenance ? <MaintenancePage /> : <StoryPage stories={STORIES} />} />
+            <Route path="/manta/:storyId" element={isMaintenance ? <MaintenancePage /> : <MantaReader />} />
+            <Route path="/reel/:storyId" element={isMaintenance ? <MaintenancePage /> : <ReelPlayer />} />
+            
+            {/* Auth - Allow admin portal even in maintenance for emergency fixes */}
+            <Route path="/user" element={isMaintenance ? <MaintenancePage /> : <Login type="user" />} />
+            <Route path="/login" element={<Navigate to="/user" replace />} />
+            <Route path="/admin" element={<Login type="admin" />} />
+            
+            {/* Combined Dashboard - Hub handles role check */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardHub settings={settings} isMaintenance={isMaintenance} />
+              </ProtectedRoute>
+            } />
 
-          {/* Redirect old dashboard URL */}
-          <Route path="/user-dashboard" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+            {/* Redirect old dashboard URL */}
+            <Route path="/user-dashboard" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Suspense>
       </Router>
     </HelmetProvider>
   );
