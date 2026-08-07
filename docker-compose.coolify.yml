@@ -14,11 +14,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - toonvault_net
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-toonvault}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   redis:
     image: redis:7-alpine
@@ -28,11 +23,6 @@ services:
       - redis_data:/data
     networks:
       - toonvault_net
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   mongo:
     image: mongo:6
@@ -41,11 +31,6 @@ services:
       - mongo_data:/data/db
     networks:
       - toonvault_net
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   backend:
     build:
@@ -56,17 +41,16 @@ services:
       REDIS_URL: redis://redis:6379
       MONGO_URI: mongodb://mongo:27017/toonvault
       PORT: 5000
-      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-""}
-      RUNWARE_API_KEY: ${RUNWARE_API_KEY:-""}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-"YyfYhkuBhuF2gQML0jlGnS6X0XrLloP7"}
+      RUNWARE_API_KEY: ${RUNWARE_API_KEY:-"pJWrGTD9NYgjxi30BnHrdupOQ4y3Ro3t"}
       RUNWARE_MODEL: runware:100@1
       JWT_SECRET: ${JWT_SECRET:-toonvault_secret_key_2026_safe}
     volumes:
       - uploads_data:/app/uploads
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
+      - mongo
     networks:
       - toonvault_net
 
@@ -74,6 +58,8 @@ services:
     build:
       context: ./frontend
       target: production
+    ports:
+      - "80:80"
     expose:
       - "80"
     restart: always
@@ -83,13 +69,17 @@ services:
       - backend
     networks:
       - toonvault_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.toonvault-frontend.rule=Host(`toonvault.com`) || Host(`www.toonvault.com`)"
       - "traefik.http.routers.toonvault-frontend.entrypoints=http,https"
       - "traefik.http.routers.toonvault-frontend.tls=true"
       - "traefik.http.services.toonvault-frontend.loadbalancer.server.port=80"
-    # Coolify will expose this container natively on port 80
 
 networks:
   toonvault_net:
