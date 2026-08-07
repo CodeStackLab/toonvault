@@ -83,26 +83,23 @@ function App() {
 
   if (loading) {
     return (
-      <div style={{
-        position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-        background: "#0F0D1E", color: "white", zIndex: 10000,
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        fontFamily: "'Inter', sans-serif"
-      }}>
-        <div style={{ position: "relative", width: 80, height: 80, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div className="tv-loader-spinner"></div>
-          <div style={{ position: "absolute", fontSize: 30, filter: "drop-shadow(0 0 10px rgba(139, 92, 246, 0.8))" }}>✨</div>
-        </div>
-        <h2 style={{
-          marginTop: 20, fontSize: 24, fontWeight: 800,
-          background: "linear-gradient(135deg, #A78BFA 0%, #F43F5E 100%)",
-          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-          letterSpacing: "1px"
-        }}>
-          ToonVault
-        </h2>
-        <div style={{ width: 140, height: 4, background: "rgba(255,255,255,0.1)", borderRadius: 2, marginTop: 16, overflow: "hidden", position: "relative" }}>
-          <div className="tv-loader-bar"></div>
+      <div className="tv-site-loader">
+        <div className="tv-loader-card">
+          <div className="tv-badge-glow">⚡</div>
+          <h2 style={{
+            marginTop: 18, fontSize: 26, fontWeight: 900,
+            background: "linear-gradient(135deg, #1E1B4B 0%, #F43F8E 100%)",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            letterSpacing: "-0.5px"
+          }}>
+            Toon<span style={{ color: "#F43F8E", WebkitTextFillColor: "#F43F8E" }}>Vault</span>
+          </h2>
+          <div style={{ fontSize: 13, color: "#64748B", fontWeight: 600, marginTop: 4 }}>
+            Unlocking interactive stories...
+          </div>
+          <div className="tv-loader-progress">
+            <div className="tv-loader-bar-inner"></div>
+          </div>
         </div>
       </div>
     );
@@ -135,8 +132,24 @@ function App() {
     <HelmetProvider>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Suspense fallback={
-          <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "#0F0D1E", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div className="tv-loader-spinner"></div>
+          <div className="tv-site-loader">
+            <div className="tv-loader-card">
+              <div className="tv-badge-glow">⚡</div>
+              <h2 style={{
+                marginTop: 18, fontSize: 26, fontWeight: 900,
+                background: "linear-gradient(135deg, #1E1B4B 0%, #F43F8E 100%)",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                letterSpacing: "-0.5px"
+              }}>
+                Toon<span style={{ color: "#F43F8E", WebkitTextFillColor: "#F43F8E" }}>Vault</span>
+              </h2>
+              <div style={{ fontSize: 13, color: "#64748B", fontWeight: 600, marginTop: 4 }}>
+                Loading experience...
+              </div>
+              <div className="tv-loader-progress">
+                <div className="tv-loader-bar-inner"></div>
+              </div>
+            </div>
           </div>
         }>
           <Routes>
